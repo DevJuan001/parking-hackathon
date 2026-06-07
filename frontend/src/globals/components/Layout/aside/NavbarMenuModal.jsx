@@ -4,10 +4,10 @@ import { useInnerModal } from "../../../hooks/useInnerModal";
 import { secondSectionItems } from "../../../constants/asideMenuItems";
 // Components
 import NavItem from "./NavItem";
+import AvatarButton from "./AvatarButton";
 // Modals
 import Modal from "../../modals/Modal";
-import AvatarButton from "./AvatarButton";
-import ProfileModal from "../../modals/ProfileModal";
+import ProfileModal from "../../modals/profileModal/ProfileModal";
 
 export default function NavbarMenuModal({ isOpen, triggerRef, onClose }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
