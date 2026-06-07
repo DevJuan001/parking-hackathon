@@ -5,6 +5,7 @@ import {
   avatarItem,
   secondSectionItems,
 } from "../../../constants/asideMenuItems";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 export default function NavbarMenuModal({
   isOpen,
@@ -13,6 +14,8 @@ export default function NavbarMenuModal({
   helpOnClick,
   avatarOnClick,
 }) {
+  const { user } = useCurrentUser();
+
   return (
     <Modal
       isOpen={isOpen}
@@ -22,11 +25,14 @@ export default function NavbarMenuModal({
     >
       <button
         onClick={avatarOnClick}
-        className="w-full h-full flex items-center py-2.5 px-4 gap-2.5 rounded-3xl transition duration-300
+        className="w-full h-full flex items-center py-2.5 px-4 gap-2.5 rounded-3xl transition duration-300 text-[#75777eb7]
         hover:bg-[#e5e7eb96]
         dark:text-[#7E8088] dark:hover:bg-[#181818]"
       >
         <img src={avatarItem.icon} alt={avatarItem.alt} className="w-8 h-8" />
+        <span>
+          {user.name} {user.first_surname}
+        </span>
       </button>
 
       {secondSectionItems.map((item) =>
@@ -43,7 +49,7 @@ export default function NavbarMenuModal({
           <button
             key={item.name}
             onClick={helpOnClick}
-            className="w-full h-full flex items-center py-3.5 px-6 gap-2 rounded-full transition duration-300 cursor-pointer group text-[#75777eb7]
+            className="w-full h-full flex items-center py-4 px-6 gap-2 rounded-full transition duration-300 cursor-pointer group text-[#75777eb7]
             hover:cursor-pointer
             hover:bg-[#e5e7eb96] 
             dark:text-gray-50 dark:hover:bg-[#202022]"
