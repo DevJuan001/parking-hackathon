@@ -1,3 +1,11 @@
+-- ROLES
+INSERT INTO ROLES (name) VALUES
+  ("Admin");
+
+-- USERS
+INSERT INTO USERS (role_id, name, first_surname, second_surname, email, password) VALUES
+	(1, "Juan", "Test", "Test", "juanesyt7@gmail.com", "12345");
+
 -- VEHICLE_TYPES
 INSERT INTO VEHICLE_TYPES (name) VALUES
   ('Car'),
