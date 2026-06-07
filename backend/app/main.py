@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
-# from app.features.auth.routes import auth_routes
+from app.features.auth.routes import auth_routes
 
 from app.core.database import get_connection
 from app.core.redis import close_redis, init_redis
@@ -62,4 +62,4 @@ def root():
 
 
 # Rutas de autenticación
-# app.include_router(auth_routes.router)
+app.include_router(auth_routes.router)
