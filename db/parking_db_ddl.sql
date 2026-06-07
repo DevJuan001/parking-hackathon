@@ -1,10 +1,30 @@
+DROP DATABASE IF EXISTS parking_db;
+
 CREATE DATABASE IF NOT EXISTS parking_db
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
 USE parking_db;
 
--- Base tables (no foreign key dependencies)
+CREATE TABLE ROLES(
+  id INT NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE USERS (
+  role_id INT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  first_surname TEXT NOT NULL,
+  second_surname TEXT NOT NULL,
+  email TEXT NOT NULL,
+  password TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  FOREIGN KEY (role_id) REFERENCES ROLES(id)
+);
+
 CREATE TABLE PLATES (
   id          INT       NOT NULL AUTO_INCREMENT,
   plate       TEXT      NOT NULL,
