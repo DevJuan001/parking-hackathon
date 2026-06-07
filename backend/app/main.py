@@ -62,4 +62,4 @@ def root():
 
 
 # Rutas de autenticación
-app.include_router(auth_routes.router)
+# app.include_router(auth_routes.router)
