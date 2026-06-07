@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
 from app.features.auth.routes import auth_routes
+from app.features.users.routes import users_routes
 
 from app.core.database import get_connection
 from app.core.redis import close_redis, init_redis
@@ -63,3 +64,5 @@ def root():
 
 # Rutas de autenticación
 app.include_router(auth_routes.router)
+# Rutas de usuarios
+app.include_router(users_routes.router)
