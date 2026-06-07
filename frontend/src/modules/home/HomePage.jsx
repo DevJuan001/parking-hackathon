@@ -2,6 +2,7 @@
 import { useModal } from "../../globals/hooks/useModal";
 // Components
 import Layout from "../../globals/components/Layout/Layout";
+import HomeSectionsContainer from "./components/ui/HomeSectionsContainer";
 
 export default function HomePage() {
   const { isOpen, modalType, modalData, triggerRef, openModal, closeModal } =
@@ -9,7 +10,7 @@ export default function HomePage() {
 
   return (
     <Layout avatarOnClick={(e) => openModal(null, "avatar", e.currentTarget)}>
-      <div className="dark:text-white"></div>
+      <HomeSectionsContainer />
     </Layout>
   );
 }
