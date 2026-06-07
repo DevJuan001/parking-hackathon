@@ -1,0 +1,63 @@
+CREATE DATABASE IF NOT EXISTS parking_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE parking_db;
+
+-- Base tables (no foreign key dependencies)
+CREATE TABLE PLATES (
+  id          INT       NOT NULL AUTO_INCREMENT,
+  plate       TEXT      NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE SPOTS (
+  spot_id     INT       NOT NULL AUTO_INCREMENT,
+  spot        TEXT      NOT NULL,
+  PRIMARY KEY (spot_id)
+);
+
+CREATE TABLE VEHICLE_TYPES (
+  id          INT       NOT NULL AUTO_INCREMENT,
+  name        TEXT      NOT NULL,
+  PRIMARY KEY (id)
+);
+
+-- Dependent tables
+CREATE TABLE ENTRIES (
+  id          INT       NOT NULL AUTO_INCREMENT,
+  plate_id    INT       NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (plate_id) REFERENCES PLATES(id)
+);
+
+CREATE TABLE EXITS (
+  id          INT       NOT NULL AUTO_INCREMENT,
+  plate_id    INT       NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (plate_id) REFERENCES PLATES(id)
+);
+
+CREATE TABLE RATES (
+  id             INT       NOT NULL AUTO_INCREMENT,
+  vehicle_type   TEXT      NOT NULL,
+  value          FLOAT     NOT NULL,
+  created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE PAYMENTS (
+  id          INT       NOT NULL AUTO_INCREMENT,
+  plate_id    INT       NOT NULL,
+  spot_id     INT       NOT NULL,
+  value       FLOAT     NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (plate_id) REFERENCES PLATES(id),
+  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id)
+);
