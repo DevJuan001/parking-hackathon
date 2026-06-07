@@ -51,11 +51,6 @@ export const firstSectionItems = [
 
 export const secondSectionItems = [
   {
-    itemId: "help",
-    name: "Ayuda",
-    icon: "feedback",
-  },
-  {
     itemId: "logout",
     name: "Cerrar Sesión",
     path: "/",
