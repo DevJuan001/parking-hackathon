@@ -7,7 +7,7 @@ export default function NavItem({ itemId, path, name, icon, showName }) {
       {({ isActive }) => (
         <div
           id={`${itemId}-aside-button`}
-          className={`w-auto h-14 flex items-center py-3 px-6 subpixel-antialiased rounded-full transition-all duration-700 group
+          className={`w-auto h-14 flex items-center py-3 px-6 subpixel-antialiased rounded-full transition-all duration-500 group
             ${showName ? "gap-3" : "gap-0 group-hover:gap-3"}
             ${
               isActive
@@ -31,7 +31,7 @@ export default function NavItem({ itemId, path, name, icon, showName }) {
           />
 
           <div
-            className={`text-center font-medium overflow-hidden transition-all duration-700 ease-in-out
+            className={`text-center font-medium overflow-hidden transition-all duration-500 ease-in-out
             ${showName ? "max-w-[200px]" : "max-w-0 group-hover:max-w-[200px]"}
             ${isActive ? "font-semibold" : "group-hover:text-black dark:group-hover:text-white"}`}
           >
