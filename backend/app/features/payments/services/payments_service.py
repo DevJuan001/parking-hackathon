@@ -3,11 +3,13 @@ from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.utils.date_formatter import date_formatter
-from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.utils.plate_formatter import plate_formatter
 from app.features.exits.repositories.exits_repository import ExitsRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
-from app.features.payments.repositories.payments_repository import PaymentsRepository
 from app.features.tariffs.repositories.tariffs_repository import TariffsRepository
+from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.payments.models.payments_responses import CalculatePaymentResponse
+from app.features.payments.repositories.payments_repository import PaymentsRepository
 from app.features.payments.models.payments_schemas import CreatePaymentSchema, PaymentsFiltersSchema
 
 logger = get_logger("payments.service")
@@ -104,8 +106,10 @@ class PaymentsService:
         connection = get_connection()
 
         try:
-            plate_text = plate.replace("-", "").strip().upper()
+            # Formateamos la placa
+            plate_text = plate_formatter(plate)
 
+            # Buscamos si la placa esta registrada
             error, plate_data = PlatesRepository.get_plate_by_name(
                 plate_text, connection
             )
@@ -113,24 +117,32 @@ class PaymentsService:
             if error or not plate_data:
                 raise ServiceError(error or "Placa no encontrada")
 
-            plate_id = plate_data.id
-            vehicle_type = plate_data.vehicle_type
+            plate_id = plate_data[0].id
+            vehicle_type = plate_data[0].vehicle_type
 
+            # Buscamos la entrada mas reciente del vehiculo
             error, entry = EntriesRepository.find_latest_entry(
                 plate_id, connection
             )
 
             if error or not entry:
                 raise ServiceError(
-                    error or "No se encontró un ingreso para esta placa")
+                    error or "No se encontró un ingreso para esta placa"
+                )
 
+            # Establecemos el tiempo cuando entro
             entry_time = entry["created_at"]
 
+            # Establecemos que el tiempo de salida es el actual
             exit_time = datetime.now()
 
+            # Calculamos la diferencia de tiempo entre la entrada y al salida
             diff = exit_time - entry_time
+
+            # Redondeamos el tiempo que duro parqueado el vehiculo
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
+            # Buscamos la tarifa por el tipo de vehiculo
             error, rate = TariffsRepository.find_rate_by_vehicle_type(
                 vehicle_type, connection
             )
@@ -139,16 +151,18 @@ class PaymentsService:
                 raise ServiceError(error or "Tarifa no encontrada")
 
             rate_value = rate["value"]
+
+            # Redondeamos el valor a cobrarle al vehiculo
             total = round(hours_parked * rate_value, 2)
 
-            return None, {
-                "plate": plate_data.plate,
-                "entry_time": date_formatter(entry_time),
-                "exit_time": date_formatter(exit_time),
-                "hours_parked": hours_parked,
-                "rate_value": rate_value,
-                "total": total
-            }
+            return None, CalculatePaymentResponse(
+                plate=plate_data[0].plate,
+                entry_time=date_formatter(entry_time),
+                exit_time=date_formatter(exit_time),
+                hours_parked=hours_parked,
+                rate_value=rate_value,
+                total=total
+            )
 
         except ServiceError as e:
             return e.message, None
@@ -169,8 +183,9 @@ class PaymentsService:
         connection = get_connection()
 
         try:
-            plate_text = payment_data.plate.replace("-", "").strip().upper()
+            plate_text = plate_formatter(payment_data.plate)
 
+            # Buscamos si esta registrada la placa
             error, plate_list = PlatesRepository.get_plate_by_name(
                 plate_text, connection
             )
@@ -179,7 +194,9 @@ class PaymentsService:
                 raise ServiceError(error or "Placa no encontrada")
 
             plate_id = plate_list[0].id
+            vehicle_type = plate_list[0].vehicle_type
 
+            # Buscamos la entrada mas reciente
             error, entry = EntriesRepository.find_latest_entry(
                 plate_id, connection
             )
@@ -188,26 +205,39 @@ class PaymentsService:
                 raise ServiceError(
                     error or "No se encontró un ingreso para esta placa")
 
+            # Almacenamos la hora a la que entro el vehiculo
             entry_time = entry["created_at"]
-            exit_time = datetime.now()
+
+            # Establecemos que el tiempo de salida es el actual
+            exit_time = payment_data.exit_time
 
             diff = exit_time - entry_time
+
+            # Redondeamos las horas que duro parqueado el vehiculo
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
-            error, rate = TariffsRepository.find_first_rate(connection)
+            # Buscamos el valor de la tarifa según el tipo de vehiculo
+            error, rate = TariffsRepository.find_rate_by_vehicle_type(
+                vehicle_type, connection
+            )
 
             if error or not rate:
                 raise ServiceError(error or "Tarifa no encontrada")
 
+            # Redondeamos el valor a pagar
             value = round(hours_parked * rate["value"], 2)
 
-            error, _, _ = ExitsRepository.create_exit(
+            # Registramos la salida del vehiculo
+            error, success, message = ExitsRepository.create_exit(
                 plate_id, connection
             )
 
-            if error:
-                raise ServiceError(error)
+            if error or not success:
+                raise ServiceError(
+                    error or "Error al intentar crear la salida"
+                )
 
+            # Registramos el pago
             error, success, message = PaymentsRepository.create_payment(
                 plate_id=plate_id,
                 spot_id=entry["spot_id"],
