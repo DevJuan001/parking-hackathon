@@ -52,7 +52,8 @@ class ParkingRepository:
         query = """
         SELECT
             spot_id,
-            spot
+            spot,
+            spot_status
         FROM SPOTS
         ORDER BY spot ASC
         """
@@ -64,7 +65,8 @@ class ParkingRepository:
             spots = [
                 SpotResponse(
                     spot_id=item[0],
-                    spot=item[1]
+                    spot=item[1],
+                    status=item[2],
                 )
                 for item in results
             ]
