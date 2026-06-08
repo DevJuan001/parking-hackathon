@@ -28,6 +28,17 @@ class ParkingController:
         }
 
     @staticmethod
+    def get_plate_by_name(plate: str):
+        error, plate_response = ParkingService.get_plate_by_name(plate)
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": plate_response
+        }
+
+    @staticmethod
     async def create_plate(plate_data: CreatePlateSchema):
         error, success, message = await ParkingService.create_plate(plate_data)
 
