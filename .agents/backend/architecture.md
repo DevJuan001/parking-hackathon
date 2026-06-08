@@ -56,7 +56,7 @@ Never shortcut a layer.
 ## Cross-feature access
 
 - A service in `features/auth` may import a service in `features/users` (e.g. `AuthService` -> `UsersService`).
-- A repository in feature A **must not** be imported by feature B. If B needs A's data, B's service calls A's service.
+- A repository in feature A **must not** be imported by feature B. The single exception is `PlatesRepository` from `parking/repositories/`, which is a shared concern: any feature that needs to read or write PLATES (entries, exits, payments, etc.) imports it directly. Treat PLATES as a shared resource owned by the `parking` feature.
 - Schemas can be shared across features when a payload crosses boundaries (e.g. `UserResponse` reused by both auth and users).
 
 ## When something does not fit a feature
