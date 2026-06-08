@@ -68,13 +68,14 @@ CREATE TABLE EXITS (
 );
 
 CREATE TABLE RATES (
-  id             INT       NOT NULL AUTO_INCREMENT,
-  vehicle_type   TEXT      NOT NULL,
+  id                INT       NOT NULL AUTO_INCREMENT,
+  vehicle_type_id   INT      NOT NULL,
   value          FLOAT     NOT NULL,
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                            ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (vehicle_type_id) REFERENCES VEHICLE_TYPES(id)
 );
 
 CREATE TABLE PAYMENTS (
