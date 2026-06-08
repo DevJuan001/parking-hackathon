@@ -1,11 +1,11 @@
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
-from app.features.parking.models.parking_responses import PlateResponse, SpotResponse
+from app.features.parking.models.parking_responses import PlateResponse
 
-logger = get_logger("parking.repository")
+logger = get_logger("plates.repository")
 
 
-class ParkingRepository:
+class PlatesRepository:
 
     @staticmethod
     def find_all_plates(connection):
@@ -45,6 +45,44 @@ class ParkingRepository:
             cursor.close()
 
     @staticmethod
+    def find_plate_by_id(plate_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            p.id,
+            p.plate,
+            vt.name,
+            p.created_at
+        FROM PLATES AS p
+        INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+        WHERE p.id = %s
+        """
+
+        try:
+            cursor.execute(query, (plate_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "Placa no encontrada", None
+
+            plate = PlateResponse(
+                id=result[0],
+                plate=result[1],
+                vehicle_type=result[2],
+                created_at=date_formatter(result[3])
+            )
+            return None, plate
+
+        except Exception as e:
+            logger.error("Error en find_plate_by_id: %s", e, exc_info=True)
+            return "Error al intentar obtener la placa", None
+
+        finally:
+            cursor.close()
+
+
+    @staticmethod
     def get_plate_by_name(plate: str, connection):
         cursor = connection.cursor()
 
@@ -57,7 +95,7 @@ class ParkingRepository:
         FROM PLATES AS p
         INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
         WHERE p.plate = %s
-        """
+        """ 
 
         try:
             cursor.execute(query, (plate.upper(),))
@@ -86,63 +124,6 @@ class ParkingRepository:
             cursor.close()
 
     @staticmethod
-    def find_all_spots(connection):
-        cursor = connection.cursor()
-
-        query = """
-        SELECT
-            spot_id,
-            spot,
-            spot_status
-        FROM SPOTS
-        ORDER BY spot ASC
-        """
-
-        try:
-            cursor.execute(query)
-            results = cursor.fetchall()
-
-            spots = [
-                SpotResponse(
-                    spot_id=item[0],
-                    spot=item[1],
-                    status=item[2],
-                )
-                for item in results
-            ]
-            return None, spots
-
-        except Exception as e:
-            logger.error("Error en find_all_spots: %s", e, exc_info=True)
-            return "Error al intentar obtener los espacios", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def find_vehicle_type_id_by_name(name: str, connection):
-        cursor = connection.cursor()
-
-        query = "SELECT id FROM VEHICLE_TYPES WHERE name = %s"
-
-        try:
-            cursor.execute(query, (name,))
-            result = cursor.fetchone()
-
-            if not result:
-                return "Tipo de vehículo no encontrado", None
-
-            return None, result[0]
-
-        except Exception as e:
-            logger.error(
-                "Error en find_vehicle_type_id_by_name: %s", e, exc_info=True)
-            return "Error al buscar el tipo de vehículo", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
     def create_plate(plate_str: str, vehicle_type_id: int, connection):
         cursor = connection.cursor()
 
@@ -153,11 +134,28 @@ class ParkingRepository:
 
         try:
             cursor.execute(query, (plate_str, vehicle_type_id))
-            return None, True, "Placa registrada correctamente"
+            return None, cursor.lastrowid, "Placa registrada correctamente"
 
         except Exception as e:
             logger.error("Error en create_plate: %s", e, exc_info=True)
-            return "Error al intentar registrar la placa", False, None
+            return "Error al intentar registrar la placa", None, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def update_plate_vehicle_type(plate_id: int, vehicle_type_id: int, connection):
+        cursor = connection.cursor()
+
+        query = "UPDATE PLATES SET vehicle_type_id = %s WHERE id = %s"
+
+        try:
+            cursor.execute(query, (vehicle_type_id, plate_id))
+            return None, True
+
+        except Exception as e:
+            logger.error("Error en update_plate_vehicle_type: %s", e, exc_info=True)
+            return "Error al actualizar el tipo de vehículo", False
 
         finally:
             cursor.close()

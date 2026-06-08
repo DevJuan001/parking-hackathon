@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
+from app.middlewares.roles_middleware import require_roles
 from app.features.payments.controllers.payments_controller import PaymentsController
 from app.features.payments.models.payments_schemas import CreatePaymentSchema, PaymentsFiltersSchema, CalculatePaymentSchema
 
@@ -12,7 +13,8 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_all_payments(filters: PaymentsFiltersSchema = Depends()):
@@ -32,7 +34,8 @@ def calculate_payment(params: CalculatePaymentSchema = Depends()):
 @router.get(
     "/plate/{plate_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_payments_by_plate(plate_id: int):
@@ -42,7 +45,8 @@ def get_payments_by_plate(plate_id: int):
 @router.get(
     "/{payment_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_payment_by_id(payment_id: int):

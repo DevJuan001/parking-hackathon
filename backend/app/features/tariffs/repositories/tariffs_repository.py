@@ -149,6 +149,51 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
+    def find_rate_by_vehicle_type(vehicle_type: str, connection):
+        cursor = connection.cursor()
+
+        query = "SELECT id, value FROM RATES WHERE vehicle_type = %s LIMIT 1"
+
+        try:
+            cursor.execute(query, (vehicle_type,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "Tarifa no encontrada para ese tipo de vehículo", None
+
+            return None, {"id": result[0], "value": result[1]}
+
+        except Exception as e:
+            logger.error("Error en find_rate_by_vehicle_type: %s",
+                         e, exc_info=True)
+            return "Error al buscar la tarifa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_first_rate(connection):
+        cursor = connection.cursor()
+
+        query = "SELECT id, vehicle_type, value FROM RATES LIMIT 1"
+
+        try:
+            cursor.execute(query)
+            result = cursor.fetchone()
+
+            if not result:
+                return "No hay tarifas registradas", None
+
+            return None, {"id": result[0], "vehicle_type": result[1], "value": result[2]}
+
+        except Exception as e:
+            logger.error("Error en find_first_rate: %s", e, exc_info=True)
+            return "Error al buscar la tarifa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
     def delete_tariff(tariff_id: int, connection):
         cursor = connection.cursor()
 

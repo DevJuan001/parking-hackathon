@@ -2,9 +2,13 @@ from datetime import datetime
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
-from app.features.payments.repositories.payments_repository import PaymentsRepository
-from app.features.payments.models.payments_schemas import CreatePaymentSchema, PaymentsFiltersSchema
 from app.utils.date_formatter import date_formatter
+from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.exits.repositories.exits_repository import ExitsRepository
+from app.features.parking.repositories.plates_repository import PlatesRepository
+from app.features.payments.repositories.payments_repository import PaymentsRepository
+from app.features.tariffs.repositories.tariffs_repository import TariffsRepository
+from app.features.payments.models.payments_schemas import CreatePaymentSchema, PaymentsFiltersSchema
 
 logger = get_logger("payments.service")
 
@@ -100,22 +104,25 @@ class PaymentsService:
         connection = get_connection()
 
         try:
-            error, plate_data = PaymentsRepository.find_plate_by_plate_str(
-                plate, connection
+            plate_text = plate.replace("-", "").strip().upper()
+
+            error, plate_data = PlatesRepository.get_plate_by_name(
+                plate_text, connection
             )
 
             if error or not plate_data:
                 raise ServiceError(error or "Placa no encontrada")
 
-            plate_id = plate_data["id"]
-            vehicle_type = plate_data["vehicle_type"]
+            plate_id = plate_data.id
+            vehicle_type = plate_data.vehicle_type
 
-            error, entry = PaymentsRepository.find_latest_entry(
+            error, entry = EntriesRepository.find_latest_entry(
                 plate_id, connection
             )
 
             if error or not entry:
-                raise ServiceError(error or "No se encontró un ingreso para esta placa")
+                raise ServiceError(
+                    error or "No se encontró un ingreso para esta placa")
 
             entry_time = entry["created_at"]
 
@@ -124,7 +131,7 @@ class PaymentsService:
             diff = exit_time - entry_time
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
-            error, rate = PaymentsRepository.find_rate_by_vehicle_type(
+            error, rate = TariffsRepository.find_rate_by_vehicle_type(
                 vehicle_type, connection
             )
 
@@ -135,7 +142,7 @@ class PaymentsService:
             total = round(hours_parked * rate_value, 2)
 
             return None, {
-                "plate": plate_data["plate"],
+                "plate": plate_data.plate,
                 "entry_time": date_formatter(entry_time),
                 "exit_time": date_formatter(exit_time),
                 "hours_parked": hours_parked,
@@ -162,49 +169,48 @@ class PaymentsService:
         connection = get_connection()
 
         try:
-            error, plate_data = PaymentsRepository.find_plate_by_plate_str(
-                payment_data.plate, connection
+            plate_text = payment_data.plate.replace("-", "").strip().upper()
+
+            error, plate_list = PlatesRepository.get_plate_by_name(
+                plate_text, connection
             )
 
-            if error or not plate_data:
+            if error or not plate_list:
                 raise ServiceError(error or "Placa no encontrada")
 
-            plate_id = plate_data["id"]
+            plate_id = plate_list[0].id
 
-            error, entry = PaymentsRepository.find_latest_entry(
+            error, entry = EntriesRepository.find_latest_entry(
                 plate_id, connection
             )
 
             if error or not entry:
-                raise ServiceError(error or "No se encontró un ingreso para esta placa")
-
-            error, exit_data = PaymentsRepository.find_latest_exit(
-                plate_id, connection
-            )
-
-            if error:
-                raise ServiceError(error)
+                raise ServiceError(
+                    error or "No se encontró un ingreso para esta placa")
 
             entry_time = entry["created_at"]
-
-            if exit_data:
-                exit_time = exit_data["created_at"]
-            else:
-                exit_time = datetime.now()
+            exit_time = datetime.now()
 
             diff = exit_time - entry_time
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
-            error, rate = PaymentsRepository.find_first_rate(connection)
+            error, rate = TariffsRepository.find_first_rate(connection)
 
             if error or not rate:
                 raise ServiceError(error or "Tarifa no encontrada")
 
             value = round(hours_parked * rate["value"], 2)
 
+            error, _, _ = ExitsRepository.create_exit(
+                plate_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
             error, success, message = PaymentsRepository.create_payment(
                 plate_id=plate_id,
-                spot_id=1,
+                spot_id=entry["spot_id"],
                 value=value,
                 connection=connection
             )

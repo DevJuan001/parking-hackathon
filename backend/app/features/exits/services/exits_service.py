@@ -3,6 +3,9 @@ from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.features.exits.repositories.exits_repository import ExitsRepository
 from app.features.exits.models.exits_schemas import CreateExitSchema, ExitsFiltersSchema
+from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.parking.repositories.plates_repository import PlatesRepository
+from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.tariffs.services.tariffs_service import TariffsService
 
 
@@ -105,29 +108,31 @@ class ExitsService:
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
-            error, plate = ExitsRepository.find_plate_by_plate_str(
-                exit_data.plate, connection
+            error, plate_list = PlatesRepository.get_plate_by_name(
+                plate_text, connection
             )
 
-            if error or not plate:
+            if error or not plate_list:
                 raise ServiceError(error or "Placa no encontrada")
 
-            error, spot_id = ExitsRepository.find_latest_entry_spot(
-                plate["id"], connection
+            plate = plate_list[0]
+
+            error, spot_id = EntriesRepository.find_latest_entry_spot(
+                plate.id, connection
             )
 
             if error or not spot_id:
                 raise ServiceError(error or "No se encontró un ingreso para esta placa")
 
             error, success, message = ExitsRepository.create_exit(
-                plate_id=plate["id"],
+                plate_id=plate.id,
                 connection=connection
             )
 
             if error or not success:
                 raise ServiceError(error)
 
-            error, _ = ExitsRepository.update_spot_status(
+            error, _ = SpotsRepository.update_spot_status(
                 spot_id, 2, connection
             )
 

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
+from app.middlewares.roles_middleware import require_roles
 from app.features.entries.controllers.entries_controller import EntriesController
 from app.features.entries.models.entries_schemas import CreateEntrySchema, EntriesFiltersSchema
 
@@ -12,7 +13,8 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_all_entries(filters: EntriesFiltersSchema = Depends()):
@@ -22,7 +24,8 @@ def get_all_entries(filters: EntriesFiltersSchema = Depends()):
 @router.get(
     "/plate/{plate_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_entries_by_plate(plate_id: int):
@@ -32,7 +35,8 @@ def get_entries_by_plate(plate_id: int):
 @router.get(
     "/{entry_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_entry_by_id(entry_id: int):

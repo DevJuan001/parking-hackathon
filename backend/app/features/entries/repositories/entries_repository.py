@@ -154,84 +154,6 @@ class EntriesRepository:
             cursor.close()
 
     @staticmethod
-    def find_plate_by_plate_str(plate_str: str, connection):
-        cursor = connection.cursor()
-
-        query = "SELECT id, vehicle_type_id FROM PLATES WHERE plate = %s"
-
-        try:
-            cursor.execute(query, (plate_str,))
-            result = cursor.fetchone()
-
-            if not result:
-                return None, None
-
-            return None, {"id": result[0], "vehicle_type_id": result[1]}
-
-        except Exception as e:
-            logger.error("Error en find_plate_by_plate_str: %s", e, exc_info=True)
-            return "Error al buscar la placa", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def update_plate_vehicle_type(plate_id: int, vehicle_type_id: int, connection):
-        cursor = connection.cursor()
-
-        query = "UPDATE PLATES SET vehicle_type_id = %s WHERE id = %s"
-
-        try:
-            cursor.execute(query, (vehicle_type_id, plate_id))
-            return None, True
-
-        except Exception as e:
-            logger.error("Error en update_plate_vehicle_type: %s", e, exc_info=True)
-            return "Error al actualizar el tipo de vehículo", False
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def create_plate(plate_str: str, vehicle_type_id: int, connection):
-        cursor = connection.cursor()
-
-        query = "INSERT INTO PLATES (plate, vehicle_type_id) VALUES (%s, %s)"
-
-        try:
-            cursor.execute(query, (plate_str, vehicle_type_id))
-            return None, cursor.lastrowid
-
-        except Exception as e:
-            logger.error("Error en create_plate: %s", e, exc_info=True)
-            return "Error al registrar la placa", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def find_vehicle_type_id_by_name(name: str, connection):
-        cursor = connection.cursor()
-
-        query = "SELECT id FROM VEHICLE_TYPES WHERE name = %s"
-
-        try:
-            cursor.execute(query, (name,))
-            result = cursor.fetchone()
-
-            if not result:
-                return "Tipo de vehículo no encontrado", None
-
-            return None, result[0]
-
-        except Exception as e:
-            logger.error("Error en find_vehicle_type_id_by_name: %s", e, exc_info=True)
-            return "Error al buscar el tipo de vehículo", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
     def has_active_entry(plate_id: int, connection):
         cursor = connection.cursor()
 
@@ -287,6 +209,98 @@ class EntriesRepository:
             cursor.close()
 
     @staticmethod
+    def find_latest_entry(plate_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT id, plate_id, spot_id, created_at
+        FROM ENTRIES
+        WHERE plate_id = %s
+        ORDER BY created_at DESC
+        LIMIT 1
+        """
+
+        try:
+            cursor.execute(query, (plate_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "No se encontró un ingreso para esta placa", None
+
+            return None, {
+                "id": result[0],
+                "plate_id": result[1],
+                "spot_id": result[2],
+                "created_at": result[3]
+            }
+
+        except Exception as e:
+            logger.error("Error en find_latest_entry: %s", e, exc_info=True)
+            return "Error al buscar el último ingreso", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_latest_entry_spot(plate_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT spot_id FROM ENTRIES
+        WHERE plate_id = %s
+        ORDER BY created_at DESC
+        LIMIT 1
+        """
+
+        try:
+            cursor.execute(query, (plate_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "No se encontró un ingreso para esta placa", None
+
+            return None, result[0]
+
+        except Exception as e:
+            logger.error("Error en find_latest_entry_spot: %s", e, exc_info=True)
+            return "Error al buscar el ingreso más reciente", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_latest_exit(plate_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT id, plate_id, created_at
+        FROM EXITS
+        WHERE plate_id = %s
+        ORDER BY created_at DESC
+        LIMIT 1
+        """
+
+        try:
+            cursor.execute(query, (plate_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return None, None
+
+            return None, {
+                "id": result[0],
+                "plate_id": result[1],
+                "created_at": result[2]
+            }
+
+        except Exception as e:
+            logger.error("Error en find_latest_exit: %s", e, exc_info=True)
+            return "Error al buscar la última salida", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
     def create_entry(plate_id: int, spot_id: int, connection):
         cursor = connection.cursor()
 
@@ -302,23 +316,6 @@ class EntriesRepository:
         except Exception as e:
             logger.error("Error en create_entry: %s", e, exc_info=True)
             return "Error al intentar registrar el ingreso", False, None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def update_spot_status(spot_id: int, status: int, connection):
-        cursor = connection.cursor()
-
-        query = "UPDATE SPOTS SET spot_status = %s WHERE spot_id = %s"
-
-        try:
-            cursor.execute(query, (status, spot_id))
-            return None, True
-
-        except Exception as e:
-            logger.error("Error en update_spot_status: %s", e, exc_info=True)
-            return "Error al actualizar el estado de la plaza", False
 
         finally:
             cursor.close()
