@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from app.features.parking.services.parking_service import ParkingService
-from app.features.parking.models.parking_schemas import CreatePlateSchema, CreatePaymentSchema, ParkingFiltersSchema
+from app.features.parking.models.parking_schemas import CreatePlateSchema
 
 
 class ParkingController:
@@ -28,42 +28,8 @@ class ParkingController:
         }
 
     @staticmethod
-    def get_all_payments(filters: ParkingFiltersSchema):
-        error, payments = ParkingService.get_all_payments(filters)
-
-        if error:
-            raise HTTPException(status_code=404, detail=error)
-
-        return {
-            "data": payments
-        }
-
-    @staticmethod
-    def get_payment_by_id(payment_id: int):
-        error, payment = ParkingService.get_payment_by_id(payment_id)
-
-        if error:
-            raise HTTPException(status_code=404, detail=error)
-
-        return {
-            "data": payment
-        }
-
-    @staticmethod
     async def create_plate(plate_data: CreatePlateSchema):
         error, success, message = await ParkingService.create_plate(plate_data)
-
-        if error:
-            raise HTTPException(status_code=400, detail=error)
-
-        return {
-            "success": success,
-            "message": message
-        }
-
-    @staticmethod
-    async def create_payment(payment_data: CreatePaymentSchema):
-        error, success, message = await ParkingService.create_payment(payment_data)
 
         if error:
             raise HTTPException(status_code=400, detail=error)
