@@ -6,7 +6,12 @@ from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
 from app.features.auth.routes import auth_routes
+from app.features.spots.routes import spots_routes
 from app.features.users.routes import users_routes
+from app.features.exits.routes import exits_routes
+from app.features.entries.routes import entries_routes
+from app.features.parking.routes import parking_routes
+from app.features.payments.routes import payments_routes
 
 from app.core.database import get_connection
 from app.core.redis import close_redis, init_redis
@@ -66,3 +71,13 @@ def root():
 app.include_router(auth_routes.router)
 # Rutas de usuarios
 app.include_router(users_routes.router)
+# Rutas de entradas
+app.include_router(entries_routes.router)
+# Rutas de salidas
+app.include_router(exits_routes.router)
+# Rutas de parking
+app.include_router(parking_routes.router)
+# Rutas de payments
+app.include_router(payments_routes.router)
+# Rutas de spots
+app.include_router(spots_routes.router)
