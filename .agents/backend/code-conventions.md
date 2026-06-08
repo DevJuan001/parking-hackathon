@@ -57,8 +57,17 @@ router = APIRouter(
 
 ## Auth, RBAC, rate limit
 
-- Public routes: only rate limit.
-- Authenticated routes: rate limit + `require_roles([...])`.
+- **Every endpoint** must declare `Depends(RateLimiter(times=N, seconds=60))`.
+- **Every endpoint** must add `Depends(require_roles([...]))` **except** the following public operations:
+  - `POST /api/auth/login`
+  - `POST /api/auth/refresh`
+  - `POST /api/auth/logout`
+  - `POST /api/auth/recover-password`
+  - `POST /api/entries/create` (vehicle entry — open to all)
+  - `POST /api/exits/create` (vehicle exit — open to all)
+  - `POST /api/payments/create` (payment — open to all)
+  - `GET /api/payments/calculate` (tariff calculation — open to all)
+- `require_roles` already includes `verify_jwt` internally. **Do not** add `Depends(verify_jwt)` separately.
 - Token storage: httpOnly cookies (`access_token`, `refresh_token`); never return tokens in response bodies.
 - Cookies are set/cleared through helpers in `app.core.security`.
 
