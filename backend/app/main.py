@@ -9,6 +9,7 @@ from app.features.auth.routes import auth_routes
 from app.features.spots.routes import spots_routes
 from app.features.users.routes import users_routes
 from app.features.exits.routes import exits_routes
+from app.features.tariffs.routes import tariffs_routes
 from app.features.entries.routes import entries_routes
 from app.features.parking.routes import parking_routes
 from app.features.payments.routes import payments_routes
@@ -81,3 +82,5 @@ app.include_router(parking_routes.router)
 app.include_router(payments_routes.router)
 # Rutas de spots
 app.include_router(spots_routes.router)
+# Rutas de tariffs
+app.include_router(tariffs_routes.router)
