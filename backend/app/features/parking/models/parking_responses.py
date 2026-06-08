@@ -11,6 +11,7 @@ class PlateResponse(BaseModel):
 class SpotResponse(BaseModel):
     spot_id: int
     spot: str
+    status: int
 
 
 class PaymentResponse(BaseModel):
