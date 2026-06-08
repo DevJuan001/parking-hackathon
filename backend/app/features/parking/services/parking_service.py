@@ -1,8 +1,8 @@
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
+from app.features.parking.models.parking_schemas import CreatePlateSchema
 from app.features.parking.repositories.parking_repository import ParkingRepository
-from app.features.parking.models.parking_schemas import CreatePlateSchema, CreatePaymentSchema, ParkingFiltersSchema
 
 logger = get_logger("parking.service")
 
@@ -62,57 +62,29 @@ class ParkingService:
             connection.close()
 
     @staticmethod
-    def get_all_payments(filters: ParkingFiltersSchema):
+    def get_plate_by_name(plate: str):
         connection = get_connection()
 
         try:
-            error, payments = ParkingRepository.find_all_payments(
-                filters, connection
+            error, plate_response = ParkingRepository.get_plate_by_name(
+                plate, connection
             )
 
             if error:
                 raise ServiceError(error)
 
-            return None, payments
+            return None, plate_response
 
         except ServiceError as e:
             return e.message, None
 
         except Exception as e:
             logger.error(
-                "Error en get_all_payments: %s",
+                "Error en get_plate_by_name: %s",
                 e,
                 exc_info=True
             )
-            return "Error al intentar obtener los pagos", None
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    def get_payment_by_id(payment_id: int):
-        connection = get_connection()
-
-        try:
-            error, payment = ParkingRepository.find_payment_by_id(
-                payment_id, connection
-            )
-
-            if error or not payment:
-                raise ServiceError(error)
-
-            return None, payment
-
-        except ServiceError as e:
-            return e.message, None
-
-        except Exception as e:
-            logger.error(
-                "Error en get_payment_by_id: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar obtener el pago", None
+            return "Error al intentar buscar la placa", None
 
         finally:
             connection.close()
@@ -124,12 +96,22 @@ class ParkingService:
         try:
             plate_text = plate_data.plate.replace("-", "").strip().upper()
 
+            error, plate_exists = ParkingRepository.get_plate_by_name(
+                plate_text, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if plate_exists:
+                raise ServiceError(
+                    "Esta placa ya se encuentra registrada, intenta cambiar la placa e intentalo nuevamente"
+                )
+
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
-            if plate_data.vehicle_type:
-                vehicle_type = plate_data.vehicle_type
-            elif plate_text[-1].isalpha():
+            if plate_text[-1].isalpha():
                 vehicle_type = "Motorcycle"
             else:
                 vehicle_type = "Car"
@@ -142,7 +124,7 @@ class ParkingService:
                 raise ServiceError(error or "Tipo de vehículo no encontrado")
 
             error, success, message = ParkingRepository.create_plate(
-                plate_str=plate_data.plate,
+                plate_str=plate_text,
                 vehicle_type_id=vehicle_type_id,
                 connection=connection
             )
@@ -166,39 +148,6 @@ class ParkingService:
                 exc_info=True
             )
             return "Error al intentar registrar la placa", False, None
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    async def create_payment(payment_data: CreatePaymentSchema):
-        connection = get_connection()
-
-        try:
-            error, success, message = ParkingRepository.create_payment(
-                payment_data=payment_data,
-                connection=connection
-            )
-
-            if error or not success:
-                raise ServiceError(error)
-
-            connection.commit()
-
-            return None, True, "Pago registrado correctamente"
-
-        except ServiceError as e:
-            connection.rollback()
-            return e.message, False, None
-
-        except Exception as e:
-            connection.rollback()
-            logger.error(
-                "Error en create_payment: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar registrar el pago", False, None
 
         finally:
             connection.close()
