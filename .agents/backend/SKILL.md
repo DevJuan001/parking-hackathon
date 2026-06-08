@@ -26,7 +26,6 @@ Skip it for: doc-only edits, `pyproject.toml` version bumps, lockfile churn, one
 For any non-trivial change, walk through these three steps **in order**. Do not start coding until the first two are written down.
 
 ### 1. Requirement
-Capture the problem before the solution. Answer:
 - What is the user-facing problem? (one sentence)
 - Which endpoint(s) or module(s)?
 - In scope / out of scope.
@@ -34,13 +33,11 @@ Capture the problem before the solution. Answer:
 - Success and failure responses.
 
 ### 2. Design
-Decide where the change lives. Answer:
 - Which layers are touched? (route / controller / service / repository / model)
 - New tables or columns -> coordinate with the `database` branch.
 - New env vars -> add to `app/core/config.py` and `.env.example`.
 - New middleware dependency -> add to `app/middlewares/`.
 - New email -> template in `app/templates/` + task in `app/tasks/`.
-- New role -> update seed in `db/parking_db_dml.sql` (separate PR).
 - RBAC: which roles? (`require_roles([...])`)
 - Rate limit: `RateLimiter(times=N, seconds=60)`.
 - Backwards compatibility: any breaking change to payloads or cookies?
@@ -50,7 +47,7 @@ Follow the rules in the companion files:
 - See `architecture.md` for folder layout and layer boundaries.
 - See `code-conventions.md` for Python/FastAPI style.
 - See `feature-workflow.md` for the step-by-step to add a new feature.
-- See `commits-and-prs.md` for commit format, pre-PR checklist, and PR template.
+- See `commits-and-prs.md` for commit format, pre-PR checklist, and PR creation (use `gh pr create` directly).
 
 ---
 
@@ -62,6 +59,6 @@ Follow the rules in the companion files:
 | `architecture.md` | Folder layout, layer rules, dependency direction |
 | `code-conventions.md` | Python typing, async, errors, logging, schemas, RBAC, rate limit, env vars |
 | `feature-workflow.md` | Step-by-step procedure to add a new feature end to end |
-| `commits-and-prs.md` | Conventional Commits, pre-PR checklist, PR template |
+| `commits-and-prs.md` | Conventional Commits, pre-PR checklist, PR template, gh pr create |
 
 Add new files here when a recurring concern emerges (e.g. `testing.md`, `emails.md`, `db-coordination.md`) and link them from the table above.
