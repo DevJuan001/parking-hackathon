@@ -1,3 +1,5 @@
+
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 
@@ -11,6 +13,7 @@ class PaymentsFiltersSchema(BaseModel):
 
 class CreatePaymentSchema(BaseModel):
     plate: str
+    exit_time: datetime
 
 
 class CalculatePaymentSchema(BaseModel):
