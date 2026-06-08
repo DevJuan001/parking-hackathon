@@ -45,6 +45,47 @@ class ParkingRepository:
             cursor.close()
 
     @staticmethod
+    def get_plate_by_name(plate: str, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            p.id,
+            p.plate,
+            vt.name,
+            p.created_at
+        FROM PLATES AS p
+        INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+        WHERE p.plate = %s
+        """
+
+        try:
+            cursor.execute(query, (plate.upper(),))
+            result = cursor.fetchall()
+
+            if not result:
+                return None, None
+
+            plate_response = [
+                PlateResponse(
+                    id=item[0],
+                    plate=item[1],
+                    vehicle_type=item[2],
+                    created_at=date_formatter(item[3])
+                )
+                for item in result
+            ]
+
+            return None, plate_response
+
+        except Exception as e:
+            logger.error("Error en get_plate_by_name: %s", e, exc_info=True)
+            return "Error al intentar buscar la placa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
     def find_all_spots(connection):
         cursor = connection.cursor()
 
