@@ -41,12 +41,12 @@ INSERT INTO SPOTS (spot, spot_status) VALUES
   ('C-04', 2);
 
 -- RATES
-INSERT INTO RATES (vehicle_type, value) VALUES
-  ('Carro',     3500.00),
-  ('Moto',       2000.00),
-  ('Truck',      5000.00),
-  ('Van',        4500.00),
-  ('Bus',        6000.00);
+INSERT INTO RATES (vehicle_type_id, value) VALUES
+  (1,     3500.00),
+  (2,       2000.00),
+  (3,      5000.00),
+  (4,        4500.00),
+  (5,        6000.00);
 
 -- ENTRIES
 INSERT INTO ENTRIES (plate_id, spot_id, created_at) VALUES
