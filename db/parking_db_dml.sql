@@ -16,16 +16,16 @@ INSERT INTO VEHICLE_TYPES (name) VALUES
 
 -- PLATES
 INSERT INTO PLATES (plate, vehicle_type_id) VALUES
-  ('ABC-123', 1),
-  ('XYZ-456', 1),
-  ('DEF-789', 1),
-  ('GHI-321', 1),
-  ('JKL-654', 1),
-  ('MNO-987', 1),
-  ('PQR-111', 1),
-  ('STU-222', 1),
-  ('VWX-333', 1),
-  ('YZA-444', 1);
+  ('ABC123', 1),
+  ('XYZ456', 1),
+  ('DEF789', 1),
+  ('GHI321', 1),
+  ('JKL654', 1),
+  ('MNO987', 1),
+  ('PQR111', 1),
+  ('STU222', 1),
+  ('VWX333', 1),
+  ('YZA444', 1);
 
 -- SPOTS
 INSERT INTO SPOTS (spot, spot_status) VALUES

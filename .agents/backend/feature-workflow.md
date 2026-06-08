@@ -36,7 +36,7 @@ Decide and write down:
 - **New tables/columns?** Coordinate with `database` branch — do not ALTER here.
 - **New middleware dependency?** Add to `app/middlewares/`.
 - **New email?** Template in `app/templates/` + task in `app/tasks/`.
-- **RBAC:** which roles? Default to `["Admin"]` for write/admin operations.
+- **RBAC:** which roles? Default to `["Admin"]` for write/admin operations. Every endpoint requires `require_roles` **except**: `POST /api/entries/create`, `POST /api/exits/create`, `POST /api/payments/create`, `GET /api/payments/calculate`, and auth public routes (login, refresh, logout, recover-password).
 - **Rate limit:** `RateLimiter(times=N, seconds=60)`. Reasonable defaults: 3 for auth/recovery, 10 for sensitive writes, 30 for normal CRUD, 50 for cheap reads.
 
 ## 4. Scaffold

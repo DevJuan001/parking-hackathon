@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
+from app.middlewares.roles_middleware import require_roles
 from app.features.exits.controllers.exits_controller import ExitsController
 from app.features.exits.models.exits_schemas import CreateExitSchema, ExitsFiltersSchema
 
@@ -12,7 +13,8 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_all_exits(filters: ExitsFiltersSchema = Depends()):
@@ -22,7 +24,8 @@ def get_all_exits(filters: ExitsFiltersSchema = Depends()):
 @router.get(
     "/plate/{plate_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_exits_by_plate(plate_id: int):
@@ -32,7 +35,8 @@ def get_exits_by_plate(plate_id: int):
 @router.get(
     "/{exit_id}",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_exit_by_id(exit_id: int):

@@ -2,6 +2,9 @@ from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.parking.repositories.plates_repository import PlatesRepository
+from app.features.parking.repositories.vehicle_types_repository import VehicleTypesRepository
+from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.entries.models.entries_schemas import CreateEntrySchema, EntriesFiltersSchema
 
 logger = get_logger("entries.service")
@@ -109,31 +112,35 @@ class EntriesService:
             else:
                 vehicle_type = "Car"
 
-            error, vehicle_type_id = EntriesRepository.find_vehicle_type_id_by_name(
+            error, vehicle_type_id = VehicleTypesRepository.find_vehicle_type_id_by_name(
                 vehicle_type, connection
             )
 
             if error or not vehicle_type_id:
                 raise ServiceError(error or "Tipo de vehículo no encontrado")
 
-            error, plate = EntriesRepository.find_plate_by_plate_str(
-                data["plate"], connection
+            plate_text = data["plate"].replace("-", "").strip().upper()
+
+            error, plate_list = PlatesRepository.get_plate_by_name(
+                plate_text, connection
             )
 
             if error:
                 raise ServiceError(error)
 
+            plate = plate_list[0] if plate_list else None
+
             if not plate:
-                error, plate_id = EntriesRepository.create_plate(
-                    data["plate"], vehicle_type_id, connection
+                error, plate_id, _ = PlatesRepository.create_plate(
+                    plate_text, vehicle_type_id, connection
                 )
 
                 if error or not plate_id:
                     raise ServiceError(error or "Error al registrar la placa")
             else:
-                plate_id = plate["id"]
-                if plate["vehicle_type_id"] != vehicle_type_id:
-                    error, _ = EntriesRepository.update_plate_vehicle_type(
+                plate_id = plate.id
+                if plate.vehicle_type != vehicle_type:
+                    error, _ = PlatesRepository.update_plate_vehicle_type(
                         plate_id, vehicle_type_id, connection
                     )
                     if error:
@@ -165,7 +172,7 @@ class EntriesService:
             if error or not success:
                 raise ServiceError(error)
 
-            error, _ = EntriesRepository.update_spot_status(
+            error, _ = SpotsRepository.update_spot_status(
                 spot_id, 3, connection
             )
 

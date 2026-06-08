@@ -2,7 +2,10 @@ from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.features.parking.models.parking_schemas import CreatePlateSchema
-from app.features.parking.repositories.parking_repository import ParkingRepository
+from app.features.parking.repositories.plates_repository import PlatesRepository
+from app.features.parking.repositories.vehicle_types_repository import VehicleTypesRepository
+from app.features.spots.models.spots_schemas import SpotsFiltersSchema
+from app.features.spots.repositories.spots_repository import SpotsRepository
 
 logger = get_logger("parking.service")
 
@@ -14,7 +17,7 @@ class ParkingService:
         connection = get_connection()
 
         try:
-            error, plates = ParkingRepository.find_all_plates(connection)
+            error, plates = PlatesRepository.find_all_plates(connection)
 
             if error:
                 raise ServiceError(error)
@@ -40,7 +43,9 @@ class ParkingService:
         connection = get_connection()
 
         try:
-            error, spots = ParkingRepository.find_all_spots(connection)
+            error, spots = SpotsRepository.find_all_spots(
+                SpotsFiltersSchema(), connection
+            )
 
             if error:
                 raise ServiceError(error)
@@ -66,7 +71,7 @@ class ParkingService:
         connection = get_connection()
 
         try:
-            error, plate_response = ParkingRepository.get_plate_by_name(
+            error, plate_response = PlatesRepository.get_plate_by_name(
                 plate, connection
             )
 
@@ -96,7 +101,7 @@ class ParkingService:
         try:
             plate_text = plate_data.plate.replace("-", "").strip().upper()
 
-            error, plate_exists = ParkingRepository.get_plate_by_name(
+            error, plate_exists = PlatesRepository.get_plate_by_name(
                 plate_text, connection
             )
 
@@ -116,21 +121,21 @@ class ParkingService:
             else:
                 vehicle_type = "Car"
 
-            error, vehicle_type_id = ParkingRepository.find_vehicle_type_id_by_name(
+            error, vehicle_type_id = VehicleTypesRepository.find_vehicle_type_id_by_name(
                 vehicle_type, connection
             )
 
             if error or not vehicle_type_id:
                 raise ServiceError(error or "Tipo de vehículo no encontrado")
 
-            error, success, message = ParkingRepository.create_plate(
+            error, plate_id, message = PlatesRepository.create_plate(
                 plate_str=plate_text,
                 vehicle_type_id=vehicle_type_id,
                 connection=connection
             )
 
-            if error or not success:
-                raise ServiceError(error)
+            if error or not plate_id:
+                raise ServiceError(error or message)
 
             connection.commit()
 
