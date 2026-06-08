@@ -21,21 +21,9 @@ CREATE TABLE USERS (
   email TEXT NOT NULL,
   password TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  status INT NOT NULL DEFAULT 2,
   PRIMARY KEY(id),
   FOREIGN KEY (role_id) REFERENCES ROLES(id)
-);
-
-CREATE TABLE PLATES (
-  id          INT       NOT NULL AUTO_INCREMENT,
-  plate       TEXT      NOT NULL,
-  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE SPOTS (
-  spot_id     INT       NOT NULL AUTO_INCREMENT,
-  spot        TEXT      NOT NULL,
-  PRIMARY KEY (spot_id)
 );
 
 CREATE TABLE VEHICLE_TYPES (
@@ -44,13 +32,32 @@ CREATE TABLE VEHICLE_TYPES (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE PLATES (
+  id               INT       NOT NULL AUTO_INCREMENT,
+  plate            TEXT      NOT NULL,
+  vehicle_type_id  INT       NOT NULL,
+  created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (vehicle_type_id) REFERENCES VEHICLE_TYPES(id)
+);
+
+CREATE TABLE SPOTS (
+  spot_id     INT       NOT NULL AUTO_INCREMENT,
+  spot        TEXT      NOT NULL,
+  spot_status  INT      NOT NULL DEFAULT 2 COMMENT '1: deshabilitada, 2: dispnible, 3: ocupado',
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (spot_id)
+);
+
 -- Dependent tables
 CREATE TABLE ENTRIES (
   id          INT       NOT NULL AUTO_INCREMENT,
   plate_id    INT       NOT NULL,
+  spot_id     INT       NOT NULL,
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (plate_id) REFERENCES PLATES(id)
+  FOREIGN KEY (plate_id) REFERENCES PLATES(id),
+  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id)
 );
 
 CREATE TABLE EXITS (
@@ -62,13 +69,14 @@ CREATE TABLE EXITS (
 );
 
 CREATE TABLE RATES (
-  id             INT       NOT NULL AUTO_INCREMENT,
-  vehicle_type   TEXT      NOT NULL,
+  id                INT       NOT NULL AUTO_INCREMENT,
+  vehicle_type_id   INT      NOT NULL,
   value          FLOAT     NOT NULL,
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                            ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (vehicle_type_id) REFERENCES VEHICLE_TYPES(id)
 );
 
 CREATE TABLE PAYMENTS (
