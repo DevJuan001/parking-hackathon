@@ -9,6 +9,7 @@ SELECT
            en.created_at)          AS time_parked,
   pay.value                        AS payment_value
 FROM PAYMENTS pay
+<<<<<<< Updated upstream
   INNER JOIN PLATES  p   ON p.id       = pay.plate_id
   INNER JOIN ENTRIES en  ON en.plate_id = pay.plate_id
   INNER JOIN EXITS   ex  ON ex.plate_id = pay.plate_id
@@ -17,8 +18,11 @@ FROM PAYMENTS pay
       SELECT name FROM VEHICLE_TYPES LIMIT 1
   )
   LEFT JOIN VEHICLE_TYPES vt ON vt.name = r.vehicle_type;
+=======
+  INNER JOIN PLATES        p   ON p.id        = pay.plate_id
+  INNER JOIN VEHICLE_TYPES vt  ON vt.id       = p.vehicle_type_id
+  INNER JOIN ENTRIES       en  ON en.plate_id = pay.plate_id
+  INNER JOIN EXITS         ex  ON ex.plate_id = pay.plate_id;
+>>>>>>> Stashed changes
 
--- ─────────────────────────────────────────
--- Query the view
--- ─────────────────────────────────────────
 SELECT * FROM vw_parking_summary;
