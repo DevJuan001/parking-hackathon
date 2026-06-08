@@ -14,14 +14,6 @@ class SpotResponse(BaseModel):
     status: int
 
 
-class PaymentResponse(BaseModel):
-    id: int
-    plate: str
-    spot: str
-    value: float
-    created_at: str
-
-
 class ParkingSummaryResponse(BaseModel):
     plate: str
     user_name: str
