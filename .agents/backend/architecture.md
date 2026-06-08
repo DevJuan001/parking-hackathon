@@ -56,7 +56,16 @@ Never shortcut a layer.
 ## Cross-feature access
 
 - A service in `features/auth` may import a service in `features/users` (e.g. `AuthService` -> `UsersService`).
-- A repository in feature A **must not** be imported by feature B. The single exception is `PlatesRepository` from `parking/repositories/`, which is a shared concern: any feature that needs to read or write PLATES (entries, exits, payments, etc.) imports it directly. Treat PLATES as a shared resource owned by the `parking` feature.
+- A repository in feature A **must not** be imported by feature B, with these two exceptions:
+  - **`PlatesRepository`** (in `parking/repositories/`): any feature that reads or writes the PLATES table (entries, exits, payments, etc.) imports it directly. PLATES is a shared resource owned by the `parking` feature.
+  - **`SpotsRepository`** (in `spots/repositories/`): the canonical home of all SPOTS queries. Other features (entries, exits) that need to update a spot's status import `SpotsRepository.update_spot_status` instead of duplicating the query.
+- The "table-per-repository" rule: **one repository owns one table**. Each table's queries live in exactly one place. Examples:
+  - PLATES queries → `parking/repositories/plates_repository.py`
+  - SPOTS queries → `spots/repositories/spots_repository.py`
+  - VEHICLE_TYPES queries → `parking/repositories/vehicle_types_repository.py`
+  - RATES queries → `tariffs/repositories/tariffs_repository.py`
+  - USERS queries → `users/repositories/users_repository.py`
+  - ROLES queries → `users/repositories/roles_repository.py`
 - Schemas can be shared across features when a payload crosses boundaries (e.g. `UserResponse` reused by both auth and users).
 
 ## When something does not fit a feature
