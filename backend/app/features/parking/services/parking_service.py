@@ -124,7 +124,7 @@ class ParkingService:
                 raise ServiceError(error or "Tipo de vehículo no encontrado")
 
             error, success, message = ParkingRepository.create_plate(
-                plate_str=plate_data.plate,
+                plate_str=plate_text,
                 vehicle_type_id=vehicle_type_id,
                 connection=connection
             )
