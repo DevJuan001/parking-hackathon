@@ -62,18 +62,56 @@ class ParkingService:
             connection.close()
 
     @staticmethod
+    def get_plate_by_name(plate: str):
+        connection = get_connection()
+
+        try:
+            error, plate_response = ParkingRepository.get_plate_by_name(
+                plate, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, plate_response
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_plate_by_name: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar buscar la placa", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     async def create_plate(plate_data: CreatePlateSchema):
         connection = get_connection()
 
         try:
             plate_text = plate_data.plate.replace("-", "").strip().upper()
 
+            error, plate_exists = ParkingRepository.get_plate_by_name(
+                plate_text, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if plate_exists:
+                raise ServiceError(
+                    "Esta placa ya se encuentra registrada, intenta cambiar la placa e intentalo nuevamente"
+                )
+
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
-            if plate_data.vehicle_type:
-                vehicle_type = plate_data.vehicle_type
-            elif plate_text[-1].isalpha():
+            if plate_text[-1].isalpha():
                 vehicle_type = "Motorcycle"
             else:
                 vehicle_type = "Car"
