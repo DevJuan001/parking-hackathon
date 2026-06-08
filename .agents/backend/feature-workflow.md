@@ -83,4 +83,4 @@ uv run uvicorn app.main:app --reload
 
 ## 8. Open the PR
 
-See `commits-and-prs.md` for the template and the pre-PR checklist. Include the Requirement and Design sections filled in.
+See `commits-and-prs.md` for the template and the pre-PR checklist.
