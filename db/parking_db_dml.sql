@@ -42,32 +42,13 @@ INSERT INTO SPOTS (spot, spot_status) VALUES
 
 -- RATES
 INSERT INTO RATES (vehicle_type, value) VALUES
-  ('Car',        3500.00),
-  ('Motorcycle', 2000.00),
+  ('Carro',     3500.00),
+  ('Moto',       2000.00),
   ('Truck',      5000.00),
   ('Van',        4500.00),
   ('Bus',        6000.00);
 
--- USERS
-INSERT INTO USERS (name, email, password) VALUES
-  ('Carlos Pérez',  'carlos@mail.com',  'hashed_password_1'),
-  ('María López',   'maria@mail.com',   'hashed_password_2'),
-  ('Juan Rodríguez','juan@mail.com',    'hashed_password_3');
-
 -- ENTRIES
-<<<<<<< Updated upstream
-INSERT INTO ENTRIES (plate_id, user_id, created_at) VALUES
-  (1,  1, '2024-06-01 08:00:00'),
-  (2,  2, '2024-06-01 08:30:00'),
-  (3,  1, '2024-06-01 09:00:00'),
-  (4,  3, '2024-06-01 09:15:00'),
-  (5,  2, '2024-06-01 10:00:00'),
-  (6,  3, '2024-06-01 10:45:00'),
-  (7,  1, '2024-06-01 11:00:00'),
-  (8,  2, '2024-06-01 11:30:00'),
-  (9,  3, '2024-06-01 12:00:00'),
-  (10, 1, '2024-06-01 12:15:00');
-=======
 INSERT INTO ENTRIES (plate_id, spot_id, created_at) VALUES
   (1,  1, '2024-06-01 08:00:00'),
   (2,  2, '2024-06-01 08:30:00'),
@@ -79,7 +60,6 @@ INSERT INTO ENTRIES (plate_id, spot_id, created_at) VALUES
   (8,  8, '2024-06-01 11:30:00'),
   (9,  9, '2024-06-01 12:00:00'),
   (10, 10, '2024-06-01 12:15:00');
->>>>>>> Stashed changes
 
 -- EXITS
 INSERT INTO EXITS (plate_id, created_at) VALUES
