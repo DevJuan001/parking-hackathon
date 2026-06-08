@@ -76,28 +76,73 @@ Run through this before opening the PR. Tick every box.
 - [ ] No secrets in diff
 - [ ] No `TODO` left behind that blocks the feature (open an issue instead)
 - [ ] Commits are atomic and follow Conventional Commits
+- [ ] Correct labels applied to the PR (`gh pr edit <num> --add-label "<label1>,<label2>"`)
 
 ## PR template
 
 ```markdown
-## Requirement
-<one-sentence user-facing problem>
+## Summary
+<one-sentence description of what this PR does and why>
 
-## Design
-- Layers touched: <route / controller / service / repository / model>
-- New env vars: <list or "none">
-- New tables/columns: <list or "none">
-- RBAC: <roles or "public">
-- Rate limit: <N / 60s>
-- Backwards compatibility: <breaking / non-breaking>
+## Labels
+<!-- Run: gh pr edit <num> --add-label "refactor,enhancement,bug,documentation,database,api,frontend" -->
+- `refactor` — refactors / non-functional
+- `enhancement` — new features
+- `bug` — bug fixes
+- `documentation` — docs-only
+- `database` — DB schema/seed
+- `api` — backend API
+- `frontend` — frontend
 
-## Implementation
-- <bullet per commit, mirroring git log>
-- Endpoint(s) added: `METHOD /api/...`
-- Response shape: <link to pydantic model or inline>
+## Type of change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor / chore
+- [ ] Documentation update
+
+## Changes
+<!-- Group by relevant section. Remove empty ones. -->
+
+### Project setup
+<!-- Dependencies, pyproject.toml, uv.lock, .env.example, scripts, Docker -->
+
+### Core (app/core)
+<!-- config, database, security, redis, mail, celery, exception -->
+
+### db/
+<!-- DDL, DML, views, migrations -->
+
+### Middlewares (app/middlewares)
+<!-- JWT, roles, custom dependencies -->
+
+### Features (app/features/<name>)
+<!-- Per feature, list layers touched -->
+
+- **<feature>**
+  - routes:
+  - controllers:
+  - services:
+  - repositories:
+  - models:
+
+### Tasks / templates
+<!-- Celery tasks, email templates -->
+
+### Docs / meta
+<!-- PR template, skills, README, .github -->
 
 ## Checklist
-- [ ] pre-PR checklist above completed
+- [ ] Code follows conventions (type hints, ServiceError, logger)
+- [ ] Rate limit + RBAC on new endpoints
+- [ ] Schema split: `*_schemas.py` / `*_responses.py`
+- [ ] DB changes coordinated with `database` branch
+- [ ] `.env.example` updated for new vars
+- [ ] `uv sync` clean, app boots
+- [ ] Labels applied correctly
+- [ ] No secrets, no `print()`, no dead code
+
+## Notes
+<!-- Breaking changes, follow-ups, things reviewers should know -->
 ```
 
 ## After merge
