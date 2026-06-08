@@ -1,8 +1,8 @@
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
+from app.features.parking.models.parking_schemas import CreatePlateSchema
 from app.features.parking.repositories.parking_repository import ParkingRepository
-from app.features.parking.models.parking_schemas import CreatePlateSchema, CreatePaymentSchema, ParkingFiltersSchema
 
 logger = get_logger("parking.service")
 
@@ -62,62 +62,6 @@ class ParkingService:
             connection.close()
 
     @staticmethod
-    def get_all_payments(filters: ParkingFiltersSchema):
-        connection = get_connection()
-
-        try:
-            error, payments = ParkingRepository.find_all_payments(
-                filters, connection
-            )
-
-            if error:
-                raise ServiceError(error)
-
-            return None, payments
-
-        except ServiceError as e:
-            return e.message, None
-
-        except Exception as e:
-            logger.error(
-                "Error en get_all_payments: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar obtener los pagos", None
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    def get_payment_by_id(payment_id: int):
-        connection = get_connection()
-
-        try:
-            error, payment = ParkingRepository.find_payment_by_id(
-                payment_id, connection
-            )
-
-            if error or not payment:
-                raise ServiceError(error)
-
-            return None, payment
-
-        except ServiceError as e:
-            return e.message, None
-
-        except Exception as e:
-            logger.error(
-                "Error en get_payment_by_id: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar obtener el pago", None
-
-        finally:
-            connection.close()
-
-    @staticmethod
     async def create_plate(plate_data: CreatePlateSchema):
         connection = get_connection()
 
@@ -166,39 +110,6 @@ class ParkingService:
                 exc_info=True
             )
             return "Error al intentar registrar la placa", False, None
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    async def create_payment(payment_data: CreatePaymentSchema):
-        connection = get_connection()
-
-        try:
-            error, success, message = ParkingRepository.create_payment(
-                payment_data=payment_data,
-                connection=connection
-            )
-
-            if error or not success:
-                raise ServiceError(error)
-
-            connection.commit()
-
-            return None, True, "Pago registrado correctamente"
-
-        except ServiceError as e:
-            connection.rollback()
-            return e.message, False, None
-
-        except Exception as e:
-            connection.rollback()
-            logger.error(
-                "Error en create_payment: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar registrar el pago", False, None
 
         finally:
             connection.close()
