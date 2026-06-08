@@ -1,5 +1,6 @@
 import ParkingPlace from "./ParkingPlace";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
+import Icon from "../../../../globals/components/ui/Icon";
 
 export default function HomeSectionsContainer() {
   return (
@@ -16,8 +17,15 @@ export default function HomeSectionsContainer() {
           />
         </div>
 
-        <div className="h-full w-full grid grid-cols-8 grid-rows-7 pt-2">
+        <div
+          className="h-full w-full grid grid-cols-8 grid-rows-7 pt-2 gap-2
+          xl:gap-5"
+        >
           <ParkingPlace name={"123"} status={"Disponible"} />
+
+          <button className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 rounded-3xl">
+            <Icon name={"add"} size={35} />
+          </button>
         </div>
       </div>
 
