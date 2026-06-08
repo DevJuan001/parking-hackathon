@@ -1,28 +1,21 @@
 CREATE VIEW vw_parking_summary AS
 SELECT
-  p.plate                          AS plate,
-  u.name                           AS user_name,
-  vt.name                          AS vehicle_type,
-  en.created_at                    AS entry_time,
-  ex.created_at                    AS exit_time,
-  TIMEDIFF(ex.created_at,
-           en.created_at)          AS time_parked,
-  pay.value                        AS payment_value
-FROM PAYMENTS pay
-<<<<<<< Updated upstream
-  INNER JOIN PLATES  p   ON p.id       = pay.plate_id
-  INNER JOIN ENTRIES en  ON en.plate_id = pay.plate_id
-  INNER JOIN EXITS   ex  ON ex.plate_id = pay.plate_id
-  INNER JOIN USERS   u   ON u.id       = en.user_id
-  INNER JOIN RATES   r   ON r.vehicle_type = (
-      SELECT name FROM VEHICLE_TYPES LIMIT 1
-  )
-  LEFT JOIN VEHICLE_TYPES vt ON vt.name = r.vehicle_type;
-=======
-  INNER JOIN PLATES        p   ON p.id        = pay.plate_id
-  INNER JOIN VEHICLE_TYPES vt  ON vt.id       = p.vehicle_type_id
-  INNER JOIN ENTRIES       en  ON en.plate_id = pay.plate_id
-  INNER JOIN EXITS         ex  ON ex.plate_id = pay.plate_id;
->>>>>>> Stashed changes
+  p.plate AS plate,
+  vt.name as vehicle_type,
+  en.created_at AS entry_time,
+  ex.created_at AS exit_time,
+  TIMEDIFF(ex.created_at, en.created_at) AS time_parked,
+  pay.value AS payment_value
+  FROM PAYMENTS AS pay
+  INNER JOIN PLATES AS p
+    ON p.id = pay.plate_id
+  INNER JOIN ENTRIES AS en
+    ON pay.plate_id = en.plate_id
+  INNER JOIN EXITS AS ex
+    ON pay.plate_id = ex.plate_id
+  LEFT JOIN VEHICLE_TYPES AS vt
+    ON vt.id = p.vehicle_type_id
+  INNER JOIN RATES AS r
+    ON r.vehicle_type_id = vt.id;
 
 SELECT * FROM vw_parking_summary;
