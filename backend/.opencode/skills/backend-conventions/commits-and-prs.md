@@ -145,6 +145,17 @@ Run through this before opening the PR. Tick every box.
 <!-- Breaking changes, follow-ups, things reviewers should know -->
 ```
 
+## Opening the PR
+
+Once the branch is pushed, create the PR directly on GitHub:
+
+```bash
+gh pr create --base main --head <branch> --title "<title>" --body "<body>"
+gh pr edit <num> --add-label "<label1>,<label2>"
+```
+
+Use the template above. Pick labels from: `refactor`, `enhancement`, `bug`, `documentation`, `database`, `api`, `frontend`.
+
 ## After merge
 
 - Delete the branch locally and remotely.
