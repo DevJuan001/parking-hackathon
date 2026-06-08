@@ -15,7 +15,8 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_all_users(filters: UsersFiltersSchema = Depends()):
@@ -26,7 +27,8 @@ def get_all_users(filters: UsersFiltersSchema = Depends()):
 @router.get(
     "/me",
     dependencies=[
-        Depends(require_roles(["Admin"]))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
     ]
 )
 def get_me(payload: dict = Depends(verify_jwt)):
@@ -61,7 +63,8 @@ def get_user_by_id(user_id: int):
 @router.post(
     "/create",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60))
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
     ]
 )
 async def create_user(
