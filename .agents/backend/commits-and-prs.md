@@ -118,13 +118,6 @@ Run through this before opening the PR. Tick every box.
 ### Features (app/features/<name>)
 <!-- Per feature, list layers touched -->
 
-- **<feature>**
-  - routes:
-  - controllers:
-  - services:
-  - repositories:
-  - models:
-
 ### Tasks / templates
 <!-- Celery tasks, email templates -->
 
@@ -144,6 +137,17 @@ Run through this before opening the PR. Tick every box.
 ## Notes
 <!-- Breaking changes, follow-ups, things reviewers should know -->
 ```
+
+## Opening the PR
+
+Create the PR directly on GitHub. Do not ask. Do not wait.
+
+```bash
+gh pr create --base main --head <branch> --title "<title>" --body "<body>"
+gh pr edit <num> --add-label "<label1>,<label2>"
+```
+
+Pick labels from: `refactor`, `enhancement`, `bug`, `documentation`, `database`, `api`, `frontend`.
 
 ## After merge
 

@@ -5,6 +5,7 @@ from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.tasks.email_tasks import send_welcome_email
 from app.core.security import generate_temporal_password, verify_password
+from app.features.users.repositories.roles_repository import RolesRepository
 from app.features.users.repositories.users_repository import UsersRepository
 from app.features.users.models.users_schemas import UpdatePasswordSchema, UsersFiltersSchema, CreateUserSchema, UpdateUserSchema
 
@@ -89,6 +90,31 @@ class UsersService:
                 exc_info=True
             )
             return "Error al intentar obtener el usuario mediante el correo", None
+
+    @staticmethod
+    def get_all_roles():
+        connection = get_connection()
+
+        try:
+            error, roles = RolesRepository.find_all_roles(
+                connection
+            )
+
+            if error or not roles:
+                raise ServiceError(error)
+
+            return None, roles
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_all_roles: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los roles", None
 
     @staticmethod
     async def create_user(user_data: CreateUserSchema):

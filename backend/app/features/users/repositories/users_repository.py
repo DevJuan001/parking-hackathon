@@ -248,9 +248,6 @@ class UsersRepository:
             "first_surname": "first_surname",
             "second_surname": "second_surname",
             "email": "email",
-            "phone": "phone",
-            "city": "city",
-            "address": "address",
             "status": "status"
         }
 
