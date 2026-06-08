@@ -52,13 +52,13 @@ router = APIRouter(
 - No trailing slash on individual path strings (`"/me"`, not `"me/"`).
 - Path params in `{snake_case}` (FastAPI converts to kwarg of the same name).
 - Every endpoint declares `Depends(RateLimiter(times=N, seconds=60))`.
-- Protected endpoints add `Depends(require_roles([...]))` and `Depends(verify_jwt)`.
+- Protected endpoints add `Depends(require_roles([...]))` — `require_roles` already includes `verify_jwt` internally. **Do not** add `Depends(verify_jwt)` separately.
+- When searching by a field (e.g. plate name), use `GET` with a **path parameter**: `@router.get("/plates/find/{plate}")`. Do **not** use `Query()` or `POST` for searches.
 
 ## Auth, RBAC, rate limit
 
 - Public routes: only rate limit.
-- Authenticated routes: rate limit + `verify_jwt`.
-- Role-restricted routes: rate limit + `verify_jwt` + `require_roles([...])`.
+- Authenticated routes: rate limit + `require_roles([...])`.
 - Token storage: httpOnly cookies (`access_token`, `refresh_token`); never return tokens in response bodies.
 - Cookies are set/cleared through helpers in `app.core.security`.
 
