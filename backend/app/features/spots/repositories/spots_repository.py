@@ -23,7 +23,6 @@ class SpotsRepository:
             s.created_at
         FROM SPOTS AS s
         INNER JOIN FLOORS AS f ON f.id = s.floor_id
-        WHERE f.parking_id = %s
         """
 
         filters = ["f.parking_id = %s"]
@@ -37,9 +36,7 @@ class SpotsRepository:
             filters.append("s.floor_id = %s")
             values.append(data["floor_id"])
 
-        query += " AND " + " AND ".join(filters[1:])
-
-        query += " ORDER BY s.spot ASC"
+        query += " WHERE " + " AND ".join(filters)
 
         try:
             cursor.execute(query, values)
