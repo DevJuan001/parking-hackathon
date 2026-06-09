@@ -1,6 +1,7 @@
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
+from app.utils.plate_formatter import plate_formatter
 from app.features.entries.repositories.entries_repository import EntriesRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
 from app.features.parking.repositories.vehicle_types_repository import VehicleTypesRepository
@@ -99,28 +100,23 @@ class EntriesService:
     @staticmethod
     async def create_entry(entry_data: CreateEntrySchema):
         data = entry_data.model_dump()
+        
         connection = get_connection()
 
         try:
-            plate_text = data["plate"].replace("-", "").strip().upper()
+            # Formateamos la placa
+            plate_text = plate_formatter(data["plate"])
 
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
+            # Validamos si la placa tiene un numero al final para poder indentificar si es una moto o un carro
             if plate_text and plate_text[-1].isalpha():
-                vehicle_type = "Motorcycle"
+                vehicle_type_id = 2
             else:
-                vehicle_type = "Car"
+                vehicle_type_id = 1
 
-            error, vehicle_type_id = VehicleTypesRepository.find_vehicle_type_id_by_name(
-                vehicle_type, connection
-            )
-
-            if error or not vehicle_type_id:
-                raise ServiceError(error or "Tipo de vehículo no encontrado")
-
-            plate_text = data["plate"].replace("-", "").strip().upper()
-
+            # Buscamos si la placa ya esta registrada
             error, plate_list = PlatesRepository.get_plate_by_name(
                 plate_text, connection
             )
@@ -130,22 +126,21 @@ class EntriesService:
 
             plate = plate_list[0] if plate_list else None
 
+            # Si la placa no esta registrada la registramos
             if not plate:
-                error, plate_id, _ = PlatesRepository.create_plate(
+                error, new_plate_id, message = PlatesRepository.create_plate(
                     plate_text, vehicle_type_id, connection
                 )
 
-                if error or not plate_id:
+                if error or not new_plate_id:
                     raise ServiceError(error or "Error al registrar la placa")
+
+                plate_id = new_plate_id
+
             else:
                 plate_id = plate.id
-                if plate.vehicle_type != vehicle_type:
-                    error, _ = PlatesRepository.update_plate_vehicle_type(
-                        plate_id, vehicle_type_id, connection
-                    )
-                    if error:
-                        raise ServiceError(error)
-
+            
+            # Buscamos si el vehiculo tiene una entrada reciente
             error, active = EntriesRepository.has_active_entry(
                 plate_id, connection
             )
@@ -156,13 +151,15 @@ class EntriesService:
             if active:
                 raise ServiceError("La placa ya tiene un ingreso activo")
 
+            # Buscamos una plaza disponible para asignarsela
             error, spot_id, spot_label = EntriesRepository.find_available_spot(
                 connection
             )
 
             if error or not spot_id:
                 raise ServiceError(error or "No hay plazas disponibles")
-
+            
+            # Registramos la entrada del vehiculo
             error, success, message = EntriesRepository.create_entry(
                 plate_id=plate_id,
                 spot_id=spot_id,
@@ -172,20 +169,21 @@ class EntriesService:
             if error or not success:
                 raise ServiceError(error)
 
-            error, _ = SpotsRepository.update_spot_status(
+            # Actualizamos el estado de la plaza a ocupada
+            error, success, message = SpotsRepository.update_spot_status(
                 spot_id, 3, connection
             )
 
-            if error:
+            if error or not success:
                 raise ServiceError(error)
 
             connection.commit()
 
-            return None, True, f"Ingreso registrado correctamente en plaza {spot_label}", vehicle_type
+            return None, True, f"Ingreso registrado correctamente en plaza {spot_label}"
 
         except ServiceError as e:
             connection.rollback()
-            return e.message, False, None, None
+            return e.message, False, None
 
         except Exception as e:
             connection.rollback()
@@ -194,7 +192,7 @@ class EntriesService:
                 e,
                 exc_info=True
             )
-            return "Error al intentar registrar el ingreso", False, None, None
+            return "Error al intentar registrar el ingreso", False, None
 
         finally:
             connection.close()
