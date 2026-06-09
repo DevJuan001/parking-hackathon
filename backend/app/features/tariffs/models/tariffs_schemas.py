@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 
 class CreateTariffSchema(BaseModel):
-    vehicle_type: str
+    vehicle_type: int
     value: float
 
 

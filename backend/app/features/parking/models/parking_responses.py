@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class PlateResponse(BaseModel):
     id: int
     plate: str
-    vehicle_type: str
+    vehicle_type: int
     created_at: str
 
 

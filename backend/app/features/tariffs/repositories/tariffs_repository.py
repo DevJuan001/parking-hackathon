@@ -15,12 +15,12 @@ class TariffsRepository:
         query = """
         SELECT
             id,
-            vehicle_type,
+            vehicle_type_id,
             value,
             created_at,
             updated_at
         FROM RATES
-        ORDER BY vehicle_type ASC
+        ORDER BY vehicle_type_id ASC
         """
 
         try:
@@ -53,7 +53,7 @@ class TariffsRepository:
         query = """
         SELECT
             id,
-            vehicle_type,
+            vehicle_type_id,
             value,
             created_at,
             updated_at
@@ -85,13 +85,55 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
+    def find_rate_by_vehicle_type(vehicle_type: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT 
+            id,
+            vehicle_type_id,
+            value,
+            created_at,
+            updated_at 
+        FROM RATES
+        WHERE vehicle_type_id = %s
+        LIMIT 1
+        """
+
+        try:
+            cursor.execute(query, (vehicle_type,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "Tarifa no encontrada para ese tipo de vehículo", None
+
+            return None, TariffResponse(
+                id=result[0],
+                vehicle_type=result[1],
+                value=result[2],
+                created_at=date_formatter(result[3]),
+                updated_at=date_formatter(result[4])
+            )
+
+        except Exception as e:
+            logger.error(
+                "Error en find_rate_by_vehicle_type: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al buscar la tarifa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
     def create_tariff(tariff_data: CreateTariffSchema, connection):
         data = tariff_data.model_dump()
 
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO RATES (vehicle_type, value)
+        INSERT INTO RATES (vehicle_type_id, value)
         VALUES (%s, %s)
         """
 
@@ -144,68 +186,6 @@ class TariffsRepository:
         except Exception as e:
             logger.error("Error en update_tariff: %s", e, exc_info=True)
             return "Error al intentar actualizar la tarifa", False, None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def find_rate_by_vehicle_type(vehicle_type: str, connection):
-        cursor = connection.cursor()
-
-        query = "SELECT id, value FROM RATES WHERE vehicle_type = %s LIMIT 1"
-
-        try:
-            cursor.execute(query, (vehicle_type,))
-            result = cursor.fetchone()
-
-            if not result:
-                return "Tarifa no encontrada para ese tipo de vehículo", None
-
-            return None, {"id": result[0], "value": result[1]}
-
-        except Exception as e:
-            logger.error("Error en find_rate_by_vehicle_type: %s",
-                         e, exc_info=True)
-            return "Error al buscar la tarifa", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def find_first_rate(connection):
-        cursor = connection.cursor()
-
-        query = "SELECT id, vehicle_type, value FROM RATES LIMIT 1"
-
-        try:
-            cursor.execute(query)
-            result = cursor.fetchone()
-
-            if not result:
-                return "No hay tarifas registradas", None
-
-            return None, {"id": result[0], "vehicle_type": result[1], "value": result[2]}
-
-        except Exception as e:
-            logger.error("Error en find_first_rate: %s", e, exc_info=True)
-            return "Error al buscar la tarifa", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
-    def delete_tariff(tariff_id: int, connection):
-        cursor = connection.cursor()
-
-        query = "DELETE FROM RATES WHERE id = %s"
-
-        try:
-            cursor.execute(query, (tariff_id,))
-            return None, True, "Tarifa eliminada correctamente"
-
-        except Exception as e:
-            logger.error("Error en delete_tariff: %s", e, exc_info=True)
-            return "Error al intentar eliminar la tarifa", False, None
 
         finally:
             cursor.close()

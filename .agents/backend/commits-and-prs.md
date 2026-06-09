@@ -57,6 +57,8 @@ Run through this before opening the PR. Tick every box.
 - [ ] Rate limit on every new endpoint (`RateLimiter`)
 - [ ] RBAC declared where the route is protected (`require_roles` + `verify_jwt`)
 - [ ] Tokens travel in httpOnly cookies, not response bodies
+- [ ] Plates normalised through `plate_formatter` before lookups
+- [ ] Business-rule validation (time ranges, minimum billing, non-negative money) enforced in the service
 - [ ] No `print()`, no commented-out code, no dead imports
 
 ### Wiring
@@ -77,28 +79,19 @@ Run through this before opening the PR. Tick every box.
 - [ ] No `TODO` left behind that blocks the feature (open an issue instead)
 - [ ] Commits are atomic and follow Conventional Commits
 - [ ] Correct labels applied to the PR (`gh pr edit <num> --add-label "<label1>,<label2>"`)
+- [ ] New SQL targets the right canonical repository (table-per-repository rule)
 
 ## PR template
+
+This matches `.github/PULL_REQUEST_TEMPLATE/backend.md`.
 
 ```markdown
 ## Summary
 <one-sentence description of what this PR does and why>
 
 ## Labels
-<!-- Run: gh pr edit <num> --add-label "refactor,enhancement,bug,documentation,database,api,frontend" -->
-- `refactor` — refactors / non-functional
-- `enhancement` — new features
-- `bug` — bug fixes
-- `documentation` — docs-only
-- `database` — DB schema/seed
-- `api` — backend API
-- `frontend` — frontend
-
-## Type of change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Refactor / chore
-- [ ] Documentation update
+<!-- Apply via: gh pr edit <num> --add-label "<label1>,<label2>" -->
+<!-- Available: refactor, enhancement, bug, documentation, database, api, frontend -->
 
 ## Changes
 <!-- Group by relevant section. Remove empty ones. -->
@@ -118,25 +111,27 @@ Run through this before opening the PR. Tick every box.
 ### Features (app/features/<name>)
 <!-- Per feature, list layers touched -->
 
+- **<feature>**
+  - routes:
+  - controllers:
+  - services:
+  - repositories:
+  - models:
+
+### Utils (app/utils)
+<!-- plate_formatter, base_schema, date_formatter, logger, helpers -->
+
 ### Tasks / templates
 <!-- Celery tasks, email templates -->
 
 ### Docs / meta
 <!-- PR template, skills, README, .github -->
-
-## Checklist
-- [ ] Code follows conventions (type hints, ServiceError, logger)
-- [ ] Rate limit + RBAC on new endpoints
-- [ ] Schema split: `*_schemas.py` / `*_responses.py`
-- [ ] DB changes coordinated with `database` branch
-- [ ] `.env.example` updated for new vars
-- [ ] `uv sync` clean, app boots
-- [ ] Labels applied correctly
-- [ ] No secrets, no `print()`, no dead code
-
-## Notes
-<!-- Breaking changes, follow-ups, things reviewers should know -->
 ```
+
+**Style rules for PR bodies:**
+- `## Summary` — 1-3 sentences. No more.
+- `## Changes` — bullets only, grouped by section. Empty sections deleted.
+- Do **not** include `## Type of change`, `## Checklist`, or `## Notes` — they have been removed from the template and are not used in real PRs.
 
 ## Opening the PR
 

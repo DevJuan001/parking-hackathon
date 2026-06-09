@@ -94,6 +94,23 @@ router = APIRouter(
 - Add new runtime deps to `pyproject.toml` under `dependencies = [...]`, then `uv sync` to refresh `uv.lock`.
 - Pin exact versions for security-sensitive packages (`pyjwt`, `bcrypt`); float others with `>=`.
 
+## Utilities (app/utils/)
+
+Reusable helpers live in `app/utils/` and are imported by services and controllers. They must NOT do any I/O, raise HTTP errors, or know about FastAPI.
+
+- **`app/utils/logger.py`** — `get_logger(name)`. Use this everywhere; never `print()`.
+- **`app/utils/date_formatter.py`** — converts DB datetimes to display strings.
+- **`app/utils/plate_formatter.py`** — normalizes a plate string (strip whitespace, remove dashes, uppercase). Every service that does plate lookups MUST call this first to avoid duplicate lookups for `ABC-123` vs `ABC123`.
+- **`app/utils/base_schema.py`** — `BaseSchema` with date-string conversion for pydantic models.
+
+## Validation invariants
+
+Services are responsible for business-rule validation. A few that recur:
+
+- **Time ranges**: when computing `diff = exit_time - entry_time`, validate `exit_time > entry_time` and raise `ServiceError` with a domain message. Negative or zero deltas must never produce a payment.
+- **Minimum billing**: parking charges a minimum of 1 hour. After computing `hours_parked = round(diff.total_seconds() / 3600, 2)`, clamp with `max(hours_parked, 1.0)` so the customer is never billed less than the rate for one hour.
+- **Negative monetary values**: before persisting, assert `value >= 0` and raise `ServiceError` if not. This is a safety net for unexpected arithmetic; the previous checks should already prevent it.
+
 ## What "done" looks like for a code change
 
 - Type hints complete.
