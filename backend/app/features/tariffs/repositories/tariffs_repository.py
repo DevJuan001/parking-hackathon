@@ -1,6 +1,5 @@
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
-from app.features.tariffs.models.tariffs_schemas import CreateTariffSchema, UpdateTariffSchema
 from app.features.tariffs.models.tariffs_responses import TariffResponse
 
 logger = get_logger("tariffs.repository")
@@ -9,7 +8,7 @@ logger = get_logger("tariffs.repository")
 class TariffsRepository:
 
     @staticmethod
-    def find_all_tariffs(connection):
+    def find_all_tariffs(parking_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -20,11 +19,12 @@ class TariffsRepository:
             created_at,
             updated_at
         FROM RATES
+        WHERE parking_id = %s
         ORDER BY vehicle_type_id ASC
         """
 
         try:
-            cursor.execute(query)
+            cursor.execute(query, (parking_id,))
             results = cursor.fetchall()
 
             tariffs = [
@@ -47,7 +47,7 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
-    def find_tariff_by_id(tariff_id: int, connection):
+    def find_tariff_by_id(parking_id: int, tariff_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -58,11 +58,11 @@ class TariffsRepository:
             created_at,
             updated_at
         FROM RATES
-        WHERE id = %s
+        WHERE parking_id = %s AND id = %s
         """
 
         try:
-            cursor.execute(query, (tariff_id,))
+            cursor.execute(query, (parking_id, tariff_id))
             result = cursor.fetchone()
 
             if not result:
@@ -85,23 +85,23 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
-    def find_rate_by_vehicle_type(vehicle_type: int, connection):
+    def find_rate_by_vehicle_type(parking_id: int, vehicle_type: int, connection):
         cursor = connection.cursor()
 
         query = """
-        SELECT 
+        SELECT
             id,
             vehicle_type_id,
             value,
             created_at,
-            updated_at 
+            updated_at
         FROM RATES
-        WHERE vehicle_type_id = %s
+        WHERE parking_id = %s AND vehicle_type_id = %s
         LIMIT 1
         """
 
         try:
-            cursor.execute(query, (vehicle_type,))
+            cursor.execute(query, (parking_id, vehicle_type))
             result = cursor.fetchone()
 
             if not result:
@@ -127,21 +127,20 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
-    def create_tariff(tariff_data: CreateTariffSchema, connection):
-        data = tariff_data.model_dump()
-
+    def create_tariff(parking_id: int, vehicle_type_id: int, value: float, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO RATES (vehicle_type_id, value)
-        VALUES (%s, %s)
+        INSERT INTO RATES (parking_id, vehicle_type_id, value)
+        VALUES (%s, %s, %s)
         """
 
         try:
             cursor.execute(query, (
-                data["vehicle_type"],
-                data["value"])
-            )
+                parking_id,
+                vehicle_type_id,
+                value
+            ))
             return None, True, "Tarifa creada correctamente"
 
         except Exception as e:
@@ -152,35 +151,17 @@ class TariffsRepository:
             cursor.close()
 
     @staticmethod
-    def update_tariff(tariff_id: int, tariff_data: UpdateTariffSchema, connection):
-        data = tariff_data.model_dump(exclude_none=True)
-
-        TARIFF_FIELDS = {
-            "vehicle_type": "vehicle_type",
-            "value": "value",
-        }
-
+    def update_tariff(parking_id: int, tariff_id: int, value: float, connection):
         cursor = connection.cursor()
 
+        query = """
+        UPDATE RATES
+        SET value = %s
+        WHERE parking_id = %s AND id = %s
+        """
+
         try:
-            tariff_fields = {
-                key: data[key]
-                for key in TARIFF_FIELDS.keys()
-                if key in data
-            }
-
-            if tariff_fields:
-                mapped = {
-                    TARIFF_FIELDS[key]: value for key, value in tariff_fields.items()}
-
-                columns = ", ".join(f"{col} = %s" for col in mapped.keys())
-                values = list(mapped.values()) + [tariff_id]
-
-                cursor.execute(
-                    f"UPDATE RATES SET {columns} WHERE id = %s",
-                    values
-                )
-
+            cursor.execute(query, (value, parking_id, tariff_id))
             return None, True, "Tarifa actualizada correctamente"
 
         except Exception as e:
