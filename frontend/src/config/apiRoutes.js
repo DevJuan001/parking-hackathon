@@ -6,5 +6,7 @@ export const apiRoutes = {
   exits: "/exits",
   entries: "/entries",
   parking: "/parking",
+  floors: "/floors",
+  tariffs: "/tariffs",
   dashboard: "/dashboard",
 };
