@@ -4,22 +4,8 @@
 
 ## Labels
 
-<!-- Add matching labels via `gh pr edit <num> --add-label "<label1>,<label2>"` -->
-
-- `refactor` — refactors / non-functional changes
-- `enhancement` — new features
-- `bug` — bug fixes
-- `documentation` — docs-only
-- `database` — DB schema or seed changes
-- `api` — backend API changes
-- `frontend` — frontend changes
-
-## Type of change
-
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Refactor / chore
-- [ ] Documentation update
+<!-- Apply via: gh pr edit <num> --add-label "<label1>,<label2>" -->
+<!-- Available: refactor, enhancement, bug, documentation, database, api, frontend -->
 
 ## Changes
 
@@ -47,22 +33,11 @@
   - repositories:
   - models:
 
+### Utils (app/utils)
+<!-- plate_formatter, base_schema, date_formatter, logger, helpers -->
+
 ### Tasks / templates
 <!-- Celery tasks, email templates -->
 
 ### Docs / meta
 <!-- PR template, skills, README, .github -->
-
-## Checklist
-
-- [ ] Code follows project conventions (type hints, ServiceError, logger)
-- [ ] Rate limit + RBAC declared on new endpoints
-- [ ] Schema split: `*_schemas.py` (input) / `*_responses.py` (output)
-- [ ] DB changes coordinated with `database` branch if needed
-- [ ] `.env.example` updated for new env vars
-- [ ] `uv sync` clean, app boots without errors
-- [ ] No secrets, no `print()`, no commented-out code
-
-## Notes
-
-<!-- Breaking changes, follow-ups, things reviewers should know -->
