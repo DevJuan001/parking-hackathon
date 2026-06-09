@@ -15,8 +15,7 @@ router = APIRouter(
     "/",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"])),
-        Depends(verify_jwt)
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_all_entries(
@@ -30,8 +29,7 @@ def get_all_entries(
     "/plate/{plate_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"])),
-        Depends(verify_jwt)
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_entries_by_plate(
@@ -45,8 +43,7 @@ def get_entries_by_plate(
     "/{entry_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"])),
-        Depends(verify_jwt)
+        Depends(require_roles(["Admin"]))
     ]
 )
 def get_entry_by_id(
@@ -59,8 +56,7 @@ def get_entry_by_id(
 @router.post(
     "/create",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60)),
-        Depends(verify_jwt)
+        Depends(RateLimiter(times=30, seconds=60))
     ]
 )
 async def create_entry(

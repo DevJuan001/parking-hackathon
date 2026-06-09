@@ -1,6 +1,7 @@
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
+from app.features.floors.repositories.floors_repository import FloorsRepository
 from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.spots.models.spots_schemas import SpotsFiltersSchema
 
@@ -10,12 +11,12 @@ logger = get_logger("spots.service")
 class SpotsService:
 
     @staticmethod
-    def get_all_spots(filters: SpotsFiltersSchema):
+    def get_all_spots(parking_id: int, filters: SpotsFiltersSchema):
         connection = get_connection()
 
         try:
             error, spots = SpotsRepository.find_all_spots(
-                filters, connection
+                parking_id, filters, connection
             )
 
             if error:
@@ -38,12 +39,12 @@ class SpotsService:
             connection.close()
 
     @staticmethod
-    def get_spot_by_id(spot_id: int):
+    def get_spot_by_id(parking_id: int, spot_id: int):
         connection = get_connection()
 
         try:
             error, spot = SpotsRepository.find_spot_by_id(
-                spot_id, connection
+                parking_id, spot_id, connection
             )
 
             if error or not spot:
@@ -66,12 +67,19 @@ class SpotsService:
             connection.close()
 
     @staticmethod
-    def create_spot(spot_label: str):
+    def create_spot(parking_id: int, floor_id: int, spot_label: str):
         connection = get_connection()
 
         try:
+            error, floor = FloorsRepository.find_floor_by_id(
+                parking_id, floor_id, connection
+            )
+
+            if error or not floor:
+                raise ServiceError(error or "Piso no encontrado")
+
             error, success, message = SpotsRepository.create_spot(
-                spot_label, connection
+                floor_id, spot_label, connection
             )
 
             if error or not success:
@@ -98,12 +106,12 @@ class SpotsService:
             connection.close()
 
     @staticmethod
-    def update_spot_status(spot_id: int, status: int):
+    def update_spot_status(parking_id: int, spot_id: int, status: int):
         connection = get_connection()
 
         try:
             error, success, message = SpotsRepository.update_spot_status(
-                spot_id, status, connection
+                parking_id, spot_id, status, connection
             )
 
             if error or not success:

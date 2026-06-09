@@ -9,31 +9,37 @@ logger = get_logger("spots.repository")
 class SpotsRepository:
 
     @staticmethod
-    def find_all_spots(filters_data: SpotsFiltersSchema, connection):
+    def find_all_spots(parking_id: int, filters_data: SpotsFiltersSchema, connection):
         data = filters_data.model_dump(exclude_none=True)
 
         cursor = connection.cursor()
 
         query = """
         SELECT
-            spot_id,
-            spot,
-            spot_status,
-            created_at
-        FROM SPOTS
+            s.spot_id,
+            s.floor_id,
+            s.spot,
+            s.spot_status,
+            s.created_at
+        FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s
         """
 
-        filters = []
-        values = []
+        filters = ["f.parking_id = %s"]
+        values = [parking_id]
 
         if "spot_status" in data:
-            filters.append("spot_status = %s")
+            filters.append("s.spot_status = %s")
             values.append(data["spot_status"])
 
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
+        if "floor_id" in data:
+            filters.append("s.floor_id = %s")
+            values.append(data["floor_id"])
 
-        query += " ORDER BY spot ASC"
+        query += " AND " + " AND ".join(filters[1:])
+
+        query += " ORDER BY s.spot ASC"
 
         try:
             cursor.execute(query, values)
@@ -42,9 +48,10 @@ class SpotsRepository:
             spots = [
                 SpotResponse(
                     spot_id=item[0],
-                    spot=item[1],
-                    spot_status=item[2],
-                    created_at=date_formatter(item[3])
+                    floor_id=item[1],
+                    spot=item[2],
+                    spot_status=item[3],
+                    created_at=date_formatter(item[4])
                 )
                 for item in results
             ]
@@ -58,21 +65,23 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
-    def find_spot_by_id(spot_id: int, connection):
+    def find_spot_by_id(parking_id: int, spot_id: int, connection):
         cursor = connection.cursor()
 
         query = """
         SELECT
-            spot_id,
-            spot,
-            spot_status,
-            created_at
-        FROM SPOTS
-        WHERE spot_id = %s
+            s.spot_id,
+            s.floor_id,
+            s.spot,
+            s.spot_status,
+            s.created_at
+        FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s AND s.spot_id = %s
         """
 
         try:
-            cursor.execute(query, (spot_id,))
+            cursor.execute(query, (parking_id, spot_id))
             result = cursor.fetchone()
 
             if not result:
@@ -80,9 +89,10 @@ class SpotsRepository:
 
             spot = SpotResponse(
                 spot_id=result[0],
-                spot=result[1],
-                spot_status=result[2],
-                created_at=date_formatter(result[3])
+                floor_id=result[1],
+                spot=result[2],
+                spot_status=result[3],
+                created_at=date_formatter(result[4])
             )
             return None, spot
 
@@ -94,16 +104,44 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
-    def create_spot(spot_label: str, connection):
+    def find_available_spot(parking_id: int, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO SPOTS (spot, spot_status)
-        VALUES (%s, 2)
+        SELECT s.spot_id, s.spot
+        FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s AND s.spot_status = 2
+        LIMIT 1
         """
 
         try:
-            cursor.execute(query, (spot_label,))
+            cursor.execute(query, (parking_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return "No hay plazas disponibles", None, None
+
+            return None, result[0], result[1]
+
+        except Exception as e:
+            logger.error("Error en find_available_spot: %s", e, exc_info=True)
+            return "Error al buscar plaza disponible", None, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def create_spot(floor_id: int, spot_label: str, connection):
+        cursor = connection.cursor()
+
+        query = """
+        INSERT INTO SPOTS (floor_id, spot, spot_status)
+        VALUES (%s, %s, 2)
+        """
+
+        try:
+            cursor.execute(query, (floor_id, spot_label))
             return None, True, "Plaza registrada correctamente"
 
         except Exception as e:
@@ -114,13 +152,18 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
-    def update_spot_status(spot_id: int, status: int, connection):
+    def update_spot_status(parking_id: int, spot_id: int, status: int, connection):
         cursor = connection.cursor()
 
-        query = "UPDATE SPOTS SET spot_status = %s WHERE spot_id = %s"
+        query = """
+        UPDATE SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        SET s.spot_status = %s
+        WHERE f.parking_id = %s AND s.spot_id = %s
+        """
 
         try:
-            cursor.execute(query, (status, spot_id))
+            cursor.execute(query, (status, parking_id, spot_id))
             return None, True, "Estado de la plaza actualizado correctamente"
 
         except Exception as e:
