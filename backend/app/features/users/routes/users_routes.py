@@ -68,9 +68,10 @@ def get_user_by_id(user_id: int):
     ]
 )
 async def create_user(
-    user_data: CreateUserSchema
+    user_data: CreateUserSchema,
+    payload: dict = Depends(verify_jwt)
 ):
-    return await UsersController.create_user(user_data)
+    return await UsersController.create_user(user_data, payload)
 
 
 # Endpoint para actualizar la informacion del usuario
