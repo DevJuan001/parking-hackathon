@@ -14,12 +14,14 @@ logger = get_logger("users.service")
 
 class UsersService:
     @staticmethod
-    def get_all_users(filters: UsersFiltersSchema):
+    def get_all_users(parking_id: int, filters: UsersFiltersSchema):
         connection = get_connection()
 
         try:
             error, users = UsersRepository.find_all_users(
-                filters, connection
+                parking_id,
+                filters,
+                connection
             )
 
             if error:
@@ -42,12 +44,14 @@ class UsersService:
             connection.close()
 
     @staticmethod
-    def get_user_by_id(user_id: int):
+    def get_user_by_id(parking_id: int, user_id: int):
         connection = get_connection()
 
         try:
             error, user = UsersRepository.find_user_by_id(
-                user_id, connection
+                parking_id,
+                user_id,
+                connection
             )
 
             if error or not user:
@@ -67,12 +71,14 @@ class UsersService:
             return "Error al intentar obtener el usuario mediante el id", None
 
     @staticmethod
-    def get_user_by_email(email: EmailStr):
+    def get_user_by_email(parking_id: int, email: EmailStr):
         connection = get_connection()
 
         try:
             error, user = UsersRepository.find_user_by_email(
-                email, connection
+                parking_id,
+                email,
+                connection
             )
 
             if error or not user:
@@ -125,6 +131,7 @@ class UsersService:
         try:
             # Verificar que no este registrado ya un usuario con el correo que viene
             error, user = UsersRepository.find_user_by_email(
+                parking_id=parking_id,
                 email=data["email"],
                 connection=connection
             )
@@ -181,14 +188,14 @@ class UsersService:
             return "Error al intentar crear el usuario", False, None
 
     @staticmethod
-    def update_user(user_id: int, user_data: UpdateUserSchema):
+    def update_user(parking_id: int, user_id: int, user_data: UpdateUserSchema):
         data = user_data.model_dump(exclude_none=True)
         connection = get_connection()
 
         try:
             # Verificar si existe el usuario
             error, user = UsersRepository.find_user_by_id(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if not user:
@@ -197,7 +204,7 @@ class UsersService:
             # Verificar si el correo ya esta siendo usado y no duplicarlo
             if "email" in data:
                 error, existing_user = UsersRepository.find_user_by_email(
-                    data["email"], connection
+                    parking_id, data["email"], connection
                 )
 
                 if existing_user and (existing_user[1] != user_id):
@@ -206,7 +213,7 @@ class UsersService:
                     )
 
             error, success, message = UsersRepository.update_user(
-                user_id, user_data, connection
+                parking_id, user_id, user_data, connection
             )
 
             if error or not success:
@@ -233,7 +240,7 @@ class UsersService:
             connection.close()
 
     @staticmethod
-    def update_user_password(password_data: UpdatePasswordSchema, user_id: int):
+    def update_user_password(parking_id: int, password_data: UpdatePasswordSchema, user_id: int):
         data = password_data.model_dump()
 
         connection = get_connection()
@@ -244,7 +251,7 @@ class UsersService:
         try:
             # Buscamos la contraseña del usuario con ese id
             error, user = UsersRepository.find_user_password_by_id(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if error or not user:
@@ -256,7 +263,7 @@ class UsersService:
             )
 
             error, success, message = UsersRepository.update_user_password(
-                user_id, data["new_password"], connection
+                parking_id, user_id, data["new_password"], connection
             )
 
             if error or not success:
@@ -283,20 +290,20 @@ class UsersService:
             connection.close()
 
     @staticmethod
-    def disable_user(user_id: int):
+    def disable_user(parking_id: int, user_id: int):
         connection = get_connection()
 
         try:
             # Validar que el usuario exista
             error, user = UsersRepository.find_user_by_id(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if error or not user:
                 raise ServiceError(error)
 
             error, success, message = UsersRepository.disable_user(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if error or not success:
@@ -320,20 +327,20 @@ class UsersService:
             return "Error al intentar deshabilitar el usuario", False, None
 
     @staticmethod
-    def enable_user(user_id: int):
+    def enable_user(parking_id: int, user_id: int):
         connection = get_connection()
 
         try:
             # Validar que el usuario exista
             error, user = UsersRepository.find_user_by_id(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if error or not user:
                 raise ServiceError(error)
 
             error, success, message = UsersRepository.enable_user(
-                user_id, connection
+                parking_id, user_id, connection
             )
 
             if error or not success:
