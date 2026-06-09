@@ -158,21 +158,23 @@ class EntriesRepository:
         cursor = connection.cursor()
 
         query = """
-        SELECT e.id FROM ENTRIES e
-        WHERE e.plate_id = %s
-        AND NOT EXISTS (
-            SELECT 1 FROM EXITS x
-            WHERE x.plate_id = e.plate_id
-            AND x.created_at > e.created_at
-        )
-        LIMIT 1
+        SELECT
+            (SELECT MAX(e.created_at) FROM ENTRIES e WHERE e.plate_id = %s) AS last_entry_at,
+            (SELECT MAX(x.created_at) FROM EXITS   x WHERE x.plate_id = %s) AS last_exit_at
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (plate_id, plate_id))
             result = cursor.fetchone()
 
-            return None, result is not None
+            last_entry_at = result[0] if result else None
+            last_exit_at = result[1] if result else None
+
+            is_active = last_entry_at is not None and (
+                last_exit_at is None or last_entry_at > last_exit_at
+            )
+
+            return None, is_active
 
         except Exception as e:
             logger.error("Error en has_active_entry: %s", e, exc_info=True)
