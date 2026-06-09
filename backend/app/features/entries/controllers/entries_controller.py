@@ -40,7 +40,7 @@ class EntriesController:
 
     @staticmethod
     async def create_entry(entry_data: CreateEntrySchema):
-        error, success, message, vehicle_type = await EntriesService.create_entry(entry_data)
+        error, success, message = await EntriesService.create_entry(entry_data)
 
         if error:
             raise HTTPException(status_code=400, detail=error)
@@ -48,5 +48,5 @@ class EntriesController:
         return {
             "success": success,
             "message": message,
-            "vehicle_type": vehicle_type
         }
+    
