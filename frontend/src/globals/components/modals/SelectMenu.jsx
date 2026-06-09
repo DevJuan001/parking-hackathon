@@ -53,7 +53,7 @@ export default function SelectMenu({
             ${spanText ? "h-full pt-1.5 rounded-2xl" : miniVersion ? "h-9 rounded-xl" : "h-14 rounded-2xl"}
             cursor-pointer text-sm
             dark:bg-black dark:border-[#1e1e20cb]
-            ${className}`}
+            ${className ? className : "shadow-sm"}`}
         >
           {spanText && (
             <div className="absolute top-2 left-3 px-1">
