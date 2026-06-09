@@ -117,7 +117,7 @@ class UsersService:
             return "Error al intentar obtener los roles", None
 
     @staticmethod
-    async def create_user(user_data: CreateUserSchema):
+    async def create_user(user_data: CreateUserSchema, parking_id: int):
         data = user_data.model_dump()
 
         connection = get_connection()
@@ -148,6 +148,7 @@ class UsersService:
             error, success, message = UsersRepository.create_user(
                 user_data=user_data,
                 hash_password=hash_password,
+                parking_id=parking_id,
                 connection=connection
             )
 
