@@ -2,72 +2,42 @@ from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.features.floors.repositories.floors_repository import FloorsRepository
-from app.features.spots.repositories.spots_repository import SpotsRepository
-from app.features.spots.models.spots_schemas import SpotsFiltersSchema
 
-logger = get_logger("spots.service")
+logger = get_logger("floors.service")
 
 
-class SpotsService:
+class FloorsService:
 
     @staticmethod
-    def get_all_spots(parking_id: int, filters: SpotsFiltersSchema):
+    def get_all_floors(parking_id: int):
         connection = get_connection()
 
         try:
-            error, spots = SpotsRepository.find_all_spots(
-                parking_id, filters, connection
+            error, floors = FloorsRepository.find_all_floors(
+                parking_id, connection
             )
 
             if error:
                 raise ServiceError(error)
 
-            return None, spots
+            return None, floors
 
         except ServiceError as e:
             return e.message, None
 
         except Exception as e:
             logger.error(
-                "Error en get_all_spots: %s",
+                "Error en get_all_floors: %s",
                 e,
                 exc_info=True
             )
-            return "Error al intentar obtener las plazas", None
+            return "Error al intentar obtener los pisos", None
 
         finally:
             connection.close()
 
     @staticmethod
-    def get_spot_by_id(parking_id: int, spot_id: int):
-        connection = get_connection()
-
-        try:
-            error, spot = SpotsRepository.find_spot_by_id(
-                parking_id, spot_id, connection
-            )
-
-            if error or not spot:
-                raise ServiceError(error)
-
-            return None, spot
-
-        except ServiceError as e:
-            return e.message, None
-
-        except Exception as e:
-            logger.error(
-                "Error en get_spot_by_id: %s",
-                e,
-                exc_info=True
-            )
-            return "Error al intentar obtener la plaza", None
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    def create_spot(parking_id: int, floor_id: int, spot_label: str):
+    def get_floor_by_id(parking_id: int, floor_id: int):
         connection = get_connection()
 
         try:
@@ -76,18 +46,39 @@ class SpotsService:
             )
 
             if error or not floor:
-                raise ServiceError(error or "Piso no encontrado")
+                raise ServiceError(error)
 
-            error, success, message = SpotsRepository.create_spot(
-                floor_id, spot_label, connection
+            return None, floor
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_floor_by_id: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener el piso", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
+    def create_floor(parking_id: int, floor_number: int):
+        connection = get_connection()
+
+        try:
+            error, floor_id, message = FloorsRepository.create_floor(
+                parking_id, floor_number, connection
             )
 
-            if error or not success:
+            if error or not floor_id:
                 raise ServiceError(error)
 
             connection.commit()
 
-            return None, True, "Plaza registrada correctamente"
+            return None, True, message
 
         except ServiceError as e:
             connection.rollback()
@@ -96,22 +87,29 @@ class SpotsService:
         except Exception as e:
             connection.rollback()
             logger.error(
-                "Error en create_spot: %s",
+                "Error en create_floor: %s",
                 e,
                 exc_info=True
             )
-            return "Error al intentar registrar la plaza", False, None
+            return "Error al intentar registrar el piso", False, None
 
         finally:
             connection.close()
 
     @staticmethod
-    def update_spot_status(parking_id: int, spot_id: int, status: int):
+    def update_floor(parking_id: int, floor_id: int, floor_number: int):
         connection = get_connection()
 
         try:
-            error, success, message = SpotsRepository.update_spot_status(
-                parking_id, spot_id, status, connection
+            error, exists = FloorsRepository.find_floor_by_id(
+                parking_id, floor_id, connection
+            )
+
+            if error or not exists:
+                raise ServiceError("Piso no encontrado")
+
+            error, success, message = FloorsRepository.update_floor(
+                parking_id, floor_id, floor_number, connection
             )
 
             if error or not success:
@@ -128,11 +126,11 @@ class SpotsService:
         except Exception as e:
             connection.rollback()
             logger.error(
-                "Error en update_spot_status: %s",
+                "Error en update_floor: %s",
                 e,
                 exc_info=True
             )
-            return "Error al actualizar el estado de la plaza", False, None
+            return "Error al intentar actualizar el piso", False, None
 
         finally:
             connection.close()

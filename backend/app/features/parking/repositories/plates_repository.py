@@ -8,7 +8,7 @@ logger = get_logger("plates.repository")
 class PlatesRepository:
 
     @staticmethod
-    def find_all_plates(connection):
+    def find_all_plates(parking_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -20,11 +20,12 @@ class PlatesRepository:
         FROM PLATES AS p
         INNER JOIN VEHICLE_TYPES AS vt
             ON vt.id = p.vehicle_type_id
+        WHERE p.parking_id = %s
         ORDER BY p.created_at DESC
         """
 
         try:
-            cursor.execute(query)
+            cursor.execute(query, (parking_id,))
             results = cursor.fetchall()
 
             plates = [
@@ -46,7 +47,7 @@ class PlatesRepository:
             cursor.close()
 
     @staticmethod
-    def find_plate_by_id(plate_id: int, connection):
+    def find_plate_by_id(parking_id: int, plate_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -57,11 +58,11 @@ class PlatesRepository:
             p.created_at
         FROM PLATES AS p
         INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
-        WHERE p.id = %s
+        WHERE p.parking_id = %s AND p.id = %s
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (parking_id, plate_id))
             result = cursor.fetchone()
 
             if not result:
@@ -84,7 +85,7 @@ class PlatesRepository:
 
 
     @staticmethod
-    def get_plate_by_name(plate: str, connection):
+    def get_plate_by_name(parking_id: int, plate: str, connection):
         cursor = connection.cursor()
 
         query = """
@@ -95,11 +96,11 @@ class PlatesRepository:
             p.created_at
         FROM PLATES AS p
         INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
-        WHERE p.plate = %s
-        """ 
+        WHERE p.parking_id = %s AND p.plate = %s
+        """
 
         try:
-            cursor.execute(query, (plate.upper(),))
+            cursor.execute(query, (parking_id, plate.upper()))
             result = cursor.fetchall()
 
             if not result:
@@ -125,16 +126,16 @@ class PlatesRepository:
             cursor.close()
 
     @staticmethod
-    def create_plate(plate_str: str, vehicle_type_id: int, connection):
+    def create_plate(parking_id: int, plate_str: str, vehicle_type_id: int, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO PLATES (plate, vehicle_type_id)
-        VALUES (%s, %s)
+        INSERT INTO PLATES (parking_id, plate, vehicle_type_id)
+        VALUES (%s, %s, %s)
         """
 
         try:
-            cursor.execute(query, (plate_str, vehicle_type_id))
+            cursor.execute(query, (parking_id, plate_str, vehicle_type_id))
             return None, cursor.lastrowid, "Placa registrada correctamente"
 
         except Exception as e:
@@ -145,13 +146,17 @@ class PlatesRepository:
             cursor.close()
 
     @staticmethod
-    def update_plate_vehicle_type(plate_id: int, vehicle_type_id: int, connection):
+    def update_plate_vehicle_type(parking_id: int, plate_id: int, vehicle_type_id: int, connection):
         cursor = connection.cursor()
 
-        query = "UPDATE PLATES SET vehicle_type_id = %s WHERE id = %s"
+        query = """
+        UPDATE PLATES
+        SET vehicle_type_id = %s
+        WHERE parking_id = %s AND id = %s
+        """
 
         try:
-            cursor.execute(query, (vehicle_type_id, plate_id))
+            cursor.execute(query, (vehicle_type_id, parking_id, plate_id))
             return None, True
 
         except Exception as e:

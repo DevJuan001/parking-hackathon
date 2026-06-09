@@ -6,8 +6,11 @@ from app.features.exits.models.exits_schemas import CreateExitSchema, ExitsFilte
 class ExitsController:
 
     @staticmethod
-    def get_all_exits(filters: ExitsFiltersSchema):
-        error, exits = ExitsService.get_all_exits(filters)
+    def get_all_exits(filters: ExitsFiltersSchema, payload: dict):
+        error, exits = ExitsService.get_all_exits(
+            int(payload["parking_id"]),
+            filters
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -17,8 +20,11 @@ class ExitsController:
         }
 
     @staticmethod
-    def get_exit_by_id(exit_id: int):
-        error, exit_record = ExitsService.get_exit_by_id(exit_id)
+    def get_exit_by_id(exit_id: int, payload: dict):
+        error, exit_record = ExitsService.get_exit_by_id(
+            int(payload["parking_id"]),
+            exit_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -28,8 +34,11 @@ class ExitsController:
         }
 
     @staticmethod
-    def get_exits_by_plate(plate_id: int):
-        error, exits = ExitsService.get_exits_by_plate(plate_id)
+    def get_exits_by_plate(plate_id: int, payload: dict):
+        error, exits = ExitsService.get_exits_by_plate(
+            int(payload["parking_id"]),
+            plate_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -39,8 +48,11 @@ class ExitsController:
         }
 
     @staticmethod
-    async def create_exit(exit_data: CreateExitSchema):
-        error, success, message = await ExitsService.create_exit(exit_data)
+    async def create_exit(exit_data: CreateExitSchema, payload: dict):
+        error, success, message = await ExitsService.create_exit(
+            int(payload["parking_id"]),
+            exit_data
+        )
 
         if error:
             raise HTTPException(status_code=400, detail=error)

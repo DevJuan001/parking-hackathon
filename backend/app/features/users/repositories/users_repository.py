@@ -11,7 +11,7 @@ class UsersRepository:
 
     # Obtener todos los usuarios
     @staticmethod
-    def find_all_users(filters_data: UsersFiltersSchema, connection):
+    def find_all_users(parking_id: int, filters_data: UsersFiltersSchema, connection):
         data = filters_data.model_dump(exclude_none=True)
 
         cursor = connection.cursor()
@@ -30,10 +30,11 @@ class UsersRepository:
             u.status
         FROM USERS AS u
         INNER JOIN ROLES AS r
+            ON r.id = u.role_id
         """
 
-        filters = []
-        values = []
+        filters = ["u.parking_id = %s"]
+        values = [parking_id]
 
         if "role_order" in data:
             filters.append("r.id = %s")
@@ -47,8 +48,7 @@ class UsersRepository:
             filters.append("DATE(u.created_at) <= %s")
             values.append(data["end_date"])
 
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
+        query += " WHERE " + " AND ".join(filters)
 
         if data.get("name_order") == "asc":
             query += " ORDER BY u.name ASC"
@@ -85,7 +85,7 @@ class UsersRepository:
 
     # Obtener un usuario por el ID
     @staticmethod
-    def find_user_by_id(user_id: int, connection):
+    def find_user_by_id(parking_id: int, user_id: int, connection):
         cursor = connection.cursor()
 
         # Petición a la base de datos
@@ -101,11 +101,12 @@ class UsersRepository:
             u.status
         FROM USERS AS u
         INNER JOIN ROLES AS r
-        WHERE u.id = %s
+            ON r.id = u.role_id
+        WHERE u.parking_id = %s AND u.id = %s
         """
 
         try:
-            cursor.execute(query, (user_id,))
+            cursor.execute(query, (parking_id, user_id))
 
             result = cursor.fetchall()
 
@@ -135,7 +136,7 @@ class UsersRepository:
             cursor.close()
 
     @staticmethod
-    def find_user_password_by_id(user_id: int, connection):
+    def find_user_password_by_id(parking_id: int, user_id: int, connection):
         cursor = connection.cursor()
 
         # Petición a la base de datos
@@ -143,11 +144,11 @@ class UsersRepository:
         SELECT
             password
         FROM USERS
-        WHERE id = %s
+        WHERE parking_id = %s AND id = %s
         """
 
         try:
-            cursor.execute(query, (user_id,))
+            cursor.execute(query, (parking_id, user_id))
             result = cursor.fetchone()
 
             if not result:
@@ -179,11 +180,11 @@ class UsersRepository:
             u.name,
             u.first_surname,
             u.second_surname,
-            u.email, 
+            u.email,
             u.password
-        FROM USERS AS u 
-        INNER JOIN ROLES AS r 
-            ON r.id = u.role_id 
+        FROM USERS AS u
+        INNER JOIN ROLES AS r
+            ON r.id = u.role_id
         WHERE u.email = %s
         """
 
@@ -203,7 +204,7 @@ class UsersRepository:
 
     # Crear un usuario
     @staticmethod
-    def create_user(user_data: CreateUserSchema, hash_password: str, connection):
+    def create_user(user_data: CreateUserSchema, hash_password: str, parking_id: int, connection):
         data = user_data.model_dump()
 
         cursor = connection.cursor()
@@ -211,16 +212,18 @@ class UsersRepository:
         # Petición a la base de datos
         query = """INSERT INTO USERS (
             role_id,
+            parking_id,
             name,
             first_surname,
             second_surname,
             password,
             email
-        ) VALUES(%s, %s, %s, %s, %s, %s)"""
+        ) VALUES(%s, %s, %s, %s, %s, %s, %s)"""
 
         try:
             cursor.execute(query, (
                 data["role_id"],
+                parking_id,
                 data["name"],
                 data["first_surname"],
                 data["second_surname"],
@@ -239,7 +242,7 @@ class UsersRepository:
 
     # Actualizar la información de un usuario
     @staticmethod
-    def update_user(user_id: int, user_data: UpdateUserSchema, connection):
+    def update_user(parking_id: int, user_id: int, user_data: UpdateUserSchema, connection):
         data = user_data.model_dump(exclude_none=True)
 
         USER_FIELDS = {
@@ -265,10 +268,10 @@ class UsersRepository:
                     USER_FIELDS[key]: value for key, value in user_fields.items()}
 
                 columns = ", ".join(f"{col} = %s" for col in mapped.keys())
-                values = list(mapped.values()) + [user_id]
+                values = list(mapped.values()) + [parking_id, user_id]
 
                 cursor.execute(
-                    f"UPDATE USERS SET {columns} WHERE id = %s",
+                    f"UPDATE USERS SET {columns} WHERE parking_id = %s AND id = %s",
                     values
                 )
 
@@ -282,20 +285,20 @@ class UsersRepository:
             cursor.close()
 
     @staticmethod
-    def update_user_password(user_id: int, password: str, connection):
+    def update_user_password(parking_id: int, user_id: int, password: str, connection):
         cursor = connection.cursor()
 
         query = """
         UPDATE USERS SET
             password = %s
-        WHERE id = %s
+        WHERE parking_id = %s AND id = %s
         """
         new_password = password.encode("utf-8")
         hash_password = bcrypt.hashpw(
             new_password, bcrypt.gensalt(rounds=12)).decode("utf-8")
 
         try:
-            cursor.execute(query, (hash_password, user_id))
+            cursor.execute(query, (hash_password, parking_id, user_id))
 
             return None, True, "Contraseña actualizada correctamente"
 
@@ -307,13 +310,13 @@ class UsersRepository:
 
     # Deshabilitar un usuario
     @staticmethod
-    def disable_user(user_id: int, connection):
+    def disable_user(parking_id: int, user_id: int, connection):
         cursor = connection.cursor()
 
-        query = "UPDATE USERS SET status = 1 WHERE id = %s"
+        query = "UPDATE USERS SET status = 1 WHERE parking_id = %s AND id = %s"
 
         try:
-            cursor.execute(query, (user_id,))
+            cursor.execute(query, (parking_id, user_id))
             return None, True, "Usuario deshabilitado correctamente"
 
         except Exception as e:
@@ -325,13 +328,13 @@ class UsersRepository:
 
     # Habilitar un usuario
     @staticmethod
-    def enable_user(user_id: int, connection):
+    def enable_user(parking_id: int, user_id: int, connection):
         cursor = connection.cursor()
 
-        query = "UPDATE USERS SET status = 2 WHERE id = %s"
+        query = "UPDATE USERS SET status = 2 WHERE parking_id = %s AND id = %s"
 
         try:
-            cursor.execute(query, (user_id,))
+            cursor.execute(query, (parking_id, user_id))
 
             return None, True, "Usuario habilitado correctamente"
 

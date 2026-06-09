@@ -14,11 +14,13 @@ logger = get_logger("parking.service")
 class ParkingService:
 
     @staticmethod
-    def get_all_plates():
+    def get_all_plates(parking_id: int):
         connection = get_connection()
 
         try:
-            error, plates = PlatesRepository.find_all_plates(connection)
+            error, plates = PlatesRepository.find_all_plates(
+                parking_id, connection
+            )
 
             if error:
                 raise ServiceError(error)
@@ -40,12 +42,12 @@ class ParkingService:
             connection.close()
 
     @staticmethod
-    def get_all_spots():
+    def get_all_spots(parking_id: int):
         connection = get_connection()
 
         try:
             error, spots = SpotsRepository.find_all_spots(
-                SpotsFiltersSchema(), connection
+                parking_id, SpotsFiltersSchema(), connection
             )
 
             if error:
@@ -68,12 +70,12 @@ class ParkingService:
             connection.close()
 
     @staticmethod
-    def get_plate_by_name(plate: str):
+    def get_plate_by_name(parking_id: int, plate: str):
         connection = get_connection()
 
         try:
             error, plate_response = PlatesRepository.get_plate_by_name(
-                plate, connection
+                parking_id, plate, connection
             )
 
             if error:
@@ -96,14 +98,14 @@ class ParkingService:
             connection.close()
 
     @staticmethod
-    async def create_plate(plate_data: CreatePlateSchema):
+    async def create_plate(parking_id: int, plate_data: CreatePlateSchema):
         connection = get_connection()
 
         try:
             plate_text = plate_formatter(plate_data.plate)
 
             error, plate_exists = PlatesRepository.get_plate_by_name(
-                plate_text, connection
+                parking_id, plate_text, connection
             )
 
             if error:
@@ -130,6 +132,7 @@ class ParkingService:
                 raise ServiceError(error or "Tipo de vehículo no encontrado")
 
             error, plate_id, message = PlatesRepository.create_plate(
+                parking_id=parking_id,
                 plate_str=plate_text,
                 vehicle_type_id=vehicle_type_id,
                 connection=connection

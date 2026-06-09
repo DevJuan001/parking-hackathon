@@ -10,11 +10,13 @@ logger = get_logger("tariffs.service")
 class TariffsService:
 
     @staticmethod
-    def get_all_tariffs():
+    def get_all_tariffs(parking_id: int):
         connection = get_connection()
 
         try:
-            error, tariffs = TariffsRepository.find_all_tariffs(connection)
+            error, tariffs = TariffsRepository.find_all_tariffs(
+                parking_id, connection
+            )
 
             if error:
                 raise ServiceError(error)
@@ -36,12 +38,12 @@ class TariffsService:
             connection.close()
 
     @staticmethod
-    def get_tariff_by_id(tariff_id: int):
+    def get_tariff_by_id(parking_id: int, tariff_id: int):
         connection = get_connection()
 
         try:
             error, tariff = TariffsRepository.find_tariff_by_id(
-                tariff_id, connection
+                parking_id, tariff_id, connection
             )
 
             if error or not tariff:
@@ -64,12 +66,14 @@ class TariffsService:
             connection.close()
 
     @staticmethod
-    async def create_tariff(tariff_data: CreateTariffSchema):
+    async def create_tariff(parking_id: int, tariff_data: CreateTariffSchema):
         connection = get_connection()
 
         try:
             error, success, message = TariffsRepository.create_tariff(
-                tariff_data=tariff_data,
+                parking_id=parking_id,
+                vehicle_type_id=tariff_data.vehicle_type,
+                value=tariff_data.value,
                 connection=connection
             )
 
@@ -97,19 +101,22 @@ class TariffsService:
             connection.close()
 
     @staticmethod
-    def update_tariff(tariff_id: int, tariff_data: UpdateTariffSchema):
+    def update_tariff(parking_id: int, tariff_id: int, tariff_data: UpdateTariffSchema):
         connection = get_connection()
 
         try:
             error, existing = TariffsRepository.find_tariff_by_id(
-                tariff_id, connection
+                parking_id, tariff_id, connection
             )
 
             if not existing:
                 raise ServiceError("Tarifa no encontrada")
 
+            if tariff_data.value is None:
+                raise ServiceError("Debes enviar el valor a actualizar")
+
             error, success, message = TariffsRepository.update_tariff(
-                tariff_id, tariff_data, connection
+                parking_id, tariff_id, tariff_data.value, connection
             )
 
             if error or not success:

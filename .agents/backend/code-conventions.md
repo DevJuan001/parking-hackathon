@@ -17,8 +17,24 @@ Style rules for Python 3.13 + FastAPI + MySQL backend code. See `architecture.md
 
 ## Errors
 
-- Services **raise** `ServiceError(message)` (from `app.core.exception`).
-- Controllers **catch** `ServiceError` and translate to HTTP responses.
+- `app/core/exception.py` defines a single domain exception:
+  ```python
+  class ServiceError(Exception):
+      def __init__(self, message: str):
+          self.message = message
+  ```
+  Keep it minimal — just `message`. Do **not** add a `code` field, status enums, or helper functions around it. The mapping from message to HTTP status lives in the controller, period.
+- Services **raise** `ServiceError("Mensaje en español")` and return tuples shaped `(error, ...)` from a `try/except ServiceError as e: return e.message, ...` block.
+- Controllers **never** catch `ServiceError` — they only inspect the returned message. When `error` is truthy, the controller maps it to HTTP with a plain `if` and a literal string match, then raises `HTTPException`:
+  ```python
+  error, success, message = Service.method(...)
+  if error:
+      if error == "Contraseña incorrecta":
+          raise HTTPException(status_code=401, detail=error)
+      raise HTTPException(status_code=404, detail=error)
+  ```
+  No helper functions, no dicts of codes, no extra parameters on the service. Just a literal-string `if` in the controller.
+- Services and repositories **must never** raise `HTTPException`. Helpers in `app/core/security.py` (e.g. `verify_password`) return `bool`, not raise — the call site decides what to do with `False`.
 - Repositories raise low-level SQL errors; services wrap them into `ServiceError` with a domain-friendly message.
 - Never let a raw `mysql.connector.Error` escape a repository without a comment explaining why.
 
@@ -102,6 +118,11 @@ Reusable helpers live in `app/utils/` and are imported by services and controlle
 - **`app/utils/date_formatter.py`** — converts DB datetimes to display strings.
 - **`app/utils/plate_formatter.py`** — normalizes a plate string (strip whitespace, remove dashes, uppercase). Every service that does plate lookups MUST call this first to avoid duplicate lookups for `ABC-123` vs `ABC123`.
 - **`app/utils/base_schema.py`** — `BaseSchema` with date-string conversion for pydantic models.
+
+## `app/core/security.py` rules
+
+- Pure functions only. `verify_password(hashed, plain) -> bool`, never `-> None` raising `HTTPException`. The HTTP mapping is the controller's job, not core's.
+- `create_access_token`, `create_refresh_token`, `set_auth_cookies`, `generate_temporal_password` follow the same rule: return values, do not raise `HTTPException`.
 
 ## Validation invariants
 
