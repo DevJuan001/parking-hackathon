@@ -6,8 +6,11 @@ from app.features.payments.models.payments_schemas import CreatePaymentSchema, P
 class PaymentsController:
 
     @staticmethod
-    def get_all_payments(filters: PaymentsFiltersSchema):
-        error, payments = PaymentsService.get_all_payments(filters)
+    def get_all_payments(filters: PaymentsFiltersSchema, payload: dict):
+        error, payments = PaymentsService.get_all_payments(
+            int(payload["parking_id"]),
+            filters
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -17,8 +20,11 @@ class PaymentsController:
         }
 
     @staticmethod
-    def get_payment_by_id(payment_id: int):
-        error, payment = PaymentsService.get_payment_by_id(payment_id)
+    def get_payment_by_id(payment_id: int, payload: dict):
+        error, payment = PaymentsService.get_payment_by_id(
+            int(payload["parking_id"]),
+            payment_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -28,8 +34,11 @@ class PaymentsController:
         }
 
     @staticmethod
-    def get_payments_by_plate(plate_id: int):
-        error, payments = PaymentsService.get_payments_by_plate(plate_id)
+    def get_payments_by_plate(plate_id: int, payload: dict):
+        error, payments = PaymentsService.get_payments_by_plate(
+            int(payload["parking_id"]),
+            plate_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -39,8 +48,9 @@ class PaymentsController:
         }
 
     @staticmethod
-    def calculate_payment(params: CalculatePaymentSchema):
+    def calculate_payment(params: CalculatePaymentSchema, payload: dict):
         error, result = PaymentsService.calculate_payment(
+            int(payload["parking_id"]),
             params.plate
         )
 
@@ -52,8 +62,11 @@ class PaymentsController:
         }
 
     @staticmethod
-    async def create_payment(payment_data: CreatePaymentSchema):
-        error, success, message = await PaymentsService.create_payment(payment_data)
+    async def create_payment(payment_data: CreatePaymentSchema, payload: dict):
+        error, success, message = await PaymentsService.create_payment(
+            int(payload["parking_id"]),
+            payment_data
+        )
 
         if error:
             raise HTTPException(status_code=400, detail=error)
