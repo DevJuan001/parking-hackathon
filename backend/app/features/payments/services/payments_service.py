@@ -131,7 +131,7 @@ class PaymentsService:
                 )
 
             # Establecemos el tiempo cuando entro
-            entry_time = entry["created_at"]
+            entry_time = entry.created_at
 
             # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
             error, latest_exit = ExitsRepository.find_latest_exit(
@@ -220,10 +220,11 @@ class PaymentsService:
 
             if error or not entry:
                 raise ServiceError(
-                    error or "No se encontró un ingreso para esta placa")
+                    error or "No se encontró un ingreso para esta placa"
+                )
 
             # Almacenamos la hora a la que entro el vehiculo
-            entry_time = entry["created_at"]
+            entry_time = entry.created_at
 
             # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
             error, latest_exit = ExitsRepository.find_latest_exit(
@@ -279,7 +280,7 @@ class PaymentsService:
             # Registramos el pago
             error, success, message = PaymentsRepository.create_payment(
                 plate_id=plate_id,
-                spot_id=entry["spot_id"],
+                spot_id=entry.spot_id,
                 value=value,
                 payment_method_id=payment_data.payment_method,
                 connection=connection
