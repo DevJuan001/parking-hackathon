@@ -31,7 +31,6 @@ class UsersRepository:
         FROM USERS AS u
         INNER JOIN ROLES AS r
             ON r.id = u.role_id
-        WHERE u.parking_id = %s
         """
 
         filters = ["u.parking_id = %s"]
@@ -49,7 +48,7 @@ class UsersRepository:
             filters.append("DATE(u.created_at) <= %s")
             values.append(data["end_date"])
 
-        query += " AND " + " AND ".join([f for f in filters if f != "u.parking_id = %s"])
+        query += " WHERE " + " AND ".join(filters)
 
         if data.get("name_order") == "asc":
             query += " ORDER BY u.name ASC"
