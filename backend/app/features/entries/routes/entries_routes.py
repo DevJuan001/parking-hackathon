@@ -26,6 +26,17 @@ def get_all_entries(
 
 
 @router.get(
+    "/recent-entries",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
+    ]
+)
+def get_recent_entries(payload: dict = Depends(verify_jwt)):
+    return EntriesController.get_recent_entries(payload)
+
+
+@router.get(
     "/plate/{plate_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
