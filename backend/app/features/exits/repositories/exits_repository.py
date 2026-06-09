@@ -1,6 +1,4 @@
 from app.utils.logger import get_logger
-from app.utils.date_formatter import date_formatter
-from app.features.exits.models.exits_schemas import ExitsFiltersSchema
 from app.features.exits.models.exits_responses import ExitResponse
 
 logger = get_logger("exits.repository")
@@ -9,9 +7,7 @@ logger = get_logger("exits.repository")
 class ExitsRepository:
 
     @staticmethod
-    def find_all_exits(filters_data: ExitsFiltersSchema, connection):
-        data = filters_data.model_dump(exclude_none=True)
-
+    def find_all_exits(parking_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -21,30 +17,12 @@ class ExitsRepository:
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p ON p.id = e.plate_id
+        WHERE e.parking_id = %s
+        ORDER BY e.created_at DESC
         """
 
-        filters = []
-        values = []
-
-        if "plate_id" in data:
-            filters.append("e.plate_id = %s")
-            values.append(data["plate_id"])
-
-        if "start_date" in data:
-            filters.append("DATE(e.created_at) >= %s")
-            values.append(data["start_date"])
-
-        if "end_date" in data:
-            filters.append("DATE(e.created_at) <= %s")
-            values.append(data["end_date"])
-
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
-
-        query += " ORDER BY e.created_at DESC"
-
         try:
-            cursor.execute(query, values)
+            cursor.execute(query, (parking_id,))
             results = cursor.fetchall()
 
             exits = [
@@ -65,7 +43,7 @@ class ExitsRepository:
             cursor.close()
 
     @staticmethod
-    def find_exit_by_id(exit_id: int, connection):
+    def find_exit_by_id(parking_id: int, exit_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -75,11 +53,11 @@ class ExitsRepository:
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p ON p.id = e.plate_id
-        WHERE e.id = %s
+        WHERE e.parking_id = %s AND e.id = %s
         """
 
         try:
-            cursor.execute(query, (exit_id,))
+            cursor.execute(query, (parking_id, exit_id))
             result = cursor.fetchone()
 
             if not result:
@@ -99,7 +77,7 @@ class ExitsRepository:
             cursor.close()
 
     @staticmethod
-    def find_exits_by_plate(plate_id: int, connection):
+    def find_exits_by_plate(parking_id: int, plate_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -110,12 +88,12 @@ class ExitsRepository:
         FROM EXITS AS e
         INNER JOIN PLATES AS p
             ON p.id = e.plate_id
-        WHERE e.plate_id = %s
+        WHERE e.parking_id = %s AND e.plate_id = %s
         ORDER BY e.created_at DESC
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (parking_id, plate_id))
             results = cursor.fetchall()
 
             exits = [
@@ -136,7 +114,7 @@ class ExitsRepository:
             cursor.close()
 
     @staticmethod
-    def find_latest_exit(plate_id: int, connection):
+    def find_latest_exit(parking_id: int, plate_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -147,13 +125,13 @@ class ExitsRepository:
         FROM EXITS AS e
         INNER JOIN PLATES AS p
             ON p.id = e.plate_id
-        WHERE plate_id = %s
-        ORDER BY created_at DESC
+        WHERE e.parking_id = %s AND e.plate_id = %s
+        ORDER BY e.created_at DESC
         LIMIT 1
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (parking_id, plate_id))
             result = cursor.fetchone()
 
             if not result:
@@ -173,16 +151,16 @@ class ExitsRepository:
             cursor.close()
 
     @staticmethod
-    def create_exit(plate_id: int, connection):
+    def create_exit(parking_id: int, plate_id: int, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO EXITS (plate_id)
-        VALUES (%s)
+        INSERT INTO EXITS (parking_id, plate_id)
+        VALUES (%s, %s)
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (parking_id, plate_id))
             return None, True, "Salida registrada correctamente"
 
         except Exception as e:
