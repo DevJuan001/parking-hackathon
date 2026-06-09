@@ -14,6 +14,7 @@ class PaymentsFiltersSchema(BaseModel):
 class CreatePaymentSchema(BaseModel):
     plate: str
     exit_time: datetime
+    payment_method: int
 
 
 class CalculatePaymentSchema(BaseModel):
