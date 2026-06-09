@@ -89,10 +89,6 @@ This matches `.github/PULL_REQUEST_TEMPLATE/backend.md`.
 ## Summary
 <one-sentence description of what this PR does and why>
 
-## Labels
-<!-- Apply via: gh pr edit <num> --add-label "<label1>,<label2>" -->
-<!-- Available: refactor, enhancement, bug, documentation, database, api, frontend -->
-
 ## Changes
 <!-- Group by relevant section. Remove empty ones. -->
 
