@@ -15,12 +15,12 @@ logger = get_logger("exits.service")
 class ExitsService:
 
     @staticmethod
-    def get_all_exits(filters: ExitsFiltersSchema):
+    def get_all_exits(parking_id: int, filters: ExitsFiltersSchema):
         connection = get_connection()
 
         try:
             error, exits = ExitsRepository.find_all_exits(
-                filters, connection
+                parking_id, connection
             )
 
             if error:
@@ -43,12 +43,12 @@ class ExitsService:
             connection.close()
 
     @staticmethod
-    def get_exit_by_id(exit_id: int):
+    def get_exit_by_id(parking_id: int, exit_id: int):
         connection = get_connection()
 
         try:
             error, exit_record = ExitsRepository.find_exit_by_id(
-                exit_id, connection
+                parking_id, exit_id, connection
             )
 
             if error or not exit_record:
@@ -71,12 +71,12 @@ class ExitsService:
             connection.close()
 
     @staticmethod
-    def get_exits_by_plate(plate_id: int):
+    def get_exits_by_plate(parking_id: int, plate_id: int):
         connection = get_connection()
 
         try:
             error, exits = ExitsRepository.find_exits_by_plate(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -99,7 +99,7 @@ class ExitsService:
             connection.close()
 
     @staticmethod
-    async def create_exit(exit_data: CreateExitSchema):
+    async def create_exit(parking_id: int, exit_data: CreateExitSchema):
         connection = get_connection()
 
         try:
@@ -108,9 +108,8 @@ class ExitsService:
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
-            # Buscamos si esta registrada la placa
             error, plate_list = PlatesRepository.get_plate_by_name(
-                plate_text, connection
+                parking_id, plate_text, connection
             )
 
             if error or not plate_list:
@@ -118,9 +117,8 @@ class ExitsService:
 
             plate = plate_list[0]
 
-            # Validamos que el vehiculo este adentro
             error, active = EntriesRepository.has_active_entry(
-                plate.id, connection
+                parking_id, plate.id, connection
             )
 
             if error:
@@ -131,9 +129,8 @@ class ExitsService:
                     "La placa no tiene un ingreso activo, no se puede registrar la salida"
                 )
 
-            # Buscamos la plaza donde estaba el vehiculo
             error, spot_id = EntriesRepository.find_latest_entry_spot(
-                plate.id, connection
+                parking_id, plate.id, connection
             )
 
             if error or not spot_id:
@@ -141,8 +138,8 @@ class ExitsService:
                     error or "No se encontró un ingreso para esta placa"
                 )
 
-            # Registramos la salida
             error, success, message = ExitsRepository.create_exit(
+                parking_id=parking_id,
                 plate_id=plate.id,
                 connection=connection
             )
@@ -150,9 +147,8 @@ class ExitsService:
             if error or not success:
                 raise ServiceError(error)
 
-            # Actualizamos el estado de la plaza
             error, success, message = SpotsRepository.update_spot_status(
-                spot_id, 2, connection
+                parking_id, spot_id, 2, connection
             )
 
             if error or not success:
