@@ -6,8 +6,11 @@ from app.features.users.models.users_schemas import CreateUserSchema, UpdateCurr
 class UsersController:
 
     @staticmethod
-    def get_all_users(filters: UsersFiltersSchema):
-        error, users = UsersService.get_all_users(filters)
+    def get_all_users(filters: UsersFiltersSchema, payload: dict):
+        error, users = UsersService.get_all_users(
+            int(payload["parking_id"]),
+            filters
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -17,8 +20,11 @@ class UsersController:
         }
 
     @staticmethod
-    def get_user_by_id(user_id: int):
-        error, user = UsersService.get_user_by_id(user_id)
+    def get_user_by_id(user_id: int, payload: dict):
+        error, user = UsersService.get_user_by_id(
+            int(payload["parking_id"]),
+            user_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -29,7 +35,10 @@ class UsersController:
 
     @staticmethod
     def get_current_user(payload: dict):
-        error, user = UsersService.get_user_by_id(int(payload["user_id"]))
+        error, user = UsersService.get_user_by_id(
+            int(payload["parking_id"]),
+            int(payload["user_id"])
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -39,8 +48,11 @@ class UsersController:
         }
 
     @staticmethod
-    def get_user_by_email(email: str):
-        error, user = UsersService.get_user_by_email(email)
+    def get_user_by_email(email: str, payload: dict):
+        error, user = UsersService.get_user_by_email(
+            int(payload["parking_id"]),
+            email
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -87,9 +99,11 @@ class UsersController:
         }
 
     @staticmethod
-    def update_user(user_id: int, user_data: UpdateUserSchema):
+    def update_user(user_id: int, user_data: UpdateUserSchema, payload: dict):
         error, success, message = UsersService.update_user(
-            user_id, user_data
+            int(payload["parking_id"]),
+            user_id,
+            user_data
         )
 
         if error:
@@ -103,7 +117,9 @@ class UsersController:
     @staticmethod
     def update_current_user(user_data: UpdateCurrentUserSchema, payload: dict):
         error, success, message = UsersService.update_user(
-            payload["user_id"], user_data
+            int(payload["parking_id"]),
+            int(payload["user_id"]),
+            user_data
         )
 
         if error:
@@ -117,7 +133,9 @@ class UsersController:
     @staticmethod
     def update_user_password(password_data: UpdatePasswordSchema, payload: dict):
         error, success, message = UsersService.update_user_password(
-            password_data, payload["user_id"]
+            int(payload["parking_id"]),
+            password_data,
+            int(payload["user_id"])
         )
 
         if error:
@@ -129,8 +147,11 @@ class UsersController:
         }
 
     @staticmethod
-    def disable_user(user_id: int):
-        error, success, message = UsersService.disable_user(user_id)
+    def disable_user(user_id: int, payload: dict):
+        error, success, message = UsersService.disable_user(
+            int(payload["parking_id"]),
+            user_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -141,8 +162,11 @@ class UsersController:
         }
 
     @staticmethod
-    def enable_user(user_id: int):
-        error, success, message = UsersService.enable_user(user_id)
+    def enable_user(user_id: int, payload: dict):
+        error, success, message = UsersService.enable_user(
+            int(payload["parking_id"]),
+            user_id
+        )
 
         if error:
             raise HTTPException(status_code=404, detail=error)
