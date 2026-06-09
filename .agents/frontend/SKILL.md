@@ -44,6 +44,8 @@ Follow the rules in the companion files:
 - See `architecture.md` for folder layout and responsibilities.
 - See `code-conventions.md` for React/Vite style (no TypeScript, hooks, state, API calls).
 - See `feature-workflow.md` for step-by-step to add a new page or component.
+- See `data-fetching.md` for the canonical read (with optional polling) and write-hook patterns.
+- See `modals.md` for the two modal patterns (page-owns-outer vs self-contained) used across the app.
 - See `commits-and-prs.md` for commit format, pre-PR checklist, and PR creation (use `gh pr create` directly).
 
 ---
@@ -55,7 +57,9 @@ Follow the rules in the companion files:
 | `SKILL.md` | This file — entry point, flow, when to use |
 | `architecture.md` | Folder layout, module structure, UI kit conventions |
 | `code-conventions.md` | React, hooks, state, API calls, no TypeScript |
-| `feature-workflow.md` | Step-by-step to add a page or component end to end |
+| `feature-workflow.md` | Step-by-step to add a new page or component end to end |
+| `data-fetching.md` | useQuery read pattern, polling, plain-`useState` write-hook pattern (no `useMutation`) |
+| `modals.md` | Two modal patterns: page-owns-outer (Pattern A) and self-contained (Pattern B) |
 | `commits-and-prs.md` | Conventional Commits, pre-PR checklist, PR creation with gh |
 
 Add new files here when a recurring concern emerges (e.g. `testing.md`, `auth-flow.md`, `routing.md`) and link them from the table above.
