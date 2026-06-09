@@ -2,6 +2,7 @@ import jwt
 from jwt.exceptions import PyJWTError
 from fastapi import Cookie, HTTPException
 from app.core.config import settings
+from app.core.database import get_connection
 
 
 # Función para verificar el token en todas las solicitudes protegidas
@@ -30,7 +31,34 @@ async def verify_jwt(access_token: str = Cookie(None)):
     except PyJWTError:
         raise credentials_exception
 
+    parking_id = _get_user_parking_id(int(user_id))
+
     return {
         "user_id": user_id,
-        "role": role
+        "role": role,
+        "parking_id": parking_id
     }
+
+
+def _get_user_parking_id(user_id: int):
+    connection = get_connection()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT parking_id FROM USERS WHERE id = %s",
+            (user_id,)
+        )
+        result = cursor.fetchone()
+        cursor.close()
+
+        if not result:
+            return None
+
+        return result[0]
+
+    except Exception:
+        return None
+
+    finally:
+        connection.close()
