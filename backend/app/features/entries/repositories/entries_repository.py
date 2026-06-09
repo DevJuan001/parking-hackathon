@@ -34,7 +34,7 @@ class EntriesRepository:
         values = [parking_id]
 
         if "plate_id" in data:
-            filters.append("p.plate_id = %s")
+            filters.append("p.id = %s")
             values.append(data["plate_id"])
         
         if "start_date" in data:
@@ -48,7 +48,7 @@ class EntriesRepository:
         query += " WHERE " + " AND ".join(filters)
 
         try:
-            cursor.execute(query, (values,))
+            cursor.execute(query, values)
             results = cursor.fetchall()
 
             entries = [
