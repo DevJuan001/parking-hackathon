@@ -18,7 +18,7 @@ class EntriesService:
 
         try:
             error, entries = EntriesRepository.find_all_entries(
-                parking_id, connection
+                parking_id, filters, connection
             )
 
             if error:
@@ -64,6 +64,34 @@ class EntriesService:
                 exc_info=True
             )
             return "Error al intentar obtener el ingreso", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
+    def get_recent_entries(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, entries = EntriesRepository.find_recent_entries(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, entries
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_recent_entries: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los ingresos recientes", None
 
         finally:
             connection.close()
