@@ -133,6 +133,19 @@ class PaymentsService:
             # Establecemos el tiempo cuando entro
             entry_time = entry["created_at"]
 
+            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
+            error, latest_exit = ExitsRepository.find_latest_exit(
+                plate_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if latest_exit and latest_exit.created_at >= entry_time:
+                raise ServiceError(
+                    "El vehiculo ya tiene una salida registrada"
+                )
+
             # Establecemos que el tiempo de salida es el actual
             exit_time = datetime.now()
 
@@ -211,6 +224,19 @@ class PaymentsService:
 
             # Almacenamos la hora a la que entro el vehiculo
             entry_time = entry["created_at"]
+
+            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
+            error, latest_exit = ExitsRepository.find_latest_exit(
+                plate_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if latest_exit and latest_exit.created_at >= entry_time:
+                raise ServiceError(
+                    "El vehiculo ya tiene una salida registrada"
+                )
 
             # Establecemos que el tiempo de salida es el actual
             exit_time = payment_data.exit_time
