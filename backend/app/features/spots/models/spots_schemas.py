@@ -4,9 +4,11 @@ from pydantic import BaseModel
 
 class SpotsFiltersSchema(BaseModel):
     spot_status: Optional[int] = None
+    floor_id: Optional[int] = None
 
 
 class CreateSpotSchema(BaseModel):
+    floor_id: int
     spot: str
 
 
