@@ -19,8 +19,11 @@ router = APIRouter(
         Depends(require_roles(["Admin"]))
     ]
 )
-def get_all_users(filters: UsersFiltersSchema = Depends()):
-    return UsersController.get_all_users(filters)
+def get_all_users(
+    filters: UsersFiltersSchema = Depends(),
+    payload: dict = Depends(verify_jwt)
+):
+    return UsersController.get_all_users(filters, payload)
 
 
 # Endpoint para obtener la información del usuario autenticado
@@ -55,8 +58,11 @@ def get_all_roles():
         Depends(require_roles(["Admin"]))
     ]
 )
-def get_user_by_id(user_id: int):
-    return UsersController.get_user_by_id(user_id)
+def get_user_by_id(
+    user_id: int,
+    payload: dict = Depends(verify_jwt)
+):
+    return UsersController.get_user_by_id(user_id, payload)
 
 
 # Endpoint para crear o registrar un usuario
@@ -68,9 +74,10 @@ def get_user_by_id(user_id: int):
     ]
 )
 async def create_user(
-    user_data: CreateUserSchema
+    user_data: CreateUserSchema,
+    payload: dict = Depends(verify_jwt)
 ):
-    return await UsersController.create_user(user_data)
+    return await UsersController.create_user(user_data, payload)
 
 
 # Endpoint para actualizar la informacion del usuario
@@ -107,9 +114,10 @@ def update_user_password(password_data: UpdatePasswordSchema, payload: dict = De
 )
 def update_user(
     user_id: int,
-    user_data: UpdateUserSchema
+    user_data: UpdateUserSchema,
+    payload: dict = Depends(verify_jwt)
 ):
-    return UsersController.update_user(user_id, user_data)
+    return UsersController.update_user(user_id, user_data, payload)
 
 
 # Endpoint para deshabilitar un usuario mediante su id
@@ -121,9 +129,10 @@ def update_user(
     ]
 )
 def disable_user(
-    user_id: int
+    user_id: int,
+    payload: dict = Depends(verify_jwt)
 ):
-    return UsersController.disable_user(user_id)
+    return UsersController.disable_user(user_id, payload)
 
 
 # Endpoint para habilitar un usuario mediante su id
@@ -135,6 +144,7 @@ def disable_user(
     ]
 )
 def enable_user(
-    user_id: int
+    user_id: int,
+    payload: dict = Depends(verify_jwt)
 ):
-    return UsersController.enable_user(user_id)
+    return UsersController.enable_user(user_id, payload)
