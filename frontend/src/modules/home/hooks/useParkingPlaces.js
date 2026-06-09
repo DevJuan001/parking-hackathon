@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllSpotsService } from "../services/parkingService";
+import { getAllSpotsService } from "../services/getAllSpotsService";
 
 export function useParkingPlaces() {
   const query = useQuery({

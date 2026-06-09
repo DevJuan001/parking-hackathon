@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { updateSpotService } from "../services/parkingService";
+import { updateSpotService } from "../services/updateSpotService";
+import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
 export function useUpdateSpot(spot) {
   const [spotData, setSpotData] = useState({
