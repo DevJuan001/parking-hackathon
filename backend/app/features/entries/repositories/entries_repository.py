@@ -1,5 +1,4 @@
 from app.utils.logger import get_logger
-from app.utils.date_formatter import date_formatter
 from app.features.entries.models.entries_schemas import CreateEntrySchema, EntriesFiltersSchema
 from app.features.entries.models.entries_responses import EntryResponse
 
@@ -19,6 +18,7 @@ class EntriesRepository:
             e.id,
             p.plate,
             vt.name,
+            s.spot_id,
             s.spot,
             e.created_at
         FROM ENTRIES AS e
@@ -56,8 +56,9 @@ class EntriesRepository:
                     id=item[0],
                     plate=item[1],
                     vehicle_type=item[2],
-                    spot=item[3],
-                    created_at=date_formatter(item[4])
+                    spot_id=item[3],
+                    spot=item[4],
+                    created_at=item[5]
                 )
                 for item in results
             ]
@@ -79,6 +80,7 @@ class EntriesRepository:
             e.id,
             p.plate,
             vt.name,
+            s.spot_id,
             s.spot,
             e.created_at
         FROM ENTRIES AS e
@@ -99,8 +101,9 @@ class EntriesRepository:
                 id=result[0],
                 plate=result[1],
                 vehicle_type=result[2],
-                spot=result[3],
-                created_at=date_formatter(result[4])
+                spot_id=result[3],
+                spot=result[4],
+                created_at=result[5]
             )
             return None, entry
 
@@ -120,6 +123,7 @@ class EntriesRepository:
             e.id,
             p.plate,
             vt.name,
+            s.spot_id,
             s.spot,
             e.created_at
         FROM ENTRIES AS e
@@ -139,15 +143,20 @@ class EntriesRepository:
                     id=item[0],
                     plate=item[1],
                     vehicle_type=item[2],
-                    spot=item[3],
-                    created_at=date_formatter(item[4])
+                    spot_id=item[3],
+                    spot=item[4],
+                    created_at=item[5]
                 )
                 for item in results
             ]
             return None, entries
 
         except Exception as e:
-            logger.error("Error en find_entries_by_plate: %s", e, exc_info=True)
+            logger.error(
+                "Error en find_entries_by_plate: %s",
+                e,
+                exc_info=True
+            )
             return "Error al intentar obtener los ingresos de la placa", None
 
         finally:
@@ -215,8 +224,20 @@ class EntriesRepository:
         cursor = connection.cursor()
 
         query = """
-        SELECT id, plate_id, spot_id, created_at
-        FROM ENTRIES
+        SELECT
+            e.id,
+            p.plate,
+            vt.name,
+            s.spot_id,
+            s.spot,
+            e.created_at
+        FROM ENTRIES AS e
+        INNER JOIN PLATES AS p 
+            ON p.id  = e.plate_id
+        INNER JOIN VEHICLE_TYPES AS vt 
+            ON vt.id = p.vehicle_type_id
+        INNER JOIN SPOTS AS s  
+            ON s.spot_id = e.spot_id
         WHERE plate_id = %s
         ORDER BY created_at DESC
         LIMIT 1
@@ -229,12 +250,14 @@ class EntriesRepository:
             if not result:
                 return "No se encontró un ingreso para esta placa", None
 
-            return None, {
-                "id": result[0],
-                "plate_id": result[1],
-                "spot_id": result[2],
-                "created_at": result[3]
-            }
+            return None, EntryResponse(
+                id=result[0],
+                plate=result[1],
+                vehicle_type=result[2],
+                spot_id=result[3],
+                spot=result[4],
+                created_at=result[5]
+            )
 
         except Exception as e:
             logger.error("Error en find_latest_entry: %s", e, exc_info=True)
@@ -264,7 +287,11 @@ class EntriesRepository:
             return None, result[0]
 
         except Exception as e:
-            logger.error("Error en find_latest_entry_spot: %s", e, exc_info=True)
+            logger.error(
+                "Error en find_latest_entry_spot: %s",
+                e,
+                exc_info=True
+            )
             return "Error al buscar el ingreso más reciente", None
 
         finally:
