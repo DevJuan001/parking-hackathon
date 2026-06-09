@@ -170,7 +170,7 @@ class UsersRepository:
 
     # Obtener un usuario mediante el correo
     @staticmethod
-    def find_user_by_email(parking_id: int, email: str, connection):
+    def find_user_by_email(email: str, connection):
         cursor = connection.cursor(buffered=True)
 
         # Petición a la base de datos
@@ -186,11 +186,11 @@ class UsersRepository:
         FROM USERS AS u
         INNER JOIN ROLES AS r
             ON r.id = u.role_id
-        WHERE u.parking_id = %s AND u.email = %s
+        WHERE u.email = %s
         """
 
         try:
-            cursor.execute(query, (parking_id, email))
+            cursor.execute(query, (email,))
 
             result = cursor.fetchone()
 
