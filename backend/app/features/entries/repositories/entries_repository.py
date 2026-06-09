@@ -1,5 +1,6 @@
 from app.utils.logger import get_logger
 from app.features.entries.models.entries_responses import EntryResponse
+from backend.app.features.entries.models.entries_schemas import EntriesFiltersSchema
 
 logger = get_logger("entries.repository")
 
@@ -7,8 +8,10 @@ logger = get_logger("entries.repository")
 class EntriesRepository:
 
     @staticmethod
-    def find_all_entries(parking_id: int, connection):
+    def find_all_entries(parking_id: int, filters_data: EntriesFiltersSchema, connection):
         cursor = connection.cursor()
+
+        data = filters_data.model_dump(exclude_none=True)
 
         query = """
         SELECT
@@ -19,15 +22,33 @@ class EntriesRepository:
             s.spot,
             e.created_at
         FROM ENTRIES AS e
-        INNER JOIN PLATES        AS p  ON p.id  = e.plate_id
-        INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
-        INNER JOIN SPOTS         AS s  ON s.spot_id = e.spot_id
-        WHERE e.parking_id = %s
-        ORDER BY e.created_at DESC
+        INNER JOIN PLATES AS p 
+            ON p.id  = e.plate_id
+        INNER JOIN VEHICLE_TYPES AS vt
+            ON vt.id = p.vehicle_type_id
+        INNER JOIN SPOTS AS s 
+            ON s.spot_id = e.spot_id
         """
 
+        filters = ["e.parking_id = %s"]
+        values = [parking_id]
+
+        if "plate_id" in data:
+            filters.append("p.plate_id = %s")
+            values.append(data["plate_id"])
+        
+        if "start_date" in data:
+            filters.append("DATE(e.created_at) >= %s")
+            values.append(data["start_date"])
+
+        if "end_date" in data:
+            filters.append("DATE(e.created_at) <= %s")
+            values.append(data["end_date"])
+
+        query += " WHERE " + " AND ".join(filters)
+
         try:
-            cursor.execute(query, (parking_id,))
+            cursor.execute(query, (values,))
             results = cursor.fetchall()
 
             entries = [
@@ -89,6 +110,51 @@ class EntriesRepository:
         except Exception as e:
             logger.error("Error en find_entry_by_id: %s", e, exc_info=True)
             return "Error al intentar obtener el ingreso", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_recent_entries(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            e.id,
+            p.plate,
+            vt.name,
+            s.spot_id,
+            s.spot,
+            e.created_at
+        FROM ENTRIES AS e
+        INNER JOIN PLATES        AS p  ON p.id  = e.plate_id
+        INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+        INNER JOIN SPOTS         AS s  ON s.spot_id = e.spot_id
+        WHERE e.parking_id = %s
+        ORDER BY e.created_at DESC
+        LIMIT 5
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            results = cursor.fetchall()
+
+            entries = [
+                EntryResponse(
+                    id=item[0],
+                    plate=item[1],
+                    vehicle_type=item[2],
+                    spot_id=item[3],
+                    spot=item[4],
+                    created_at=item[5]
+                )
+                for item in results
+            ]
+            return None, entries
+
+        except Exception as e:
+            logger.error("Error en find_recent_entries: %s", e, exc_info=True)
+            return "Error al intentar obtener los ingresos recientes", None
 
         finally:
             cursor.close()
