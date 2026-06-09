@@ -4,7 +4,6 @@ from app.core.database import get_connection
 from app.utils.plate_formatter import plate_formatter
 from app.features.entries.repositories.entries_repository import EntriesRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
-from app.features.parking.repositories.vehicle_types_repository import VehicleTypesRepository
 from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.entries.models.entries_schemas import CreateEntrySchema, EntriesFiltersSchema
 
@@ -14,12 +13,12 @@ logger = get_logger("entries.service")
 class EntriesService:
 
     @staticmethod
-    def get_all_entries(filters: EntriesFiltersSchema):
+    def get_all_entries(parking_id: int, filters: EntriesFiltersSchema):
         connection = get_connection()
 
         try:
             error, entries = EntriesRepository.find_all_entries(
-                filters, connection
+                parking_id, connection
             )
 
             if error:
@@ -42,12 +41,12 @@ class EntriesService:
             connection.close()
 
     @staticmethod
-    def get_entry_by_id(entry_id: int):
+    def get_entry_by_id(parking_id: int, entry_id: int):
         connection = get_connection()
 
         try:
             error, entry = EntriesRepository.find_entry_by_id(
-                entry_id, connection
+                parking_id, entry_id, connection
             )
 
             if error or not entry:
@@ -70,12 +69,12 @@ class EntriesService:
             connection.close()
 
     @staticmethod
-    def get_entries_by_plate(plate_id: int):
+    def get_entries_by_plate(parking_id: int, plate_id: int):
         connection = get_connection()
 
         try:
             error, entries = EntriesRepository.find_entries_by_plate(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -98,27 +97,24 @@ class EntriesService:
             connection.close()
 
     @staticmethod
-    async def create_entry(entry_data: CreateEntrySchema):
+    async def create_entry(parking_id: int, entry_data: CreateEntrySchema):
         data = entry_data.model_dump()
-        
+
         connection = get_connection()
 
         try:
-            # Formateamos la placa
             plate_text = plate_formatter(data["plate"])
 
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
-            # Validamos si la placa tiene un numero al final para poder indentificar si es una moto o un carro
-            if plate_text and plate_text[-1].isalpha():
+            if plate_text[-1].isalpha():
                 vehicle_type_id = 2
             else:
                 vehicle_type_id = 1
 
-            # Buscamos si la placa ya esta registrada
             error, plate_list = PlatesRepository.get_plate_by_name(
-                plate_text, connection
+                parking_id, plate_text, connection
             )
 
             if error:
@@ -126,10 +122,12 @@ class EntriesService:
 
             plate = plate_list[0] if plate_list else None
 
-            # Si la placa no esta registrada la registramos
             if not plate:
                 error, new_plate_id, message = PlatesRepository.create_plate(
-                    plate_text, vehicle_type_id, connection
+                    parking_id=parking_id,
+                    plate_str=plate_text,
+                    vehicle_type_id=vehicle_type_id,
+                    connection=connection
                 )
 
                 if error or not new_plate_id:
@@ -139,10 +137,9 @@ class EntriesService:
 
             else:
                 plate_id = plate.id
-            
-            # Buscamos si el vehiculo tiene una entrada reciente
+
             error, active = EntriesRepository.has_active_entry(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -151,16 +148,15 @@ class EntriesService:
             if active:
                 raise ServiceError("La placa ya tiene un ingreso activo")
 
-            # Buscamos una plaza disponible para asignarsela
-            error, spot_id, spot_label = EntriesRepository.find_available_spot(
-                connection
+            error, spot_id, spot_label = SpotsRepository.find_available_spot(
+                parking_id, connection
             )
 
             if error or not spot_id:
                 raise ServiceError(error or "No hay plazas disponibles")
-            
-            # Registramos la entrada del vehiculo
+
             error, success, message = EntriesRepository.create_entry(
+                parking_id=parking_id,
                 plate_id=plate_id,
                 spot_id=spot_id,
                 connection=connection
@@ -169,9 +165,8 @@ class EntriesService:
             if error or not success:
                 raise ServiceError(error)
 
-            # Actualizamos el estado de la plaza a ocupada
             error, success, message = SpotsRepository.update_spot_status(
-                spot_id, 3, connection
+                parking_id, spot_id, 3, connection
             )
 
             if error or not success:
