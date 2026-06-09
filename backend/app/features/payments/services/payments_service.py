@@ -133,13 +133,30 @@ class PaymentsService:
             # Establecemos el tiempo cuando entro
             entry_time = entry["created_at"]
 
+            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
+            error, latest_exit = ExitsRepository.find_latest_exit(
+                plate_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if latest_exit and latest_exit.created_at >= entry_time:
+                raise ServiceError(
+                    "El vehiculo ya tiene una salida registrada"
+                )
+
             # Establecemos que el tiempo de salida es el actual
             exit_time = datetime.now()
+
+            if exit_time <= entry_time:
+                raise ServiceError(
+                    "La hora actual es anterior a la hora de ingreso"
+                )
 
             # Calculamos la diferencia de tiempo entre la entrada y al salida
             diff = exit_time - entry_time
 
-            # Redondeamos el tiempo que duro parqueado el vehiculo
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
             # Buscamos la tarifa por el tipo de vehiculo
@@ -150,7 +167,7 @@ class PaymentsService:
             if error or not rate:
                 raise ServiceError(error or "Tarifa no encontrada")
 
-            rate_value = rate["value"]
+            rate_value = rate.value
 
             # Redondeamos el valor a cobrarle al vehiculo
             total = round(hours_parked * rate_value, 2)
@@ -208,12 +225,29 @@ class PaymentsService:
             # Almacenamos la hora a la que entro el vehiculo
             entry_time = entry["created_at"]
 
+            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
+            error, latest_exit = ExitsRepository.find_latest_exit(
+                plate_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if latest_exit and latest_exit.created_at >= entry_time:
+                raise ServiceError(
+                    "El vehiculo ya tiene una salida registrada"
+                )
+
             # Establecemos que el tiempo de salida es el actual
             exit_time = payment_data.exit_time
 
+            if exit_time <= entry_time:
+                raise ServiceError(
+                    "La hora de salida debe ser posterior a la hora de ingreso"
+                )
+
             diff = exit_time - entry_time
 
-            # Redondeamos las horas que duro parqueado el vehiculo
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
             # Buscamos el valor de la tarifa según el tipo de vehiculo
@@ -225,7 +259,12 @@ class PaymentsService:
                 raise ServiceError(error or "Tarifa no encontrada")
 
             # Redondeamos el valor a pagar
-            value = round(hours_parked * rate["value"], 2)
+            value = round(hours_parked * rate.value, 2)
+
+            if value < 0:
+                raise ServiceError(
+                    "El valor calculado del pago es invalido"
+                )
 
             # Registramos la salida del vehiculo
             error, success, message = ExitsRepository.create_exit(
@@ -242,6 +281,7 @@ class PaymentsService:
                 plate_id=plate_id,
                 spot_id=entry["spot_id"],
                 value=value,
+                payment_method_id=payment_data.payment_method,
                 connection=connection
             )
 

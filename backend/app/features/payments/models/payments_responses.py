@@ -7,6 +7,7 @@ class PaymentResponse(BaseModel):
     spot: str
     value: float
     created_at: str
+    payment_method: int
 
 
 class CalculatePaymentResponse(BaseModel):
