@@ -18,12 +18,12 @@ logger = get_logger("payments.service")
 class PaymentsService:
 
     @staticmethod
-    def get_all_payments(filters: PaymentsFiltersSchema):
+    def get_all_payments(parking_id: int, filters: PaymentsFiltersSchema):
         connection = get_connection()
 
         try:
             error, payments = PaymentsRepository.find_all_payments(
-                filters, connection
+                parking_id, connection
             )
 
             if error:
@@ -46,12 +46,12 @@ class PaymentsService:
             connection.close()
 
     @staticmethod
-    def get_payment_by_id(payment_id: int):
+    def get_payment_by_id(parking_id: int, payment_id: int):
         connection = get_connection()
 
         try:
             error, payment = PaymentsRepository.find_payment_by_id(
-                payment_id, connection
+                parking_id, payment_id, connection
             )
 
             if error or not payment:
@@ -74,12 +74,12 @@ class PaymentsService:
             connection.close()
 
     @staticmethod
-    def get_payments_by_plate(plate_id: int):
+    def get_payments_by_plate(parking_id: int, plate_id: int):
         connection = get_connection()
 
         try:
             error, payments = PaymentsRepository.find_payments_by_plate(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -102,16 +102,14 @@ class PaymentsService:
             connection.close()
 
     @staticmethod
-    def calculate_payment(plate: str):
+    def calculate_payment(parking_id: int, plate: str):
         connection = get_connection()
 
         try:
-            # Formateamos la placa
             plate_text = plate_formatter(plate)
 
-            # Buscamos si la placa esta registrada
             error, plate_data = PlatesRepository.get_plate_by_name(
-                plate_text, connection
+                parking_id, plate_text, connection
             )
 
             if error or not plate_data:
@@ -120,9 +118,8 @@ class PaymentsService:
             plate_id = plate_data[0].id
             vehicle_type = plate_data[0].vehicle_type
 
-            # Buscamos la entrada mas reciente del vehiculo
             error, entry = EntriesRepository.find_latest_entry(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error or not entry:
@@ -130,12 +127,10 @@ class PaymentsService:
                     error or "No se encontró un ingreso para esta placa"
                 )
 
-            # Establecemos el tiempo cuando entro
             entry_time = entry.created_at
 
-            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
             error, latest_exit = ExitsRepository.find_latest_exit(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -146,7 +141,6 @@ class PaymentsService:
                     "El vehiculo ya tiene una salida registrada"
                 )
 
-            # Establecemos que el tiempo de salida es el actual
             exit_time = datetime.now()
 
             if exit_time <= entry_time:
@@ -154,14 +148,12 @@ class PaymentsService:
                     "La hora actual es anterior a la hora de ingreso"
                 )
 
-            # Calculamos la diferencia de tiempo entre la entrada y al salida
             diff = exit_time - entry_time
 
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
-            # Buscamos la tarifa por el tipo de vehiculo
             error, rate = TariffsRepository.find_rate_by_vehicle_type(
-                vehicle_type, connection
+                parking_id, vehicle_type, connection
             )
 
             if error or not rate:
@@ -169,7 +161,6 @@ class PaymentsService:
 
             rate_value = rate.value
 
-            # Redondeamos el valor a cobrarle al vehiculo
             total = round(hours_parked * rate_value, 2)
 
             return None, CalculatePaymentResponse(
@@ -196,15 +187,14 @@ class PaymentsService:
             connection.close()
 
     @staticmethod
-    async def create_payment(payment_data: CreatePaymentSchema):
+    async def create_payment(parking_id: int, payment_data: CreatePaymentSchema):
         connection = get_connection()
 
         try:
             plate_text = plate_formatter(payment_data.plate)
 
-            # Buscamos si esta registrada la placa
             error, plate_list = PlatesRepository.get_plate_by_name(
-                plate_text, connection
+                parking_id, plate_text, connection
             )
 
             if error or not plate_list:
@@ -213,9 +203,8 @@ class PaymentsService:
             plate_id = plate_list[0].id
             vehicle_type = plate_list[0].vehicle_type
 
-            # Buscamos la entrada mas reciente
             error, entry = EntriesRepository.find_latest_entry(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error or not entry:
@@ -223,12 +212,10 @@ class PaymentsService:
                     error or "No se encontró un ingreso para esta placa"
                 )
 
-            # Almacenamos la hora a la que entro el vehiculo
             entry_time = entry.created_at
 
-            # Verificamos que el vehiculo no tenga una salida registrada posterior a su ultimo ingreso
             error, latest_exit = ExitsRepository.find_latest_exit(
-                plate_id, connection
+                parking_id, plate_id, connection
             )
 
             if error:
@@ -239,7 +226,6 @@ class PaymentsService:
                     "El vehiculo ya tiene una salida registrada"
                 )
 
-            # Establecemos que el tiempo de salida es el actual
             exit_time = payment_data.exit_time
 
             if exit_time <= entry_time:
@@ -251,15 +237,13 @@ class PaymentsService:
 
             hours_parked = round(diff.total_seconds() / 3600, 2)
 
-            # Buscamos el valor de la tarifa según el tipo de vehiculo
             error, rate = TariffsRepository.find_rate_by_vehicle_type(
-                vehicle_type, connection
+                parking_id, vehicle_type, connection
             )
 
             if error or not rate:
                 raise ServiceError(error or "Tarifa no encontrada")
 
-            # Redondeamos el valor a pagar
             value = round(hours_parked * rate.value, 2)
 
             if value < 0:
@@ -267,9 +251,10 @@ class PaymentsService:
                     "El valor calculado del pago es invalido"
                 )
 
-            # Registramos la salida del vehiculo
             error, success, message = ExitsRepository.create_exit(
-                plate_id, connection
+                parking_id=parking_id,
+                plate_id=plate_id,
+                connection=connection
             )
 
             if error or not success:
@@ -277,8 +262,8 @@ class PaymentsService:
                     error or "Error al intentar crear la salida"
                 )
 
-            # Registramos el pago
             error, success, message = PaymentsRepository.create_payment(
+                parking_id=parking_id,
                 plate_id=plate_id,
                 spot_id=entry.spot_id,
                 value=value,

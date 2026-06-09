@@ -1,7 +1,6 @@
 from datetime import datetime
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
-from app.features.payments.models.payments_schemas import PaymentsFiltersSchema
 from app.features.payments.models.payments_responses import PaymentResponse
 
 logger = get_logger("payments.repository")
@@ -10,9 +9,7 @@ logger = get_logger("payments.repository")
 class PaymentsRepository:
 
     @staticmethod
-    def find_all_payments(filters_data: PaymentsFiltersSchema, connection):
-        data = filters_data.model_dump(exclude_none=True)
-
+    def find_all_payments(parking_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -26,38 +23,12 @@ class PaymentsRepository:
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
+        WHERE pay.parking_id = %s
+        ORDER BY pay.created_at DESC
         """
 
-        filters = []
-        values = []
-
-        if "plate_id" in data:
-            filters.append("pay.plate_id = %s")
-            values.append(data["plate_id"])
-
-        if "spot_id" in data:
-            filters.append("pay.spot_id = %s")
-            values.append(data["spot_id"])
-
-        if "payment_method" in data:
-            filters.append("pay.payment_method_id = %s")
-            values.append(data["payment_method"])
-
-        if "start_date" in data:
-            filters.append("DATE(pay.created_at) >= %s")
-            values.append(data["start_date"])
-
-        if "end_date" in data:
-            filters.append("DATE(pay.created_at) <= %s")
-            values.append(data["end_date"])
-
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
-
-        query += " ORDER BY pay.created_at DESC"
-
         try:
-            cursor.execute(query, values)
+            cursor.execute(query, (parking_id,))
             results = cursor.fetchall()
 
             payments = [
@@ -81,7 +52,7 @@ class PaymentsRepository:
             cursor.close()
 
     @staticmethod
-    def find_payment_by_id(payment_id: int, connection):
+    def find_payment_by_id(parking_id: int, payment_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -95,11 +66,11 @@ class PaymentsRepository:
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
-        WHERE pay.id = %s
+        WHERE pay.parking_id = %s AND pay.id = %s
         """
 
         try:
-            cursor.execute(query, (payment_id,))
+            cursor.execute(query, (parking_id, payment_id))
             result = cursor.fetchone()
 
             if not result:
@@ -123,7 +94,7 @@ class PaymentsRepository:
             cursor.close()
 
     @staticmethod
-    def find_payments_by_plate(plate_id: int, connection):
+    def find_payments_by_plate(parking_id: int, plate_id: int, connection):
         cursor = connection.cursor()
 
         query = """
@@ -137,12 +108,12 @@ class PaymentsRepository:
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
-        WHERE pay.plate_id = %s
+        WHERE pay.parking_id = %s AND pay.plate_id = %s
         ORDER BY pay.created_at DESC
         """
 
         try:
-            cursor.execute(query, (plate_id,))
+            cursor.execute(query, (parking_id, plate_id))
             results = cursor.fetchall()
 
             payments = [
@@ -170,17 +141,18 @@ class PaymentsRepository:
             cursor.close()
 
     @staticmethod
-    def create_payment(plate_id: int, spot_id: int, value: float, payment_method_id: str, connection):
+    def create_payment(parking_id: int, plate_id: int, spot_id: int, value: float, payment_method_id: str, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO PAYMENTS (plate_id, spot_id, value, payment_method_id)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO PAYMENTS (parking_id, plate_id, spot_id, value, payment_method_id)
+        VALUES (%s, %s, %s, %s, %s)
         """
 
         try:
             cursor.execute(
                 query, (
+                    parking_id,
                     plate_id,
                     spot_id,
                     value,

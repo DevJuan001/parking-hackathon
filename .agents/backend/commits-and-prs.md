@@ -122,7 +122,11 @@ This matches `.github/PULL_REQUEST_TEMPLATE/backend.md`.
 
 ### Docs / meta
 <!-- PR template, skills, README, .github -->
-```
+
+**Style rules for PR bodies:**
+- `## Summary` — 1-3 sentences. No more.
+- `## Changes` — bullets only, grouped by section. Empty sections deleted.
+- Do **not** include `## Labels`, `## Notes`, `## Type of change`, or `## Checklist` — they have been removed from the template and are not used in real PRs. Labels are applied via `gh pr edit <num> --add-label ...` and don't appear in the body.
 
 **Style rules for PR bodies:**
 - `## Summary` — 1-3 sentences. No more.
