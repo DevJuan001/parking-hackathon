@@ -15,10 +15,11 @@ class PlatesRepository:
         SELECT
             p.id,
             p.plate,
-            vt.name,
+            vt.id,
             p.created_at
         FROM PLATES AS p
-        INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+        INNER JOIN VEHICLE_TYPES AS vt
+            ON vt.id = p.vehicle_type_id
         ORDER BY p.created_at DESC
         """
 
@@ -90,7 +91,7 @@ class PlatesRepository:
         SELECT
             p.id,
             p.plate,
-            vt.name,
+            vt.id,
             p.created_at
         FROM PLATES AS p
         INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id

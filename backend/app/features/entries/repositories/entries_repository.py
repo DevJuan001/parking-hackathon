@@ -271,38 +271,6 @@ class EntriesRepository:
             cursor.close()
 
     @staticmethod
-    def find_latest_exit(plate_id: int, connection):
-        cursor = connection.cursor()
-
-        query = """
-        SELECT id, plate_id, created_at
-        FROM EXITS
-        WHERE plate_id = %s
-        ORDER BY created_at DESC
-        LIMIT 1
-        """
-
-        try:
-            cursor.execute(query, (plate_id,))
-            result = cursor.fetchone()
-
-            if not result:
-                return None, None
-
-            return None, {
-                "id": result[0],
-                "plate_id": result[1],
-                "created_at": result[2]
-            }
-
-        except Exception as e:
-            logger.error("Error en find_latest_exit: %s", e, exc_info=True)
-            return "Error al buscar la última salida", None
-
-        finally:
-            cursor.close()
-
-    @staticmethod
     def create_entry(plate_id: int, spot_id: int, connection):
         cursor = connection.cursor()
 
