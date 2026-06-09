@@ -1,4 +1,5 @@
 import bcrypt
+from fastapi import HTTPException
 from pydantic import EmailStr
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
@@ -71,12 +72,11 @@ class UsersService:
             return "Error al intentar obtener el usuario mediante el id", None
 
     @staticmethod
-    def get_user_by_email(parking_id: int, email: EmailStr):
+    def get_user_by_email(email: EmailStr):
         connection = get_connection()
 
         try:
             error, user = UsersRepository.find_user_by_email(
-                parking_id,
                 email,
                 connection
             )
@@ -131,7 +131,6 @@ class UsersService:
         try:
             # Verificar que no este registrado ya un usuario con el correo que viene
             error, user = UsersRepository.find_user_by_email(
-                parking_id=parking_id,
                 email=data["email"],
                 connection=connection
             )
@@ -204,7 +203,7 @@ class UsersService:
             # Verificar si el correo ya esta siendo usado y no duplicarlo
             if "email" in data:
                 error, existing_user = UsersRepository.find_user_by_email(
-                    parking_id, data["email"], connection
+                    data["email"], connection
                 )
 
                 if existing_user and (existing_user[1] != user_id):
@@ -245,10 +244,10 @@ class UsersService:
 
         connection = get_connection()
 
-        if data["new_password"] != data["repeat_password"]:
-            raise ServiceError("Las contraseñas no coiniciden")
-
         try:
+            if data["new_password"] != data["repeat_password"]:
+                raise ServiceError("Las contraseñas no coiniciden")
+
             # Buscamos la contraseña del usuario con ese id
             error, user = UsersRepository.find_user_password_by_id(
                 parking_id, user_id, connection
@@ -258,9 +257,12 @@ class UsersService:
                 raise ServiceError(error)
 
             # Validamos que la contraseña antigua sea igual a la que esta registrada
-            verify_password(
+            success = verify_password(
                 str(user[0]), data["old_password"]
             )
+
+            if not success:
+                raise ServiceError("Contraseña incorrecta")
 
             error, success, message = UsersRepository.update_user_password(
                 parking_id, user_id, data["new_password"], connection
