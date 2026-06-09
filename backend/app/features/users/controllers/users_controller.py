@@ -72,9 +72,10 @@ class UsersController:
         }
 
     @staticmethod
-    async def create_user(user_data: CreateUserSchema):
+    async def create_user(user_data: CreateUserSchema, payload: dict):
         error, success, message = await UsersService.create_user(
-            user_data
+            user_data,
+            int(payload["parking_id"])
         )
 
         if error:
