@@ -179,11 +179,11 @@ class UsersRepository:
             u.name,
             u.first_surname,
             u.second_surname,
-            u.email, 
+            u.email,
             u.password
-        FROM USERS AS u 
-        INNER JOIN ROLES AS r 
-            ON r.id = u.role_id 
+        FROM USERS AS u
+        INNER JOIN ROLES AS r
+            ON r.id = u.role_id
         WHERE u.email = %s
         """
 
@@ -203,7 +203,7 @@ class UsersRepository:
 
     # Crear un usuario
     @staticmethod
-    def create_user(user_data: CreateUserSchema, hash_password: str, connection):
+    def create_user(user_data: CreateUserSchema, hash_password: str, parking_id: int, connection):
         data = user_data.model_dump()
 
         cursor = connection.cursor()
@@ -211,16 +211,18 @@ class UsersRepository:
         # Petición a la base de datos
         query = """INSERT INTO USERS (
             role_id,
+            parking_id,
             name,
             first_surname,
             second_surname,
             password,
             email
-        ) VALUES(%s, %s, %s, %s, %s, %s)"""
+        ) VALUES(%s, %s, %s, %s, %s, %s, %s)"""
 
         try:
             cursor.execute(query, (
                 data["role_id"],
+                parking_id,
                 data["name"],
                 data["first_surname"],
                 data["second_surname"],
