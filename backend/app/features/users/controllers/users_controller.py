@@ -48,11 +48,8 @@ class UsersController:
         }
 
     @staticmethod
-    def get_user_by_email(email: str, payload: dict):
-        error, user = UsersService.get_user_by_email(
-            int(payload["parking_id"]),
-            email
-        )
+    def get_user_by_email(email: str):
+        error, user = UsersService.get_user_by_email(email)
 
         if error:
             raise HTTPException(status_code=404, detail=error)
@@ -139,6 +136,8 @@ class UsersController:
         )
 
         if error:
+            if error == "Contraseña incorrecta":
+                raise HTTPException(status_code=401, detail=error)
             raise HTTPException(status_code=404, detail=error)
 
         return {
