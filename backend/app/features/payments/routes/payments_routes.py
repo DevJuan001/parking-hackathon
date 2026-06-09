@@ -53,8 +53,6 @@ def get_payment_by_id(payment_id: int):
     return PaymentsController.get_payment_by_id(payment_id)
 
 
-
-
 @router.post(
     "/create",
     dependencies=[
