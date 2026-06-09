@@ -21,7 +21,8 @@ class PaymentsRepository:
             p.plate,
             s.spot,
             pay.value,
-            pay.created_at
+            pay.created_at,
+            pay.payment_method_id
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
@@ -37,6 +38,10 @@ class PaymentsRepository:
         if "spot_id" in data:
             filters.append("pay.spot_id = %s")
             values.append(data["spot_id"])
+
+        if "payment_method" in data:
+            filters.append("pay.payment_method_id = %s")
+            values.append(data["payment_method"])
 
         if "start_date" in data:
             filters.append("DATE(pay.created_at) >= %s")
@@ -61,7 +66,8 @@ class PaymentsRepository:
                     plate=item[1],
                     spot=item[2],
                     value=item[3],
-                    created_at=date_formatter(item[4])
+                    created_at=date_formatter(item[4]),
+                    payment_method=item[5]
                 )
                 for item in results
             ]
@@ -84,7 +90,8 @@ class PaymentsRepository:
             p.plate,
             s.spot,
             pay.value,
-            pay.created_at
+            pay.created_at,
+            pay.payment_method_id
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
@@ -103,7 +110,8 @@ class PaymentsRepository:
                 plate=result[1],
                 spot=result[2],
                 value=result[3],
-                created_at=date_formatter(result[4])
+                created_at=date_formatter(result[4]),
+                payment_method=result[5]
             )
             return None, payment
 
@@ -124,7 +132,8 @@ class PaymentsRepository:
             p.plate,
             s.spot,
             pay.value,
-            pay.created_at
+            pay.created_at,
+            pay.payment_method_id
         FROM PAYMENTS AS pay
         INNER JOIN PLATES AS p ON p.id = pay.plate_id
         INNER JOIN SPOTS  AS s ON s.spot_id = pay.spot_id
@@ -142,30 +151,42 @@ class PaymentsRepository:
                     plate=item[1],
                     spot=item[2],
                     value=item[3],
-                    created_at=date_formatter(item[4])
+                    created_at=date_formatter(item[4]),
+                    payment_method=item[5]
                 )
                 for item in results
             ]
             return None, payments
 
         except Exception as e:
-            logger.error("Error en find_payments_by_plate: %s", e, exc_info=True)
+            logger.error(
+                "Error en find_payments_by_plate: %s",
+                e,
+                exc_info=True
+            )
             return "Error al intentar obtener los pagos de la placa", None
 
         finally:
             cursor.close()
 
     @staticmethod
-    def create_payment(plate_id: int, spot_id: int, value: float, connection):
+    def create_payment(plate_id: int, spot_id: int, value: float, payment_method_id: str, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO PAYMENTS (plate_id, spot_id, value)
-        VALUES (%s, %s, %s)
+        INSERT INTO PAYMENTS (plate_id, spot_id, value, payment_method_id)
+        VALUES (%s, %s, %s, %s)
         """
 
         try:
-            cursor.execute(query, (plate_id, spot_id, value))
+            cursor.execute(
+                query, (
+                    plate_id,
+                    spot_id,
+                    value,
+                    payment_method_id
+                )
+            )
             return None, True, "Pago registrado correctamente"
 
         except Exception as e:
