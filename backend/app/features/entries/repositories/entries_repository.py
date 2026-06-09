@@ -1,6 +1,6 @@
 from app.utils.logger import get_logger
 from app.features.entries.models.entries_responses import EntryResponse
-from backend.app.features.entries.models.entries_schemas import EntriesFiltersSchema
+from app.features.entries.models.entries_schemas import EntriesFiltersSchema
 
 logger = get_logger("entries.repository")
 
