@@ -6,6 +6,7 @@ Step-by-step procedure to add a new feature end to end. Follow the **Requirement
 
 - [ ] Confirm no existing branch is already working on this (`git fetch` + `git branch -a`).
 - [ ] Confirm the database has the tables/columns you need; if not, file/coordinate a PR to the `database` branch first.
+- [ ] **Table-per-repository check**: identify which table(s) the queries will target. If the table already has a canonical repository (e.g. `PlatesRepository`, `SpotsRepository`, `TariffsRepository`, `VehicleTypesRepository`, `UsersRepository`, `RolesRepository`), do **not** create a new one — import the existing repository instead. Only create a new repository when introducing a brand-new table. See `architecture.md` for the full mapping.
 
 ## 1. Branch
 
