@@ -51,7 +51,7 @@ class ExitsRepository:
                 ExitResponse(
                     id=item[0],
                     plate=item[1],
-                    created_at=date_formatter(item[2])
+                    created_at=item[2]
                 )
                 for item in results
             ]
@@ -85,12 +85,11 @@ class ExitsRepository:
             if not result:
                 return "Salida no encontrada", None
 
-            exit_record = ExitResponse(
+            return None, ExitResponse(
                 id=result[0],
                 plate=result[1],
-                created_at=date_formatter(result[2])
+                created_at=result[2]
             )
-            return None, exit_record
 
         except Exception as e:
             logger.error("Error en find_exit_by_id: %s", e, exc_info=True)
@@ -109,7 +108,8 @@ class ExitsRepository:
             p.plate,
             e.created_at
         FROM EXITS AS e
-        INNER JOIN PLATES AS p ON p.id = e.plate_id
+        INNER JOIN PLATES AS p
+            ON p.id = e.plate_id
         WHERE e.plate_id = %s
         ORDER BY e.created_at DESC
         """
@@ -122,7 +122,7 @@ class ExitsRepository:
                 ExitResponse(
                     id=item[0],
                     plate=item[1],
-                    created_at=date_formatter(item[2])
+                    created_at=item[2]
                 )
                 for item in results
             ]
@@ -131,6 +131,43 @@ class ExitsRepository:
         except Exception as e:
             logger.error("Error en find_exits_by_plate: %s", e, exc_info=True)
             return "Error al intentar obtener las salidas de la placa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_latest_exit(plate_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            e.id,
+            p.plate,
+            e.created_at
+        FROM EXITS AS e
+        INNER JOIN PLATES AS p
+            ON p.id = e.plate_id
+        WHERE plate_id = %s
+        ORDER BY created_at DESC
+        LIMIT 1
+        """
+
+        try:
+            cursor.execute(query, (plate_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return None, None
+
+            return None, ExitResponse(
+                id=result[0],
+                plate=result[1],
+                created_at=result[2]
+            )
+
+        except Exception as e:
+            logger.error("Error en find_latest_exit: %s", e, exc_info=True)
+            return "Error al buscar la última salida", None
 
         finally:
             cursor.close()
