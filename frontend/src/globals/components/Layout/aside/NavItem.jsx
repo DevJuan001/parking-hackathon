@@ -33,7 +33,7 @@ export default function NavItem({ itemId, path, name, icon, showName }) {
           <div
             className={`text-center font-medium overflow-hidden transition-all duration-500 ease-in-out
             ${showName ? "max-w-[200px]" : "max-w-0 group-hover:max-w-[200px]"}
-            ${isActive ? "font-semibold" : "group-hover:text-black dark:group-hover:text-white"}`}
+            ${isActive ? "font-semibold max-w-[200px]" : "group-hover:text-black dark:group-hover:text-white"}`}
           >
             <span className={`inline-block text-nowrap whitespace-nowrap origin-left group-not-hover:animate-grow-out group-hover:animate-grow-in`}>
               {name}
