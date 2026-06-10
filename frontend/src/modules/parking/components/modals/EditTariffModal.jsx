@@ -11,13 +11,17 @@ import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 // Constants
 import { vehicleTypeOptions } from "../../constants/vehicleTypes";
+import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
 
 export default function EditTariffModal({ onClose, tariff }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, tariffData, loading } = useUpdateTariff(tariff);
+  const { handleChange, handleSubmit, tariffData, loading } =
+    useUpdateTariff(tariff);
 
   return (
     <section className="flex flex-col items-center gap-2">
+      <ModalHighSection icon={"payments"} text={tariff.vehicle_type} />
+
       <SelectMenu
         id={"vehicle_type"}
         spanText={"Tipo de vehículo"}

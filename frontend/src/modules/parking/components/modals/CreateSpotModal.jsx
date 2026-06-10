@@ -18,7 +18,7 @@ export default function CreateSpotModal({ onClose }) {
       <FormField
         id={"spot"}
         name={"spot"}
-        labelText={"Plaza"}
+        labelText={"Nombre"}
         value={spotData.spot}
         onChange={handleChange}
         autoComplete="off"

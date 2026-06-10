@@ -6,10 +6,12 @@ import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
+// Constants
+import { placeStatus } from "../../constants/spotStatus";
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
-import { placeStatus } from "../../constants/spotStatus";
+import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
 
 export default function EditSpotModal({ onClose, spot }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -17,10 +19,12 @@ export default function EditSpotModal({ onClose, spot }) {
 
   return (
     <section className="flex flex-col items-center gap-2">
+      <ModalHighSection icon={"garage"} text={spot.spot} />
+
       <FormField
         id={"spot"}
         name={"spot"}
-        labelText={"Plaza"}
+        labelText={"Nombre"}
         value={spotData.spot}
         onChange={handleChange}
         autoComplete="off"
