@@ -63,3 +63,17 @@ def update_tariff(
     payload: dict = Depends(verify_jwt)
 ):
     return TariffsController.update_tariff(tariff_id, tariff_data, payload)
+
+
+@router.delete(
+    "/delete/{tariff_id}",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
+    ]
+)
+def delete_tariff(
+    tariff_id: int,
+    payload: dict = Depends(verify_jwt)
+):
+    return TariffsController.delete_tariff(tariff_id, payload)

@@ -62,3 +62,18 @@ class TariffsController:
             "success": success,
             "message": message
         }
+
+    @staticmethod
+    def delete_tariff(tariff_id: int, payload: dict):
+        error, success, message = TariffsService.delete_tariff(
+            int(payload["parking_id"]),
+            tariff_id
+        )
+
+        if error:
+            raise HTTPException(status_code=400, detail=error)
+
+        return {
+            "success": success,
+            "message": message
+        }
