@@ -24,3 +24,10 @@ class UserByIdResponse(BaseModel):
     email: EmailStr
     created_at: str
     status: int
+
+
+class UserStatsResponse(BaseModel):
+    total: int
+    active: int
+    disabled: int
+    created_this_week: int

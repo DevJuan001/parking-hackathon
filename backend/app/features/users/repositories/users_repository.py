@@ -2,7 +2,7 @@ import bcrypt
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
 from app.features.users.models.users_schemas import CreateUserSchema, UpdateUserSchema, UsersFiltersSchema
-from app.features.users.models.users_responses import UserByIdResponse, UserResponse
+from app.features.users.models.users_responses import UserByIdResponse, UserResponse, UserStatsResponse
 
 logger = get_logger("users.repository")
 
@@ -79,6 +79,43 @@ class UsersRepository:
         except Exception as e:
             logger.error("Error en find_all_users: %s", e, exc_info=True)
             return "Error al intentar obtener todos los usuarios", None
+
+        finally:
+            cursor.close()
+
+    # Obtener estadisticas de usuarios del parking
+    @staticmethod
+    def count_user_stats(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN u.status = 2 THEN 1 ELSE 0 END) AS active,
+            SUM(CASE WHEN u.status = 1 THEN 1 ELSE 0 END) AS disabled,
+            SUM(
+                CASE WHEN u.created_at >= (NOW() - INTERVAL 7 DAY) THEN 1
+                ELSE 0 END
+            ) AS created_this_week
+        FROM USERS AS u
+        WHERE u.parking_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            result = cursor.fetchone()
+
+            stats = UserStatsResponse(
+                total=int(result[0] or 0),
+                active=int(result[1] or 0),
+                disabled=int(result[2] or 0),
+                created_this_week=int(result[3] or 0)
+            )
+            return None, stats
+
+        except Exception as e:
+            logger.error("Error en count_user_stats: %s", e, exc_info=True)
+            return "Error al intentar obtener las estadisticas de usuarios", None
 
         finally:
             cursor.close()

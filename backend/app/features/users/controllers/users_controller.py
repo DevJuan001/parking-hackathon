@@ -20,6 +20,19 @@ class UsersController:
         }
 
     @staticmethod
+    def get_user_stats(payload: dict):
+        error, stats = UsersService.get_user_stats(
+            int(payload["parking_id"])
+        )
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": stats
+        }
+
+    @staticmethod
     def get_user_by_id(user_id: int, payload: dict):
         error, user = UsersService.get_user_by_id(
             int(payload["parking_id"]),

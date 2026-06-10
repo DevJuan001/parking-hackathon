@@ -39,7 +39,7 @@ class FloorsController:
     def create_floor(floor_data: CreateFloorSchema, payload: dict):
         error, success, message = FloorsService.create_floor(
             int(payload["parking_id"]),
-            floor_data.floor_number
+            floor_data.name
         )
 
         if error:
@@ -52,16 +52,16 @@ class FloorsController:
 
     @staticmethod
     def update_floor(floor_id: int, floor_data: UpdateFloorSchema, payload: dict):
-        if floor_data.floor_number is None:
+        if floor_data.name is None:
             raise HTTPException(
                 status_code=400,
-                detail="Debes enviar al menos un campo a actualizar"
+                detail="Debes enviar el nombre del piso a actualizar"
             )
 
         error, success, message = FloorsService.update_floor(
             int(payload["parking_id"]),
             floor_id,
-            floor_data.floor_number
+            floor_data.name
         )
 
         if error:

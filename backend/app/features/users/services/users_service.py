@@ -45,6 +45,34 @@ class UsersService:
             connection.close()
 
     @staticmethod
+    def get_user_stats(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, stats = UsersRepository.count_user_stats(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, stats
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_user_stats: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener las estadisticas de usuarios", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     def get_user_by_id(parking_id: int, user_id: int):
         connection = get_connection()
 
