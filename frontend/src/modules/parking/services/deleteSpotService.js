@@ -1,15 +1,11 @@
 import { apiRoutes } from "../../../config/apiRoutes";
 import { fetchWithAuth } from "../../../utils/fetchWithAuth";
 
-export async function updateSpotService(spot_id, changes) {
+export async function deleteSpotService(spot_id) {
   const response = await fetchWithAuth(
-    `${apiRoutes.apiUrl}${apiRoutes.spots}/update/${spot_id}`,
+    `${apiRoutes.apiUrl}${apiRoutes.spots}/delete/${spot_id}`,
     {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(changes),
+      method: "DELETE",
     },
   );
 
@@ -19,5 +15,5 @@ export async function updateSpotService(spot_id, changes) {
     return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return { error: null, data: json };
+  return json;
 }

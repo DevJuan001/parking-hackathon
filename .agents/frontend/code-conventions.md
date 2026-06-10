@@ -9,7 +9,7 @@ Style rules for React + Vite + JavaScript (no TypeScript). See `architecture.md`
 - ES6+ features: arrow functions, destructuring, template literals, async/await.
 - Component files: PascalCase (`LoginPage.jsx`, `ActionButtons.jsx`).
 - Hook files: camelCase, prefixed with `use` (`useAuth.js`, `useParking.js`).
-- Service files: camelCase (`authService.js`, `parkingService.js`).
+- Service files: camelCase, one per action (`getAllSpotsService.js`, `createSpotService.js`, `updateSpotService.js`). Never group multiple actions in a single barrel file — see `architecture.md`.
 
 ## Components
 
@@ -45,7 +45,8 @@ Style rules for React + Vite + JavaScript (no TypeScript). See `architecture.md`
 - Build URLs from the keys in `src/config/apiRoutes.js` via template strings. Do not add new keys unless the route prefix is genuinely new across the codebase. Each feature module typically needs only one or two keys (e.g. `parking` for `/parking`, `spots` for `/spots`).
 - Auth token is read from httpOnly cookies via `fetchWithAuth`; do not read `document.cookie` directly.
 - Handle loading, error, and success states in the caller.
-- Throw `new Error("Mensaje legible en español")` on `!response.ok` so the caller's inner `ErrorModal` can render a friendly message.
+- **Write services read the body first, then check `response.ok`.** They never `throw` on HTTP errors — instead they return `{ error: json.detail || "Error en la petición", data: null }` on failure, and the raw `json` on success (typically `{ success: true, message: "..." }`). The hook wraps the call in `try` / `catch` and inspects `response.success === true`. See `data-fetching.md` for the canonical shapes.
+- **Read services** (`get<Name>Service`) use the older `throw new Error(...)` + raw JSON pattern. Their failure is handled by `useQuery`'s `error` state, not by an inner modal.
 - Never call APIs directly inside components; use the service layer.
 
 ## Polling

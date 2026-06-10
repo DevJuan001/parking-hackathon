@@ -38,6 +38,15 @@ src/
 - Auth token is read from cookies (handled by the login module's auth utility).
 - For authenticated endpoints, always go through `fetchWithAuth` from `src/utils/fetchWithAuth.js`. For public endpoints (login, recover-password), plain `fetch` is fine.
 - **URL building**: use keys from `src/config/apiRoutes.js` via template strings. Don't add new keys unless the route prefix is genuinely new (e.g. `parking`, `spots`, `users`, `entries`, `exits`, `auth`, `dashboard`). For nested paths like `/parking/spots`, build as `${apiRoutes.apiUrl}${apiRoutes.parking}/spots`.
+- **One service file per action, not a barrel file.** Each HTTP call lives in its own file, named after the action it performs (`getAllSpotsService.js`, `createSpotService.js`, `updateSpotService.js`, etc.). This keeps imports tight, makes grep-to-impact trivial, and matches the layout already in `src/modules/parking/services/`. Do **not** group multiple actions in a single file like `spotsService.js` with several named exports.
+
+  ```
+  src/modules/<name>/services/
+  ├── getAll<Name>Service.js
+  ├── create<Name>Service.js
+  ├── update<Name>Service.js
+  └── ...
+  ```
 
 ### Auth
 

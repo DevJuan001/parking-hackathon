@@ -82,12 +82,6 @@ docs(frontend): add README setup instructions
 - `api` — backend API
 - `frontend` — frontend
 
-## Type of change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Refactor / chore
-- [ ] Documentation update
-
 ## Changes
 <!-- Group by relevant section. Remove empty ones. -->
 
@@ -106,17 +100,6 @@ docs(frontend): add README setup instructions
 ### Styles
 <!-- Global or component CSS changes -->
 
-## Checklist
-- [ ] No TypeScript
-- [ ] Shared components in globals/ui
-- [ ] API calls via service layer
-- [ ] No console.log, no hardcoded URLs
-- [ ] npm run dev works
-- [ ] Labels applied correctly
-- [ ] No dead code
-
-## Notes
-<!-- Breaking changes, follow-ups, things reviewers should know -->
 ```
 
 ## Opening the PR

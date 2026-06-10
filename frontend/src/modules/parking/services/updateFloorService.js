@@ -1,14 +1,12 @@
 import { apiRoutes } from "../../../config/apiRoutes";
 import { fetchWithAuth } from "../../../utils/fetchWithAuth";
 
-export async function updateSpotService(spot_id, changes) {
+export async function updateFloorService(floor_id, changes) {
   const response = await fetchWithAuth(
-    `${apiRoutes.apiUrl}${apiRoutes.spots}/update/${spot_id}`,
+    `${apiRoutes.apiUrl}${apiRoutes.floors}/update/${floor_id}`,
     {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(changes),
     },
   );
@@ -19,5 +17,5 @@ export async function updateSpotService(spot_id, changes) {
     return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return { error: null, data: json };
+  return json;
 }

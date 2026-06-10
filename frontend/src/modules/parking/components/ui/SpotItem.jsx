@@ -1,7 +1,7 @@
 import Icon from "../../../../globals/components/ui/Icon";
-import { placeStatus } from "../../constants/placeStatus";
+import { placeStatus } from "../../constants/spotStatus";
 
-export default function ParkingPlace({ name, status = 2, onClick }) {
+export default function SpotItem({ name, status = 2, onClick }) {
   const config = placeStatus[status] || placeStatus[2];
 
   return (
@@ -16,7 +16,6 @@ export default function ParkingPlace({ name, status = 2, onClick }) {
         <Icon
           name={config.icon}
           size={14}
-          color={config.fill ? undefined : "#FFFFFF"}
           fill={config.fill}
         />
 
