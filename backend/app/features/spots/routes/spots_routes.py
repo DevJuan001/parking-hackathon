@@ -18,7 +18,7 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=100, seconds=60)),
+        Depends(RateLimiter(times=300, seconds=60)),
     ]
 )
 def get_all_spots(
