@@ -39,8 +39,7 @@ export function useCreateUser() {
     setLoading(true);
 
     try {
-      const payload = { ...form, role_id: Number(form.role_id) };
-      const response = await createUserService(payload);
+      const response = await createUserService(form);
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["users"] });
