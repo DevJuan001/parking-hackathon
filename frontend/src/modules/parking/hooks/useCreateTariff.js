@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
+import { createTariffService } from "../services/createTariffService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
-import { createTariffService } from "../services/tariffsService";
 
 export function useCreateTariff() {
   const [tariffData, setTariffData] = useState({
