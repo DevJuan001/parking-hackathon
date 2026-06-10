@@ -13,7 +13,7 @@ export default function UsersTable({ openModal }) {
   const isFirstLoad = users.length === 0 && loading;
 
   return (
-    <div className="w-full h-full border rounded-2xl">
+    <div className="w-full h-full border rounded-2xl dark:border-[#17171a] dark:text-white">
       {noUsers && (
         <div
           className="flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]
@@ -41,7 +41,7 @@ export default function UsersTable({ openModal }) {
       ) : (
         !noUsers && (
           <table className="h-full w-full">
-            <thead className="sticky h-12 border-b">
+            <thead className="sticky h-12 border-b dark:border-[#17171a]">
               <tr>
                 <th className="font-medium text-sm pl-4 text-start">Rol</th>
 
@@ -71,7 +71,9 @@ export default function UsersTable({ openModal }) {
               {users.map((user) => (
                 <tr
                   key={user.id}
-                  className="h-12 transition-colors duration-200 hover:bg-[#f5f3f6]"
+                  className="h-12 transition-colors duration-200
+                  hover:bg-[#f5f3f6]
+                  dark:hover:bg-[#17171a]"
                 >
                   <th className="font-medium text-sm pl-4 text-start">
                     {user.role_name}
