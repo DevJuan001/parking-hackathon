@@ -90,7 +90,7 @@ export function useUpdate<X>(original) {
       const response = await update<X>Service(original.id, changes);
 
       if (response.success === true) {
-        await queryClient.invalidateQueries({ queryKey: ["<name>"] });
+        await queryClient.invalidateQueries({ queryKey: ["<relatedQueries>"] });
         openInnerModal("success", triggerButton);
       } else {
         setError(
@@ -110,9 +110,29 @@ export function useUpdate<X>(original) {
 }
 ```
 
-For **create** hooks, drop `getChanges` and send `formData` as the full payload.
+For **create** hooks, drop `getChanges` and send `formData` as the full payload (no `Number(...)` coercion — see "Raw form data, no coercion" below).
 
 For **delete** hooks (e.g. `useDeleteSpot`), there is no form to validate. The hook receives `(e, openInnerModal, onClose)`, calls the service, and either calls `onClose()` on success or opens the inner error modal. The caller passes `onClose` as a prop that closes the outer modal.
+
+### Raw form data, no coercion
+
+The hook sends the form **as the user typed it** — every `value` is a string (because `FormField` and `SelectMenu` are uncontrolled HTML inputs). The hook does **not** call `Number(form.role_id)` or `parseInt(...)` to "fix" the shape before sending. The backend accepts the strings (or coerces them itself) and returns the real error if anything is off. If you find yourself reaching for `Number(...)` in a write hook, stop — the value is fine as a string.
+
+### Invalidate all related queries, not just the obvious one
+
+A single write can change the shape of more than one cached query. After a successful create / update / delete, invalidate **every** query whose result the write could have touched. Two rules:
+
+- The main list query (e.g. `["users"]`) — always.
+- Any aggregate / detail / count query that depends on the same records (e.g. `["userStats"]` for totals, `["userById", id]` for the detail view).
+
+Example for `useCreateUser` / `useUpdateUser`:
+
+```js
+await queryClient.invalidateQueries({ queryKey: ["users"] });
+await queryClient.invalidateQueries({ queryKey: ["userStats"] });
+```
+
+Do not try to be clever with partial invalidation by mutating the cache — the polling interval + invalidate is fast enough, and full invalidation is uniform across the codebase.
 
 ### Two paths, every time
 
@@ -120,7 +140,7 @@ Every write hook follows the same shape. The hook does not read `response.error`
 
 | Path | When | What the hook does |
 |---|---|---|
-| **Success** | `response.success === true` | Invalidate query + `openInnerModal("success", triggerButton)` (or `onClose()` for delete) |
+| **Success** | `response.success === true` | Invalidate all related queries + `openInnerModal("success", triggerButton)` (or `onClose()` for delete) |
 | **Failure** | `response.success !== true` or `await` threw | `setError(<fallback en español>)` + `openInnerModal("error", triggerButton)` |
 
 ### Showing the error in the modal
