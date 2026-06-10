@@ -67,12 +67,12 @@ CREATE TABLE PLATES (
 
 CREATE TABLE SPOTS (
   spot_id     INT       NOT NULL AUTO_INCREMENT,
-  floor_id    INT       NOT NULL,
+  floor_id    INT       NULL,
   spot        TEXT      NOT NULL,
   spot_status  INT      NOT NULL DEFAULT 2 COMMENT '1: deshabilitada, 2: dispnible, 3: ocupado',
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (spot_id),
-  FOREIGN KEY (floor_id) REFERENCES FLOORS(id),
+  FOREIGN KEY (floor_id) REFERENCES FLOORS(id) ON DELETE SET NULL,
   INDEX idx_spots_floor_id (floor_id)
 );
 
@@ -81,12 +81,12 @@ CREATE TABLE ENTRIES (
   id          INT       NOT NULL AUTO_INCREMENT,
   parking_id  INT       NOT NULL,
   plate_id    INT       NOT NULL,
-  spot_id     INT       NOT NULL,
+  spot_id     INT       NULL,
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (parking_id) REFERENCES PARKINGS(id),
   FOREIGN KEY (plate_id) REFERENCES PLATES(id),
-  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id),
+  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id) ON DELETE SET NULL,
   INDEX idx_entries_parking_id (parking_id)
 );
 
@@ -128,14 +128,14 @@ CREATE TABLE PAYMENTS (
   id          INT       NOT NULL AUTO_INCREMENT,
   parking_id  INT       NOT NULL,
   plate_id    INT       NOT NULL,
-  spot_id     INT       NOT NULL,
+  spot_id     INT       NULL,
   value       FLOAT     NOT NULL,
   payment_method_id INT NOT NULL,
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (parking_id) REFERENCES PARKINGS(id),
   FOREIGN KEY (plate_id) REFERENCES PLATES(id),
-  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id),
+  FOREIGN KEY (spot_id)  REFERENCES SPOTS(spot_id) ON DELETE SET NULL,
   FOREIGN KEY (payment_method_id)  REFERENCES PAYMENT_METHODS(id),
   INDEX idx_payments_parking_id (parking_id)
 );
