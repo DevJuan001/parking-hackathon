@@ -1,9 +1,12 @@
 import { apiRoutes } from "../../../config/apiRoutes";
+import { buildQueryParams } from "../../../utils/buildQueryParams";
 import { fetchWithAuth } from "../../../utils/fetchWithAuth";
 
-export async function getAllSpotsService() {
+export async function getAllSpotsService(filters = {}) {
+  const params = buildQueryParams(filters);
+
   const response = await fetchWithAuth(
-    `${apiRoutes.apiUrl}${apiRoutes.parking}/spots`,
+    `${apiRoutes.apiUrl}${apiRoutes.parking}/spots/?${params}`,
     {
       method: "GET",
     },
