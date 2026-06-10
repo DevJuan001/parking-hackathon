@@ -37,7 +37,7 @@ export default function ParkingPage() {
           )}
 
           {modalType === "createSpot" && (
-            <CreateSpotModal onClose={closeModal} />
+            <CreateSpotModal floor={modalData} onClose={closeModal} />
           )}
 
           {modalType === "editFloor" && (

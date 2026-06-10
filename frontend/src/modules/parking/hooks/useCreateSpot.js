@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { createSpotService } from "../../home/services/createSpotService";
+import { createSpotService } from "../services/createSpotService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
-export function useCreateSpot() {
-  const [spotData, setSpotData] = useState({ spot: "" });
+export function useCreateSpot(floor) {
+  const [spotData, setSpotData] = useState({
+    floor_id: floor,
+    spot: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const queryClient = useQueryClient();

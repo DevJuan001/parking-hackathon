@@ -8,6 +8,7 @@ import Skeleton from "../../../../globals/components/ui/Skeleton";
 // Constants
 import SpotItem from "./SpotItem";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
+import CreateButton from "../../../../globals/components/ui/CreateButton";
 
 export default function SpotsPanel({ openModal }) {
   const { floors } = useFloors();
@@ -35,12 +36,18 @@ export default function SpotsPanel({ openModal }) {
       </div>
 
       {noSpots && (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-[#75777E]">
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4">
           <Icon name={"border_clear"} size={90} />
 
-          <span className="text-xl font-semibold">
+          <span className="text-xl font-semibold text-[#75777E]">
             Aún no hay plazas registradas
           </span>
+
+          <CreateButton
+            onClick={(e) =>
+              openModal(filters.floor_id, "createSpot", e.currentTarget)
+            }
+          />
         </div>
       )}
 
@@ -70,7 +77,9 @@ export default function SpotsPanel({ openModal }) {
             ))}
 
             <button
-              onClick={(e) => openModal(null, "createSpot", e.currentTarget)}
+              onClick={(e) =>
+                openModal(filters.floor_id, "createSpot", e.currentTarget)
+              }
               className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 rounded-3xl transition-colors 
             hover:bg-[#efedf0] 
             dark:hover:bg-[#ffffff15]"

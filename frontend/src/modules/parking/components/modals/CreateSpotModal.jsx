@@ -8,10 +8,10 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
-export default function CreateSpotModal({ onClose }) {
+export default function CreateSpotModal({ floor, onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
   const { handleChange, handleSubmit, spotData, loading, error } =
-    useCreateSpot();
+    useCreateSpot(floor);
 
   return (
     <section className="flex flex-col items-center gap-2">
