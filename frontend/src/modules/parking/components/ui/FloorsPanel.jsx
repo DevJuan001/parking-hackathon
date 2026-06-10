@@ -20,7 +20,7 @@ export default function FloorsPanel({ openModal }) {
 
         <CreateButton
           borderRadius={"20px"}
-          onClick={(e) => openModal(null, "createTariff", e.currentTarget)}
+          onClick={(e) => openModal(null, "createFloor", e.currentTarget)}
         />
       </div>
 
