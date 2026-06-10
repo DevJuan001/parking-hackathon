@@ -25,6 +25,7 @@ export default function ParkingPage() {
       {modalType && (
         <Modal
           isOpen={isOpen}
+          type={modalType}
           title={modalTitles[modalType] ?? ""}
           onClose={closeModal}
           location="anchored"

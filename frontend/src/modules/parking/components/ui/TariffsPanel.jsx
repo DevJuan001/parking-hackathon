@@ -31,7 +31,6 @@ export default function TariffsPanel({ openModal }) {
 
       {isFirstLoad ? (
         <div className="h-full w-full flex flex-wrap pt-4 gap-2">
-
           <Skeleton
             count={12}
             width="128px"
@@ -45,7 +44,7 @@ export default function TariffsPanel({ openModal }) {
         </div>
       ) : (
         !noTariffs && (
-          <div className="h-full w-full flex gap-2 overflow-y-auto">
+          <div className="h-full w-full flex flex-wrap gap-2 overflow-y-auto">
             {tariffs.map((tariff) => (
               <TariffItem openModal={openModal} tariff={tariff} />
             ))}
