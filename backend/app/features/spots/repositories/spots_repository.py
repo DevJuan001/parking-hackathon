@@ -171,6 +171,31 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
+    def delete_spot(parking_id: int, spot_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        DELETE s FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s AND s.spot_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id, spot_id))
+
+            if cursor.rowcount == 0:
+                return "Plaza no encontrada", False, None
+
+            return None, True, "Plaza eliminada correctamente"
+
+        except Exception as e:
+            logger.error("Error en delete_spot: %s", e, exc_info=True)
+            return "Error al intentar eliminar la plaza", False, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
     def update_spot(
         parking_id: int,
         spot_id: int,
