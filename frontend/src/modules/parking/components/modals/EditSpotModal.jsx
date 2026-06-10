@@ -12,14 +12,21 @@ import { placeStatus } from "../../constants/spotStatus";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
+import DeleteSpotModal from "./DeleteSpotModal";
 
 export default function EditSpotModal({ onClose, spot }) {
-  const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
+    useInnerModal();
   const { handleChange, handleSubmit, spotData, loading } = useUpdateSpot(spot);
 
   return (
     <section className="flex flex-col items-center gap-2">
-      <ModalHighSection icon={"garage"} text={spot.spot} />
+      <ModalHighSection
+        icon={"garage"}
+        text={spot.spot}
+        closeButtonOnClick={onClose}
+        deleteButtonOnClick={(e) => openInnerModal("delete", e)}
+      />
 
       <FormField
         id={"spot"}
@@ -70,6 +77,31 @@ export default function EditSpotModal({ onClose, spot }) {
           isOpen={true}
           errorTitle="¡No se pudo editar la plaza!"
           errorText="Verifica que los datos sean correctos y vuelve a intentarlo"
+          confirmButtonText="Volver a intentarlo"
+          onClose={() => openInnerModal(null)}
+        />
+      )}
+
+      {innerType === "delete" && (
+        <DeleteSpotModal
+          isOpen={true}
+          spot={spot}
+          triggerRef={innerTrigger}
+          onClose={closeInnerModal}
+          onDeleted={() => {
+            closeInnerModal();
+            onClose();
+          }}
+          onError={() => openInnerModal("deleteError")}
+        />
+      )}
+
+      {innerType === "deleteError" && (
+        <ErrorModal
+          triggerRef={innerTrigger}
+          isOpen={true}
+          errorTitle="¡No se pudo eliminar la plaza!"
+          errorText="Inténtalo de nuevo más tarde"
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />
