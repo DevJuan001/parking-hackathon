@@ -7,7 +7,7 @@ export default function AvatarButton({ avatarOnClick }) {
   return (
     <button
       onClick={avatarOnClick}
-      className="w-full h-full flex items-center justify-center py-1.5 gap-2.5 rounded-2xl transition duration-300 cursor-pointer
+      className="w-full h-full flex items-center py-3 pl-4 gap-3 rounded-2xl transition duration-300 cursor-pointer
         hover:cursor-pointer
         hover:bg-[#e5e7eb96] 
         dark:text-gray-50 dark:hover:bg-[#202022]"

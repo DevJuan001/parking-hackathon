@@ -1,5 +1,5 @@
 // Hooks
-import { useInnerModal } from "../../../hooks/useInnerModal";
+import { useModal } from "../../../hooks/useModal";
 // Constantes
 import { firstSectionItems } from "../../../constants/asideMenuItems";
 // Componentes
@@ -8,8 +8,8 @@ import Icon from "../../ui/Icon";
 // Modales
 import MobileMenuModal from "./NavbarMenuModal";
 
-export default function Navbar({ hasRole, avatarOnClick, helpOnClick }) {
-  const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+export default function Navbar({ hasRole }) {
+  const { isOpen, triggerRef, modalType, openModal, closeModal } = useModal();
 
   return (
     <section className="relative w-screen flex items-center justify-center gap-10 pb-1 pl-1 pr-2 transition-all duration-700">
@@ -36,7 +36,7 @@ export default function Navbar({ hasRole, avatarOnClick, helpOnClick }) {
 
       <button
         id="more-options-aside-button"
-        onClick={(e) => openInnerModal("menu", e)}
+        onClick={(e) => openModal(null, "menu", e.currentTarget)}
         className="self-end w-auto h-16 flex flex-col items-center justify-center py-2.5 px-5 rounded-full bg-black cursor-pointer group
         dark:bg-white"
       >
@@ -46,13 +46,11 @@ export default function Navbar({ hasRole, avatarOnClick, helpOnClick }) {
         />
       </button>
 
-      {innerType === "menu" && (
+      {modalType === "menu" && (
         <MobileMenuModal
-          isOpen={true}
-          triggerRef={innerTrigger}
-          onClose={() => openInnerModal(null)}
-          helpOnClick={helpOnClick}
-          avatarOnClick={avatarOnClick}
+          isOpen={isOpen}
+          triggerRef={triggerRef}
+          onClose={closeModal}
         />
       )}
     </section>

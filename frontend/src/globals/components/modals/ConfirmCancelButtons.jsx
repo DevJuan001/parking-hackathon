@@ -27,11 +27,13 @@ export default function ConfirmCancelButtons({
         hover:text-gray-300
         dark:bg-white dark:text-black dark:hover:text-gray-800`}
       >
-        <Icon
-          name={confirmImage}
-          size={24}
-          className={`dark:invert-0 ${confirmImageDisplay ? "block" : "hidden"}`}
-        />
+        {confirmImage && (
+          <Icon
+            name={confirmImage}
+            size={24}
+            className={`dark:invert-0 ${confirmImageDisplay ? "block" : "hidden"}`}
+          />
+        )}
         <span>{confirmText}</span>
       </button>
 

@@ -33,9 +33,11 @@ src/
 
 ### Services
 
-- **`src/modules/<name>/services/`** — API calls for the feature. Use `axios` or `fetch`. Store base URL in an env var or centralized config; never hardcode URLs.
+- **`src/modules/<name>/services/`** — API calls for the feature. Use `fetch` (axios is not in the project). Store base URL in an env var or centralized config; never hardcode URLs.
 - API responses are handled here; data shaping happens here, not in components.
 - Auth token is read from cookies (handled by the login module's auth utility).
+- For authenticated endpoints, always go through `fetchWithAuth` from `src/utils/fetchWithAuth.js`. For public endpoints (login, recover-password), plain `fetch` is fine.
+- **URL building**: use keys from `src/config/apiRoutes.js` via template strings. Don't add new keys unless the route prefix is genuinely new (e.g. `parking`, `spots`, `users`, `entries`, `exits`, `auth`, `dashboard`). For nested paths like `/parking/spots`, build as `${apiRoutes.apiUrl}${apiRoutes.parking}/spots`.
 
 ### Auth
 
