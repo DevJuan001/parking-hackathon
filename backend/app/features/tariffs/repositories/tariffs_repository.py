@@ -170,3 +170,77 @@ class TariffsRepository:
 
         finally:
             cursor.close()
+
+    @staticmethod
+    def count_active_vehicles_by_type(
+        parking_id: int, vehicle_type_id: int, connection
+    ):
+        cursor = connection.cursor()
+
+        # Placas del parking con ese tipo de vehiculo cuyo ultimo ingreso
+        # no tiene una salida posterior (siguen adentro).
+        query = """
+        SELECT COUNT(DISTINCT p.id)
+        FROM PLATES AS p
+        INNER JOIN ENTRIES AS e ON e.plate_id = p.id AND e.parking_id = p.parking_id
+        WHERE p.parking_id = %s
+          AND p.vehicle_type_id = %s
+          AND e.created_at = (
+              SELECT MAX(e2.created_at)
+              FROM ENTRIES e2
+              WHERE e2.parking_id = p.parking_id
+                AND e2.plate_id   = p.id
+          )
+          AND (
+              NOT EXISTS (
+                  SELECT 1 FROM EXITS x
+                  WHERE x.parking_id = p.parking_id
+                    AND x.plate_id   = p.id
+              )
+              OR e.created_at > (
+                  SELECT MAX(x.created_at)
+                  FROM EXITS x
+                  WHERE x.parking_id = p.parking_id
+                    AND x.plate_id   = p.id
+              )
+          )
+        """
+
+        try:
+            cursor.execute(query, (parking_id, vehicle_type_id))
+            result = cursor.fetchone()
+            count = int(result[0]) if result and result[0] is not None else 0
+            return None, count
+
+        except Exception as e:
+            logger.error(
+                "Error en count_active_vehicles_by_type: %s", e, exc_info=True
+            )
+            return "Error al verificar vehiculos activos para esta tarifa", 0
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def delete_tariff(parking_id: int, tariff_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        DELETE FROM RATES
+        WHERE parking_id = %s AND id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id, tariff_id))
+
+            if cursor.rowcount == 0:
+                return "Tarifa no encontrada", False, None
+
+            return None, True, "Tarifa eliminada correctamente"
+
+        except Exception as e:
+            logger.error("Error en delete_tariff: %s", e, exc_info=True)
+            return "Error al intentar eliminar la tarifa", False, None
+
+        finally:
+            cursor.close()
