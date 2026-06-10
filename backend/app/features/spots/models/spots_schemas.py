@@ -14,3 +14,9 @@ class CreateSpotSchema(BaseModel):
 
 class UpdateSpotStatusSchema(BaseModel):
     spot_status: int
+
+
+class UpdateSpotSchema(BaseModel):
+    floor_id: Optional[int] = None
+    spot: Optional[str] = None
+    spot_status: Optional[int] = None

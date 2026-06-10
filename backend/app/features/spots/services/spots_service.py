@@ -136,3 +136,63 @@ class SpotsService:
 
         finally:
             connection.close()
+
+    @staticmethod
+    def update_spot(
+        parking_id: int,
+        spot_id: int,
+        floor_id: int | None,
+        spot_label: str | None,
+        spot_status: int | None,
+    ):
+        connection = get_connection()
+
+        try:
+            # Validamos que la plaza exista
+            error, existing = SpotsRepository.find_spot_by_id(
+                parking_id, spot_id, connection
+            )
+
+            if error or not existing:
+                raise ServiceError(error or "Plaza no encontrada")
+
+            # Si llega un floor_id, validamos que el piso exista
+            if floor_id is not None:
+                error, floor = FloorsRepository.find_floor_by_id(
+                    parking_id, floor_id, connection
+                )
+
+                if error or not floor:
+                    raise ServiceError(error or "Piso no encontrado")
+
+            error, success, message = SpotsRepository.update_spot(
+                parking_id,
+                spot_id,
+                floor_id,
+                spot_label,
+                spot_status,
+                connection,
+            )
+
+            if error or not success:
+                raise ServiceError(error)
+
+            connection.commit()
+
+            return None, True, message
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, False, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en update_spot: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al actualizar la plaza", False, None
+
+        finally:
+            connection.close()
