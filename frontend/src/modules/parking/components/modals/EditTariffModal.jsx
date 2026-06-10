@@ -15,12 +15,17 @@ import ModalHighSection from "../../../../globals/components/modals/ModalHighSec
 
 export default function EditTariffModal({ onClose, tariff }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, tariffData, loading } =
+  const { handleChange, handleSubmit, tariffData, loading, error } =
     useUpdateTariff(tariff);
 
   return (
     <section className="flex flex-col items-center gap-2">
-      <ModalHighSection icon={"payments"} text={tariff.vehicle_type} />
+      <ModalHighSection
+        icon={"payments"}
+        text={tariff.vehicle_type}
+        closeButtonOnClick={onClose}
+        deleteButtonOnClick={onClose}
+      />
 
       <SelectMenu
         id={"vehicle_type"}
@@ -68,7 +73,7 @@ export default function EditTariffModal({ onClose, tariff }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo editar la tarifa!"
-          errorText="Verifica los datos y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />

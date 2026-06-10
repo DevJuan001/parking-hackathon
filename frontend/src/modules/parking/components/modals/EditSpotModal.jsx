@@ -17,7 +17,7 @@ import DeleteSpotModal from "./DeleteSpotModal";
 export default function EditSpotModal({ onClose, spot }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
-  const { handleChange, handleSubmit, spotData, loading } = useUpdateSpot(spot);
+  const { handleChange, handleSubmit, spotData, loading, error } = useUpdateSpot(spot);
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -76,7 +76,7 @@ export default function EditSpotModal({ onClose, spot }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo editar la plaza!"
-          errorText="Verifica que los datos sean correctos y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />
@@ -92,18 +92,6 @@ export default function EditSpotModal({ onClose, spot }) {
             closeInnerModal();
             onClose();
           }}
-          onError={() => openInnerModal("deleteError")}
-        />
-      )}
-
-      {innerType === "deleteError" && (
-        <ErrorModal
-          triggerRef={innerTrigger}
-          isOpen={true}
-          errorTitle="¡No se pudo eliminar la plaza!"
-          errorText="Inténtalo de nuevo más tarde"
-          confirmButtonText="Volver a intentarlo"
-          onClose={() => openInnerModal(null)}
         />
       )}
     </section>

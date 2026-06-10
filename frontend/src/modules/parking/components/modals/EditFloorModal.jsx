@@ -8,13 +8,22 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
+import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
 
 export default function EditFloorModal({ onClose, floor }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, floorData, loading } = useUpdateFloor(floor);
+  const { handleChange, handleSubmit, floorData, loading, error } =
+    useUpdateFloor(floor);
 
   return (
     <section className="flex flex-col items-center gap-2">
+      <ModalHighSection
+        icon={"stairs"}
+        text={floor.floor_number}
+        deleteButtonOnClick={(e) => openInnerModal("delete", e)}
+        closeButtonOnClick={onClose}
+      />
+
       <FormField
         id={"floor_number"}
         name={"floor_number"}
@@ -52,7 +61,7 @@ export default function EditFloorModal({ onClose, floor }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo editar el piso!"
-          errorText="Verifica que el número sea válido y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />

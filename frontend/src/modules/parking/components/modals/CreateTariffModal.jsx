@@ -14,7 +14,7 @@ import { vehicleTypeOptions } from "../../constants/vehicleTypes";
 
 export default function CreateTariffModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, tariffData, loading } = useCreateTariff();
+  const { handleChange, handleSubmit, tariffData, loading, error } = useCreateTariff();
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -64,7 +64,7 @@ export default function CreateTariffModal({ onClose }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo crear la tarifa!"
-          errorText="Verifica los datos y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />

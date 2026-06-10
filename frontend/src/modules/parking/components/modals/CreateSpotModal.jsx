@@ -11,7 +11,7 @@ import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 
 export default function CreateSpotModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, spotData, loading } = useCreateSpot();
+  const { handleChange, handleSubmit, spotData, loading, error } = useCreateSpot();
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -51,7 +51,7 @@ export default function CreateSpotModal({ onClose }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo crear la plaza!"
-          errorText="Verifica que el nombre sea válido y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />

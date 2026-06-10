@@ -11,7 +11,7 @@ import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 
 export default function CreateFloorModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, floorData, loading } = useCreateFloor();
+  const { handleChange, handleSubmit, floorData, loading, error } = useCreateFloor();
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -52,7 +52,7 @@ export default function CreateFloorModal({ onClose }) {
           triggerRef={innerTrigger}
           isOpen={true}
           errorTitle="¡No se pudo crear el piso!"
-          errorText="Verifica que el número sea válido y vuelve a intentarlo"
+          errorText={error}
           confirmButtonText="Volver a intentarlo"
           onClose={() => openInnerModal(null)}
         />
