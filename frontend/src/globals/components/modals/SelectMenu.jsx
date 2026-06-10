@@ -149,7 +149,7 @@ export default function SelectMenu({
                     className={`min-h-[52px] flex items-center px-5 cursor-pointer text-sm rounded-full transition-colors
                       hover:bg-[#efedf0] hover:font-medium  
                       dark:hover:bg-[#ffffff15]
-                      ${isSelected ? "bg-[#efedf0] font-medium dark:bg-[#ffffff15]" : ""}`}
+                      ${isSelected ? "bg-[#efedf0] font-semibold dark:bg-[#ffffff15]" : ""}`}
                   >
                     <span>{option.label}</span>
                   </button>
