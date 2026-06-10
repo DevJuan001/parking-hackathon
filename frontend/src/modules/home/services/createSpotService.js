@@ -13,9 +13,11 @@ export async function createSpotService(spot_data) {
     },
   );
 
+  const json = await response.json();
+
   if (!response.ok) {
-    throw new Error("Error al intentar registrar la plaza");
+    return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return await response.json();
+  return { error: null, data: json };
 }
