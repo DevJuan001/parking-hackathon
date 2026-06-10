@@ -4,9 +4,8 @@ import { useModal } from "../../globals/hooks/useModal";
 import Layout from "../../globals/components/Layout/Layout";
 import HomeSectionsContainer from "./components/ui/HomeSectionsContainer";
 import Modal from "../../globals/components/modals/Modal";
-// Modals
-import EditSpotModal from "./components/modals/EditSpotModal";
-import CreateSpotModal from "./components/modals/CreateSpotModal";
+import EditSpotModal from "../parking/components/modals/EditSpotModal";
+import CreateSpotModal from "../parking/components/modals/CreateSpotModal";
 
 export default function HomePage() {
   const { isOpen, modalType, modalData, triggerRef, openModal, closeModal } =
@@ -20,9 +19,9 @@ export default function HomePage() {
         <Modal
           isOpen={isOpen}
           title={
-            modalType === "edit"
+            modalType === "editSpot"
               ? "Editar Plaza"
-              : modalType === "create"
+              : modalType === "createSpot"
                 ? "Agregar Plaza"
                 : ""
           }
@@ -31,11 +30,13 @@ export default function HomePage() {
           growDirection="center"
           triggerRef={triggerRef}
         >
-          {modalType === "edit" && (
+          {modalType === "editSpot" && (
             <EditSpotModal onClose={closeModal} spot={modalData} />
           )}
 
-          {modalType === "create" && <CreateSpotModal onClose={closeModal} />}
+          {modalType === "createSpot" && (
+            <CreateSpotModal onClose={closeModal} />
+          )}
         </Modal>
       )}
     </Layout>
