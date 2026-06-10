@@ -22,7 +22,8 @@ class SpotsRepository:
             s.spot_status,
             s.created_at
         FROM SPOTS AS s
-        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        INNER JOIN FLOORS AS f
+        ON f.id = s.floor_id
         """
 
         filters = ["f.parking_id = %s"]
@@ -191,6 +192,57 @@ class SpotsRepository:
         except Exception as e:
             logger.error("Error en delete_spot: %s", e, exc_info=True)
             return "Error al intentar eliminar la plaza", False, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def count_occupied_spots_by_floor(
+        parking_id: int, floor_id: int, connection
+    ):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT COUNT(*)
+        FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s AND s.floor_id = %s AND s.spot_status = 3
+        """
+
+        try:
+            cursor.execute(query, (parking_id, floor_id))
+            result = cursor.fetchone()
+            count = int(result[0]) if result and result[0] is not None else 0
+            return None, count
+
+        except Exception as e:
+            logger.error(
+                "Error en count_occupied_spots_by_floor: %s", e, exc_info=True
+            )
+            return "Error al verificar plazas ocupadas del piso", 0
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def delete_spots_by_floor(parking_id: int, floor_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        DELETE s FROM SPOTS AS s
+        INNER JOIN FLOORS AS f ON f.id = s.floor_id
+        WHERE f.parking_id = %s AND s.floor_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id, floor_id))
+            return None, True, "Plazas del piso eliminadas correctamente"
+
+        except Exception as e:
+            logger.error(
+                "Error en delete_spots_by_floor: %s", e, exc_info=True
+            )
+            return "Error al intentar eliminar las plazas del piso", False, None
 
         finally:
             cursor.close()
