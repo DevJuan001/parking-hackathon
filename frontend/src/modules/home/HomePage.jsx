@@ -25,6 +25,7 @@ export default function HomePage() {
                 ? "Agregar Plaza"
                 : ""
           }
+          type={modalType}
           onClose={closeModal}
           location="anchored"
           growDirection="center"
