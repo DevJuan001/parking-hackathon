@@ -5,7 +5,7 @@ import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 import { createFloorService } from "../services/createFloorService";
 
 export function useCreateFloor() {
-  const [floorData, setFloorData] = useState({ floor_number: "" });
+  const [floorData, setFloorData] = useState({ name: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const queryClient = useQueryClient();
@@ -26,7 +26,6 @@ export function useCreateFloor() {
     const isValid = validate(floorData);
 
     if (!isValid) {
-      openInnerModal("error", triggerButton);
       return;
     }
 

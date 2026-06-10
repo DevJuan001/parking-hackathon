@@ -29,7 +29,6 @@ export function useCreateTariff() {
     const isValid = validate(tariffData);
 
     if (!isValid) {
-      openInnerModal("error", triggerButton);
       return;
     }
 

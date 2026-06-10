@@ -26,7 +26,6 @@ export function useCreateSpot() {
     const isValid = validate(spotData);
 
     if (!isValid) {
-      openInnerModal("error", triggerButton);
       return;
     }
 

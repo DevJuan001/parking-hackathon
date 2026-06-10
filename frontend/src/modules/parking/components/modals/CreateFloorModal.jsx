@@ -11,16 +11,16 @@ import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 
 export default function CreateFloorModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, floorData, loading, error } = useCreateFloor();
+  const { handleChange, handleSubmit, floorData, loading, error } =
+    useCreateFloor();
 
   return (
     <section className="flex flex-col items-center gap-2">
       <FormField
-        id={"floor_number"}
-        name={"floor_number"}
-        labelText={"Número de piso"}
-        type="number"
-        value={floorData.floor_number}
+        id={"name"}
+        name={"name"}
+        labelText={"Nombre"}
+        value={floorData.name}
         onChange={handleChange}
         autoComplete="off"
       />
@@ -35,6 +35,8 @@ export default function CreateFloorModal({ onClose }) {
         <SuccessModal
           triggerRef={innerTrigger}
           isOpen={true}
+          location="anchored"
+          growDirection={"top-right"}
           confirmTitle={"Piso creado con éxito!"}
           confirmText={
             "El piso se ha registrado correctamente, toca el botón de volver a la pagina para verlo"
@@ -51,6 +53,8 @@ export default function CreateFloorModal({ onClose }) {
         <ErrorModal
           triggerRef={innerTrigger}
           isOpen={true}
+          location="anchored"
+          growDirection={"top-right"}
           errorTitle="¡No se pudo crear el piso!"
           errorText={error}
           confirmButtonText="Volver a intentarlo"

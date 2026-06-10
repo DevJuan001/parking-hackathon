@@ -47,6 +47,8 @@ export default function CreateTariffModal({ onClose }) {
         <SuccessModal
           triggerRef={innerTrigger}
           isOpen={true}
+          location="anchored"
+          growDirection={"top-right"}
           confirmTitle={"Tarifa creada con éxito!"}
           confirmText={
             "La tarifa se ha registrado correctamente, toca el botón de volver a la pagina para verla"
@@ -63,6 +65,8 @@ export default function CreateTariffModal({ onClose }) {
         <ErrorModal
           triggerRef={innerTrigger}
           isOpen={true}
+          location="anchored"
+          growDirection={"top-right"}
           errorTitle="¡No se pudo crear la tarifa!"
           errorText={error}
           confirmButtonText="Volver a intentarlo"
