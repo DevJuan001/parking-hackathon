@@ -7,7 +7,7 @@ export default function ConfirmCancelButtons({
   confirmImage,
   confirmImageDisplay = false,
   confirmText = "Confirmar",
-  confirmBgColor = "black",
+  confirmBgColor = "#000",
   confirmButtonOnClick,
   cancelText = "Cancelar",
   cancelButtonWidth,
@@ -23,7 +23,8 @@ export default function ConfirmCancelButtons({
         ref={confirmBtnRef}
         onClick={confirmButtonOnClick}
         disabled={disabled}
-        className={`h-11 flex items-center px-5 py-2.5 gap-2 font-medium text-sm bg-${confirmBgColor} text-white rounded-2xl transition duration-300
+        style={{ backgroundColor: confirmBgColor }}
+        className={`h-11 flex items-center px-5 py-2.5 gap-2 font-medium text-sm text-white rounded-2xl transition duration-300
         hover:text-gray-300
         dark:bg-white dark:text-black dark:hover:text-gray-800`}
       >
