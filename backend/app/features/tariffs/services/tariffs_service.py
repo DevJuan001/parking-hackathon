@@ -141,3 +141,60 @@ class TariffsService:
 
         finally:
             connection.close()
+
+    @staticmethod
+    def delete_tariff(parking_id: int, tariff_id: int):
+        connection = get_connection()
+
+        try:
+            # Validamos que la tarifa exista
+            error, existing = TariffsRepository.find_tariff_by_id(
+                parking_id, tariff_id, connection
+            )
+
+            if error or not existing:
+                raise ServiceError(
+                    "No se encontro la tarifa solicitada, verifica el id e intentalo nuevamente"
+                )
+
+            # Verificamos que no haya vehiculos activos de este tipo dentro del parking
+            error, active_count = TariffsRepository.count_active_vehicles_by_type(
+                parking_id, existing.vehicle_type, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if active_count > 0:
+                raise ServiceError(
+                    f"No se puede eliminar la tarifa porque hay {active_count} "
+                    f"vehiculo(s) del mismo tipo dentro del parking. "
+                    f"Registra su salida y vuelve a intentarlo"
+                )
+
+            error, success, message = TariffsRepository.delete_tariff(
+                parking_id, tariff_id, connection
+            )
+
+            if error or not success:
+                raise ServiceError(error or "Tarifa no encontrada")
+
+            connection.commit()
+
+            return None, True, message
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, False, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en delete_tariff: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar eliminar la tarifa", False, None
+
+        finally:
+            connection.close()
