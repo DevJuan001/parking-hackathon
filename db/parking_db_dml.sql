@@ -32,10 +32,10 @@ INSERT INTO PLATES (parking_id, plate, vehicle_type_id) VALUES
   (1, 'YZA444', 1);
 
 -- FLOORS
-INSERT INTO FLOORS (parking_id, floor_number) VALUES
-  (1, 1),
-  (1, 2),
-  (1, 3);
+INSERT INTO FLOORS (parking_id, name) VALUES
+  (1, 'Piso 1'),
+  (1, 'Piso 2'),
+  (1, 'Piso 3');
 
 -- SPOTS
 INSERT INTO SPOTS (floor_id, spot, spot_status) VALUES
