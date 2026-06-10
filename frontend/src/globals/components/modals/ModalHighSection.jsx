@@ -1,9 +1,12 @@
 import Icon from "../ui/Icon";
 
-export default function ModalHighSection({ icon, text }) {
+export default function ModalHighSection({ icon, text, closeButtonOnClick }) {
   return (
-    <div className="w-full h-40 flex justify-between items-center py-3 px-2 gap-2 bg-[#efedf0] rounded-2xl font-inter">
-      <button className="self-start flex items-center p-2 rounded-full bg-[#fbf9fc] border">
+    <div className="w-full h-40 flex justify-between items-center py-3 px-2 gap-2 bg-[#efedf0] border-2 rounded-2xl font-inter">
+      <button
+        onClick={closeButtonOnClick}
+        className="self-start flex items-center p-2 rounded-full bg-[#fbf9fc] border"
+      >
         <Icon name={"delete"} size={20} />
       </button>
 
@@ -13,7 +16,10 @@ export default function ModalHighSection({ icon, text }) {
         <span className="font-semibold text-lg">{text}</span>
       </div>
 
-      <button className="self-start flex items-center p-2 rounded-full bg-[#fbf9fc] border">
+      <button
+        onClick={closeButtonOnClick}
+        className="self-start flex items-center p-2 rounded-full bg-[#fbf9fc] border"
+      >
         <Icon name={"close"} size={20} />
       </button>
     </div>
