@@ -47,15 +47,19 @@ export function useUpdateSpot(spot) {
 
     try {
       const response = await updateSpotService(spot.spot_id, changes);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError(
+          "No se pudo editar la plaza, intentalo nuevamente mas tarde.",
+        );
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo editar la plaza, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }

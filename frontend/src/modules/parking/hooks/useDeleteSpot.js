@@ -15,6 +15,7 @@ export function useDeleteSpot(spot) {
 
     try {
       const response = await deleteSpotService(spot.spot_id);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
         onClose();
@@ -24,7 +25,7 @@ export function useDeleteSpot(spot) {
       }
     } catch {
       setError(
-        "No se pudo eliminar la plaza, intentalo nuevamente mas tarde..",
+        "No se pudo eliminar la plaza, intentalo nuevamente mas tarde.",
       );
       openInnerModal("error", triggerButton);
     } finally {

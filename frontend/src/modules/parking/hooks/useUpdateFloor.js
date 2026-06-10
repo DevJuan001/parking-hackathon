@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { updateFloorService } from "../services/updateFloorService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { updateFloorService } from "../services/updateFloorService";
 
 export function useUpdateFloor(floor) {
   const [floorData, setFloorData] = useState({
@@ -33,10 +33,7 @@ export function useUpdateFloor(floor) {
     }
 
     const updated = { floor_number: Number(floorData.floor_number) };
-    const changes = getChanges(
-      { floor_number: floor.floor_number },
-      updated,
-    );
+    const changes = getChanges({ floor_number: floor.floor_number }, updated);
 
     if (Object.keys(changes).length === 0) {
       openInnerModal("error", triggerButton);
@@ -47,15 +44,17 @@ export function useUpdateFloor(floor) {
 
     try {
       const response = await updateFloorService(floor.id, changes);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["floors"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError("No se pudo editar el piso, intentalo nuevamente mas tarde.");
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo editar el piso, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }

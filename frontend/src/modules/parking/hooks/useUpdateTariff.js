@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { updateTariffService } from "../services/updateTariffService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { updateTariffService } from "../services/updateTariffService";
 
 export function useUpdateTariff(tariff) {
   const [tariffData, setTariffData] = useState({
@@ -49,17 +49,21 @@ export function useUpdateTariff(tariff) {
 
     setLoading(true);
 
+    const response = await updateTariffService(tariff.id, changes);
+
     try {
-      const response = await updateTariffService(tariff.id, changes);
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["tariffs"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError(
+          "No se pudo editar la tarifa, intentalo nuevamente mas tarde.",
+        );
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo editar la tarifa, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }

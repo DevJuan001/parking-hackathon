@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { createFloorService } from "../services/createFloorService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { createFloorService } from "../services/createFloorService";
 
 export function useCreateFloor() {
   const [floorData, setFloorData] = useState({ floor_number: "" });
@@ -33,20 +33,23 @@ export function useCreateFloor() {
     setLoading(true);
 
     try {
-      const payload = { floor_number: Number(floorData.floor_number) };
-      const response = await createFloorService(payload);
+      const response = await createFloorService(floorData);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["floors"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError("No se pudo crear el piso, intentalo nuevamente mas tarde.");
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo crear el piso, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }
+
+    setLoading(false);
   }
 
   return { handleSubmit, handleChange, floorData, loading, error };

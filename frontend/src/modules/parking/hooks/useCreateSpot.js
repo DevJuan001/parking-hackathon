@@ -34,15 +34,17 @@ export function useCreateSpot() {
 
     try {
       const response = await createSpotService(spotData);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError("No se pudo crear la plaza, intentalo nuevamente mas tarde.");
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo crear la plaza, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { createTariffService } from "../services/createTariffService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { createTariffService } from "../services/createTariffService";
 
 export function useCreateTariff() {
   const [tariffData, setTariffData] = useState({
@@ -36,20 +36,20 @@ export function useCreateTariff() {
     setLoading(true);
 
     try {
-      const payload = {
-        vehicle_type: Number(tariffData.vehicle_type),
-        value: Number(tariffData.value),
-      };
-      const response = await createTariffService(payload);
+      const response = await createTariffService(tariffData);
+
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["tariffs"] });
         openInnerModal("success", triggerButton);
       } else {
+        setError(
+          "No se pudo crear la tarifa, intentalo nuevamente mas tarde.",
+        );
         openInnerModal("error", triggerButton);
       }
-    } catch (error) {
+    } catch {
+      setError("No se pudo crear la tarifa, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
-      setError(error);
     } finally {
       setLoading(false);
     }
