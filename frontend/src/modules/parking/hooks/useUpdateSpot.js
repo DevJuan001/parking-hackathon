@@ -49,7 +49,7 @@ export function useUpdateSpot(spot) {
       const response = await updateSpotService(spot.spot_id, changes);
 
       if (response.success === true) {
-        await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
+        await queryClient.invalidateQueries({ queryKey: ["spots"] });
         openInnerModal("success", triggerButton);
       } else {
         setError(

@@ -7,7 +7,6 @@ import FormField from "../../../../globals/components/ui/FormField";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
-import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 
 export default function CreateSpotModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -27,27 +26,9 @@ export default function CreateSpotModal({ onClose }) {
 
       <ConfirmCancelButtons
         confirmText={loading ? <Loader /> : "Crear"}
-        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
+        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal, onClose)}
         cancelButtonOnClick={onClose}
       />
-
-      {innerType === "success" && (
-        <SuccessModal
-          triggerRef={innerTrigger}
-          isOpen={true}
-          location="anchored"
-          growDirection={"center"}
-          confirmTitle={"Plaza creada con éxito!"}
-          confirmText={
-            "La plaza se ha registrado correctamente, toca el botón de volver a la pagina para verlo"
-          }
-          confirmButtonText={"Volver a la pagina"}
-          onClose={() => {
-            openInnerModal(null);
-            onClose();
-          }}
-        />
-      )}
 
       {innerType === "error" && (
         <ErrorModal

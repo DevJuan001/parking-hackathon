@@ -17,7 +17,7 @@ export function useDeleteSpot(spot) {
       const response = await deleteSpotService(spot.spot_id);
 
       if (response.success === true) {
-        await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
+        await queryClient.invalidateQueries({ queryKey: ["spots"] });
         onDeleted();
       } else {
         setError(response.error);

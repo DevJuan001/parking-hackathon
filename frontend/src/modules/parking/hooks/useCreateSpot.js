@@ -18,7 +18,7 @@ export function useCreateSpot() {
     }));
   }
 
-  async function handleSubmit(e, openInnerModal) {
+  async function handleSubmit(e, openInnerModal, onClose) {
     e.preventDefault();
 
     const triggerButton = getModalTrigger(e);
@@ -35,8 +35,8 @@ export function useCreateSpot() {
       const response = await createSpotService(spotData);
 
       if (response.success === true) {
-        await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
-        openInnerModal("success", triggerButton);
+        await queryClient.invalidateQueries({ queryKey: ["spots"] });
+        onClose();
       } else {
         setError("No se pudo crear la plaza, intentalo nuevamente mas tarde.");
         openInnerModal("error", triggerButton);

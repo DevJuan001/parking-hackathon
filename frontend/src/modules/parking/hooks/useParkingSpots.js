@@ -9,7 +9,7 @@ export function useParkingSpots() {
   });
 
   const query = useQuery({
-    queryKey: ["parkingSpots", filters],
+    queryKey: ["spots", filters],
     queryFn: () => getAllSpotsService(filters),
     refetchInterval: 25_000,
     refetchIntervalInBackground: false,

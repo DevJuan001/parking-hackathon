@@ -45,6 +45,7 @@ export function useUpdateFloor(floor) {
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["floors"] });
+        await queryClient.invalidateQueries({ queryKey: ["spots"] });
         openInnerModal("success", triggerButton);
       } else {
         setError("No se pudo editar el piso, intentalo nuevamente mas tarde.");
