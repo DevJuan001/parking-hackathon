@@ -4,7 +4,7 @@ import ErrorModal from "./components/modals/ErrorModal";
 import LoginForm from "./components/ui/LoginForm";
 
 export default function LoginPage() {
-  const { isOpen, modalType, modalData, triggerRef, openModal, closeModal } =
+  const { isOpen, modalType, triggerRef, openModal, closeModal } =
     useModal();
 
   return (

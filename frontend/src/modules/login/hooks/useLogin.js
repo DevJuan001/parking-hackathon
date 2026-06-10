@@ -41,11 +41,11 @@ export function useLogin(openModal) {
       if (response.success === true) {
         navigate("/home");
       } else {
-        openModal(null, "error", null, currentTarget);
+        openModal(null, "error", currentTarget);
       }
     } catch (error) {
       setError(error);
-      openModal(null, "error", null, currentTarget);
+      openModal(null, "error", currentTarget);
     } finally {
       setLoading(false);
     }
