@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllSpotsService } from "../services/getAllSpotsService";
-import { useState } from "react";
 
 export function useParkingSpots() {
   const [filters, setFilters] = useState({
@@ -10,7 +10,7 @@ export function useParkingSpots() {
 
   const query = useQuery({
     queryKey: ["parkingSpots", filters],
-    queryFn: getAllSpotsService,
+    queryFn: () => getAllSpotsService(filters),
     refetchInterval: 25_000,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
