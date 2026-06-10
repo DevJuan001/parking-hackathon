@@ -15,7 +15,7 @@ export async function updateTariffService(tariff_id, changes) {
 
   if (!response.ok) {
     return { error: json.detail || "Error en la petición", data: null };
-  }k
+  }
 
   return json;
 }
