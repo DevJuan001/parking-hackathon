@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { deleteSpotService } from "../services/deleteSpotService";
+import { deleteFloorService } from "../services/deleteFloorService";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
 
-export function useDeleteSpot(spot) {
+export function useDeleteFloor(floor) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const queryClient = useQueryClient();
@@ -14,17 +14,18 @@ export function useDeleteSpot(spot) {
     const triggerButton = getModalTrigger(e);
 
     try {
-      const response = await deleteSpotService(spot.spot_id);
+      const response = await deleteFloorService(floor.id);
 
       if (response.success === true) {
-        await queryClient.invalidateQueries({ queryKey: ["parkingSpots"] });
+        await queryClient.invalidateQueries({ queryKey: ["floors"] });
+        await queryClient.invalidateQueries({ queryKey: ["spots"] });
         onDeleted();
       } else {
         setError(response.error);
         openInnerModal("error", triggerButton);
       }
     } catch {
-      setError("No se pudo eliminar la plaza, intentalo nuevamente mas tarde.");
+      setError("No se pudo eliminar el piso, intentalo nuevamente mas tarde.");
       openInnerModal("error", triggerButton);
     } finally {
       setLoading(false);

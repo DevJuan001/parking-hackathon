@@ -9,9 +9,11 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
+import DeleteFloorModal from "./DeleteFloorModal";
 
 export default function EditFloorModal({ onClose, floor }) {
-  const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
+    useInnerModal();
   const { handleChange, handleSubmit, floorData, loading, error } =
     useUpdateFloor(floor);
 
@@ -38,6 +40,19 @@ export default function EditFloorModal({ onClose, floor }) {
         confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
         cancelButtonOnClick={onClose}
       />
+
+      {innerType === "delete" && (
+        <DeleteFloorModal
+          isOpen={true}
+          floor={floor}
+          triggerRef={innerTrigger}
+          onClose={closeInnerModal}
+          onDeleted={() => {
+            closeInnerModal();
+            onClose();
+          }}
+        />
+      )}
 
       {innerType === "success" && (
         <SuccessModal
