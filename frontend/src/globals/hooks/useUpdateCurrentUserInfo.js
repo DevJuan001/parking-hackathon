@@ -9,10 +9,7 @@ export function useUpdateCurrentUserInfo(user) {
     name: user.name || "",
     first_surname: user.first_surname || "",
     second_surname: user.second_surname || "",
-    address: user.address || "",
-    city: user.city || "",
     email: user.email || "",
-    phone: user.phone || "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,7 +23,7 @@ export function useUpdateCurrentUserInfo(user) {
     }));
   }
 
-  async function handleSubmit(e, openInnerModal) {
+  async function handleSubmit(e, openInnerModal, onClose) {
     e.preventDefault();
 
     const triggerButton = getModalTrigger(e);
@@ -51,7 +48,7 @@ export function useUpdateCurrentUserInfo(user) {
       const response = await updateCurrentUserInfoService(changes);
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-        openInnerModal("success", triggerButton);
+        onClose();
       } else {
         openInnerModal("error", triggerButton);
       }
