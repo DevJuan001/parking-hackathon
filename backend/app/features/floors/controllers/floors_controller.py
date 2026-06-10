@@ -71,3 +71,18 @@ class FloorsController:
             "success": success,
             "message": message
         }
+
+    @staticmethod
+    def delete_floor(floor_id: int, payload: dict):
+        error, success, message = FloorsService.delete_floor(
+            int(payload["parking_id"]),
+            floor_id
+        )
+
+        if error:
+            raise HTTPException(status_code=400, detail=error)
+
+        return {
+            "success": success,
+            "message": message
+        }

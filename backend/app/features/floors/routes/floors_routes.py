@@ -65,3 +65,17 @@ def update_floor(
     payload: dict = Depends(verify_jwt)
 ):
     return FloorsController.update_floor(floor_id, floor_data, payload)
+
+
+@router.delete(
+    "/delete/{floor_id}",
+    dependencies=[
+        Depends(RateLimiter(times=10, seconds=60)),
+        Depends(verify_jwt)
+    ]
+)
+def delete_floor(
+    floor_id: int,
+    payload: dict = Depends(verify_jwt)
+):
+    return FloorsController.delete_floor(floor_id, payload)

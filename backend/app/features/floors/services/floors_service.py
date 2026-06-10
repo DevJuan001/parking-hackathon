@@ -2,6 +2,7 @@ from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.features.floors.repositories.floors_repository import FloorsRepository
+from app.features.spots.repositories.spots_repository import SpotsRepository
 
 logger = get_logger("floors.service")
 
@@ -137,6 +138,74 @@ class FloorsService:
                 exc_info=True
             )
             return "Error al intentar actualizar el piso", False, None
+
+        finally:
+            connection.close()
+
+    @staticmethod
+    def delete_floor(parking_id: int, floor_id: int):
+        connection = get_connection()
+
+        try:
+            # Validamos que el piso exista
+            error, existing = FloorsRepository.find_floor_by_id(
+                parking_id, floor_id, connection
+            )
+
+            if error or not existing:
+                raise ServiceError(
+                    "No se encontro el piso solicitado, verifica el id e intentalo nuevamente"
+                )
+
+            # Verificamos que ninguna plaza del piso este ocupada (spot_status = 3)
+            error, occupied_count = SpotsRepository.count_occupied_spots_by_floor(
+                parking_id, floor_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if occupied_count > 0:
+                raise ServiceError(
+                    f"No se puede eliminar el piso porque hay {occupied_count} "
+                    f"plaza(s) ocupada(s). Registra la salida de los vehiculos "
+                    f"y vuelve a intentarlo"
+                )
+
+            # Borramos primero todas las plazas del piso
+            error, spots_ok, _ = SpotsRepository.delete_spots_by_floor(
+                parking_id, floor_id, connection
+            )
+
+            if error or not spots_ok:
+                raise ServiceError(
+                    error or "No se pudieron eliminar las plazas del piso"
+                )
+
+            # Luego borramos el piso
+            error, success, message = FloorsRepository.delete_floor(
+                parking_id, floor_id, connection
+            )
+
+            if error or not success:
+                raise ServiceError(error or "Piso no encontrado")
+
+            connection.commit()
+
+            return None, True, message
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, False, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en delete_floor: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar eliminar el piso", False, None
 
         finally:
             connection.close()

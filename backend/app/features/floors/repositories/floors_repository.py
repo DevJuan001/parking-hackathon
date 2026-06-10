@@ -116,3 +116,27 @@ class FloorsRepository:
 
         finally:
             cursor.close()
+
+    @staticmethod
+    def delete_floor(parking_id: int, floor_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        DELETE FROM FLOORS
+        WHERE parking_id = %s AND id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id, floor_id))
+
+            if cursor.rowcount == 0:
+                return "Piso no encontrado", False, None
+
+            return None, True, "Piso eliminado correctamente"
+
+        except Exception as e:
+            logger.error("Error en delete_floor: %s", e, exc_info=True)
+            return "Error al intentar eliminar el piso", False, None
+
+        finally:
+            cursor.close()
