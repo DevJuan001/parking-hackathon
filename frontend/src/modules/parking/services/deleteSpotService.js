@@ -9,9 +9,11 @@ export async function deleteSpotService(spot_id) {
     },
   );
 
+  const json = await response.json();
+
   if (!response.ok) {
-    throw new Error("Error al intentar eliminar la plaza");
+    return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return await response.json();
+  return json;
 }

@@ -11,9 +11,11 @@ export async function updateTariffService(tariff_id, changes) {
     },
   );
 
-  if (!response.ok) {
-    throw new Error("Error al intentar editar la tarifa");
-  }
+  const json = await response.json();
 
-  return await response.json();
+  if (!response.ok) {
+    return { error: json.detail || "Error en la petición", data: null };
+  }k
+
+  return json;
 }

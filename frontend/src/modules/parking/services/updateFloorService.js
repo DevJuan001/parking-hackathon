@@ -11,9 +11,11 @@ export async function updateFloorService(floor_id, changes) {
     },
   );
 
+  const json = await response.json();
+
   if (!response.ok) {
-    throw new Error("Error al intentar editar el piso");
+    return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return await response.json();
+  return json;
 }

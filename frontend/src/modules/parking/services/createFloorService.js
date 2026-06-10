@@ -11,9 +11,11 @@ export async function createFloorService(floor_data) {
     },
   );
 
+  const json = await response.json();
+
   if (!response.ok) {
-    throw new Error("Error al intentar registrar el piso");
+    return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return await response.json();
+  return json;
 }
