@@ -38,6 +38,18 @@ Style rules for Python 3.13 + FastAPI + MySQL backend code. See `architecture.md
 - Repositories raise low-level SQL errors; services wrap them into `ServiceError` with a domain-friendly message.
 - Never let a raw `mysql.connector.Error` escape a repository without a comment explaining why.
 
+### Error messages must be explanatory
+
+`ServiceError` messages are user-facing — the controller returns them verbatim as `HTTPException.detail`. They must always tell the caller **what happened** and **what to do next**. Bad: `"Error"`, `"No se puede eliminar"`, `"Tarifa no encontrada"`. Good: `"La plaza esta ocupada, desocupala primero e intentalo nuevamente"`.
+
+Rules:
+
+- **State the problem** in the first clause. Avoid generic verbs like "error" / "fallo" without an object.
+- **State the resolution** when there is one: "intentalo nuevamente", "verifica el id e intentalo nuevamente", "registra su salida y vuelve a intentarlo".
+- **Include the count when relevant** so the caller can act without another round trip: `f"hay {n} vehiculo(s) del mismo tipo dentro del parking"`.
+- **Spanish, imperative / indicative, no trailing period** — same style as the rest of the messages in the codebase.
+- Never expose internal field names, SQL fragments, or stack traces in the message.
+
 ## Logging
 
 ```python

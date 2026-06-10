@@ -7,7 +7,7 @@ Canonical patterns for the three server-state situations in this codebase: reads
 ```js
 // src/modules/<name>/hooks/use<Name>.js
 import { useQuery } from "@tanstack/react-query";
-import { get<Name>Service } from "../services/<name>Service";
+import { get<Name>Service } from "../services/get<Name>Service";
 
 export function use<Name>() {
   const query = useQuery({
@@ -56,7 +56,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { update<X>Service } from "../services/<name>Service";
+import { update<X>Service } from "../services/update<X>Service";
 
 export function useUpdate<X>(original) {
   const [formData, setFormData] = useState({ /* seed from `original` */ });

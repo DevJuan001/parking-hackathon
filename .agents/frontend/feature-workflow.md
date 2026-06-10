@@ -44,8 +44,8 @@ Use Conventional Commits (see `commits-and-prs.md`).
 
 1. **Constants** (status maps, catalogs, validators) — colocated in `src/modules/<name>/constants/`.
    - Commit: `feat(frontend): add <name> constants`
-2. **Service** — `services/<name>Service.js`. API calls here.
-   - Commit: `feat(frontend): add <name> service`
+2. **Services** — `services/<action><Name>Service.js`, **one file per action** (e.g. `getAllSpotsService.js`, `createSpotService.js`, `updateSpotService.js`). API calls here. Do not group actions in a single `spotsService.js` barrel.
+   - Commit: `feat(frontend): add <name> services`
 3. **Read hook** — `hooks/use<Name>.js` (with polling when needed).
    - Commit: `feat(frontend): add use<Name> hook`
 4. **Write hooks** — one hook per mutation (create, update, etc.) using `useState` + `loading`/`error` flags + `queryClient.invalidateQueries`. See `data-fetching.md`.

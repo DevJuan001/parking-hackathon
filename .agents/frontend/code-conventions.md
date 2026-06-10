@@ -9,7 +9,7 @@ Style rules for React + Vite + JavaScript (no TypeScript). See `architecture.md`
 - ES6+ features: arrow functions, destructuring, template literals, async/await.
 - Component files: PascalCase (`LoginPage.jsx`, `ActionButtons.jsx`).
 - Hook files: camelCase, prefixed with `use` (`useAuth.js`, `useParking.js`).
-- Service files: camelCase (`authService.js`, `parkingService.js`).
+- Service files: camelCase, one per action (`getAllSpotsService.js`, `createSpotService.js`, `updateSpotService.js`). Never group multiple actions in a single barrel file — see `architecture.md`.
 
 ## Components
 
