@@ -196,3 +196,49 @@ class SpotsService:
 
         finally:
             connection.close()
+
+    @staticmethod
+    def delete_spot(parking_id: int, spot_id: int):
+        connection = get_connection()
+
+        try:
+            # Validamos que la plaza exista
+            error, existing = SpotsRepository.find_spot_by_id(
+                parking_id, spot_id, connection
+            )
+
+            if error or not existing:
+                raise ServiceError(error or "Plaza no encontrada")
+
+            # No se puede eliminar una plaza que está ocupada (spot_status = 3)
+            if existing.spot_status == 3:
+                raise ServiceError(
+                    "La plaza esta ocupada, desocupala primero e intentalo nuevamente"
+                )
+
+            error, success, message = SpotsRepository.delete_spot(
+                parking_id, spot_id, connection
+            )
+
+            if error or not success:
+                raise ServiceError(error or "Plaza no encontrada")
+
+            connection.commit()
+
+            return None, True, message
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, False, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en delete_spot: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar eliminar la plaza", False, None
+
+        finally:
+            connection.close()

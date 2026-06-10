@@ -87,3 +87,18 @@ class SpotsController:
             "success": success,
             "message": message
         }
+
+    @staticmethod
+    def delete_spot(spot_id: int, payload: dict):
+        error, success, message = SpotsService.delete_spot(
+            int(payload["parking_id"]),
+            spot_id
+        )
+
+        if error:
+            raise HTTPException(status_code=400, detail=error)
+
+        return {
+            "success": success,
+            "message": message
+        }
