@@ -46,7 +46,11 @@ export default function TariffsPanel({ openModal }) {
         !noTariffs && (
           <div className="h-full w-full flex flex-wrap gap-2 overflow-y-auto">
             {tariffs.map((tariff) => (
-              <TariffItem openModal={openModal} tariff={tariff} />
+              <TariffItem
+                key={tariff.vehicle_type}
+                openModal={openModal}
+                tariff={tariff}
+              />
             ))}
 
             <button
