@@ -8,8 +8,6 @@ import ConfirmCancelButtons from "../ConfirmCancelButtons";
 // Modals
 import Modal from "../Modal";
 import ErrorModal from "../ErrorModal";
-import SuccessModal from "../SuccessModal";
-import SelectMenu from "../SelectMenu";
 
 export default function EditInfoModal({ isOpen, onClose, user, triggerRef }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -65,28 +63,11 @@ export default function EditInfoModal({ isOpen, onClose, user, triggerRef }) {
 
         <ConfirmCancelButtons
           confirmText={loading ? <Loader /> : "Editar"}
-          confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
+          confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal, onClose)}
           cancelButtonOnClick={onClose}
         />
       </section>
-      
-      {/* Modales Internas */}
-      {innerType === "success" && (
-        <SuccessModal
-          triggerRef={innerTrigger}
-          isOpen={true}
-          confirmTitle={"Información editada con éxito!"}
-          confirmText={
-            "Se ha editado correctamente tu información, toca el botón de volver a la pagina para verlo"
-          }
-          confirmButtonText={"Volver a la pagina"}
-          onClose={() => {
-            openInnerModal(null);
-            onClose();
-          }}
-        />
-      )}
-      
+
       {innerType === "error" && (
         <ErrorModal
           triggerRef={innerTrigger}

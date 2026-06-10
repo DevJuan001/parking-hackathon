@@ -22,7 +22,7 @@ export default function ErrorModal({
       location={location}
       growDirection={growDirection}
     >
-      <section className="flex flex-col items-center gap-1 animate-blurUp">
+      <section className="flex flex-col items-center gap-1 animate-blur-up">
         <div className="w-20 h-20 flex items-center justify-center bg-red-200 rounded-full dark:bg-red-950">
           <Icon
             name={"close"}

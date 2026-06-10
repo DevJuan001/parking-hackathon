@@ -11,11 +11,10 @@ import EditInfoModal from "./EditInfoModal";
 import ChangePasswordModal from "./ChangePasswordModal";
 import Modal from "../Modal";
 
-export default function ProfileModal() {
+export default function ProfileModal({ triggerRef, onClose }) {
   const { user } = useCurrentUser();
   const [activeSection, setActiveSection] = useState("general");
-  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
-    useInnerModal();
+  const { innerTrigger, innerType, openInnerModal } = useInnerModal();
 
   return (
     <Modal
@@ -23,8 +22,8 @@ export default function ProfileModal() {
       type={"user"}
       title={"Configuración"}
       location="center"
-      triggerRef={innerTrigger}
-      onClose={closeInnerModal}
+      triggerRef={triggerRef}
+      onClose={onClose}
     >
       <section
         className="h-screen flex flex-col-reverse items-center justify-between gap-4
@@ -73,30 +72,11 @@ export default function ProfileModal() {
                 <span className="text-xs md:text-sm"> Apariencia </span>
               </button>
             </li>
-
-            <li>
-              <button
-                className={`w-full flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 transition duration-300
-              hover:bg-[#efedf0]
-              md:flex-row md:pr-0 md:pl-3
-              dark:hover:bg-[#202022]
-              ${
-                activeSection === "credits"
-                  ? "bg-gray-200 font-medium dark:bg-[#202022] text-black dark:text-white"
-                  : "hover:bg-[#efedf0] dark:hover:bg-[#202022] text-[#68676786]"
-              }`}
-                onClick={() => setActiveSection("credits")}
-              >
-                <Icon name={"psychology"} size={24} />
-
-                <span className="text-xs md:text-sm"> Creditos </span>
-              </button>
-            </li>
           </ul>
         </aside>
 
         <section
-          className="h-[80%] w-full flex flex-col gap-7 animate-blurUp
+          className="h-[80%] w-full flex flex-col gap-7 animate-blur-up
         md:h-full
         dark:text-white"
         >

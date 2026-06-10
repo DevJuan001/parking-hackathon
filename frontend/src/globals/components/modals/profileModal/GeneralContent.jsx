@@ -7,7 +7,7 @@ export default function GeneralContent({ user, onEditClick, onPasswordClick }) {
   const { logout } = useLogout();
 
   return (
-    <div className="h-full w-full flex flex-col gap-7 animate-blurUp dark:text-white">
+    <div className="h-full w-full flex flex-col gap-7 animate-blur-up dark:text-white">
       {/* Información general del usuario */}
       <div className="flex flex-col">
         <span className="font-medium text-sm pl-1">Perfil</span>

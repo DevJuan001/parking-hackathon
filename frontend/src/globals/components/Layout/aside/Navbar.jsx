@@ -14,7 +14,7 @@ export default function Navbar({ hasRole }) {
   return (
     <section className="relative w-screen flex items-center justify-center gap-10 pb-1 pl-1 pr-2 transition-all duration-700">
       <ul
-        className="w-auto h-full flex px-1 gap-0.5 rounded-full border border-[#EBE6E7] bg-white transition-all duration-700 
+        className="w-auto h-full flex px-1 gap-0.5 rounded-full shadow-[0px_0px_20px_-2px_#EBE6E7] bg-white transition-all duration-700 
         dark:bg-black dark:shadow-[1px_1px_1px_4px_#ffffff14]"
       >
         {firstSectionItems

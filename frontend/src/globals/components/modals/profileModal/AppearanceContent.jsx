@@ -6,7 +6,7 @@ export default function AppearanceContent() {
   const { setTheme } = useTheme();
 
   return (
-    <section className="h-full w-full flex flex-col pb-10 gap-7 animate-blurUp dark:text-white">
+    <section className="h-full w-full flex flex-col pb-10 gap-7 animate-blur-up dark:text-white">
       {/* Opciones de apariencia */}
       <div className="w-full flex flex-col gap-2">
         <span className="font-medium text-sm">Apariencia</span>

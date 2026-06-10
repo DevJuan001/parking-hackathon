@@ -19,7 +19,7 @@ export default function TopSection({
       md:h-[8%]
       `}
     >
-      <span className="text-nowrap text-sm md:text-xl font-medium dark:text-white">
+      <span className="text-nowrap text-sm md:text-2xl font-medium dark:text-white">
         {sectionName}
       </span>
 

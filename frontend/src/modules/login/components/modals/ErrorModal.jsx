@@ -2,7 +2,7 @@ import Icon from "../../../../globals/components/ui/Icon";
 
 export default function ErrorModal({ onClose }) {
   return (
-    <section className="flex flex-col items-center gap-1 animate-blurUp">
+    <section className="flex flex-col items-center gap-1 animate-blur-up">
       <div className="w-24 h-24 flex items-center justify-center bg-red-200 rounded-full dark:bg-[#450a0a81]">
         <Icon name={"close"} size={40} color={"#dc2626"} />
       </div>
