@@ -80,3 +80,16 @@ def update_spot(
     payload: dict = Depends(verify_jwt)
 ):
     return SpotsController.update_spot(spot_id, spot_data, payload)
+
+
+@router.delete(
+    "/delete/{spot_id}",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+    ]
+)
+def delete_spot(
+    spot_id: int,
+    payload: dict = Depends(verify_jwt)
+):
+    return SpotsController.delete_spot(spot_id, payload)
