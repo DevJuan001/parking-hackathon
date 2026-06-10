@@ -14,11 +14,11 @@ class FloorsRepository:
         query = """
         SELECT
             id,
-            floor_number,
+            name,
             created_at
         FROM FLOORS
         WHERE parking_id = %s
-        ORDER BY floor_number ASC
+        ORDER BY name ASC
         """
 
         try:
@@ -28,7 +28,7 @@ class FloorsRepository:
             floors = [
                 FloorResponse(
                     id=item[0],
-                    floor_number=item[1],
+                    name=item[1],
                     created_at=date_formatter(item[2])
                 )
                 for item in results
@@ -49,7 +49,7 @@ class FloorsRepository:
         query = """
         SELECT
             id,
-            floor_number,
+            name,
             created_at
         FROM FLOORS
         WHERE parking_id = %s AND id = %s
@@ -64,7 +64,7 @@ class FloorsRepository:
 
             floor = FloorResponse(
                 id=result[0],
-                floor_number=result[1],
+                name=result[1],
                 created_at=date_formatter(result[2])
             )
             return None, floor
@@ -77,16 +77,16 @@ class FloorsRepository:
             cursor.close()
 
     @staticmethod
-    def create_floor(parking_id: int, floor_number: int, connection):
+    def create_floor(parking_id: int, name: str, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO FLOORS (parking_id, floor_number)
+        INSERT INTO FLOORS (parking_id, name)
         VALUES (%s, %s)
         """
 
         try:
-            cursor.execute(query, (parking_id, floor_number))
+            cursor.execute(query, (parking_id, name))
             return None, cursor.lastrowid, "Piso registrado correctamente"
 
         except Exception as e:
@@ -97,17 +97,17 @@ class FloorsRepository:
             cursor.close()
 
     @staticmethod
-    def update_floor(parking_id: int, floor_id: int, floor_number: int, connection):
+    def update_floor(parking_id: int, floor_id: int, name: str, connection):
         cursor = connection.cursor()
 
         query = """
         UPDATE FLOORS
-        SET floor_number = %s
+        SET name = %s
         WHERE parking_id = %s AND id = %s
         """
 
         try:
-            cursor.execute(query, (floor_number, parking_id, floor_id))
+            cursor.execute(query, (name, parking_id, floor_id))
             return None, True, "Piso actualizado correctamente"
 
         except Exception as e:
