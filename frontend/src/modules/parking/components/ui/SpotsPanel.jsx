@@ -10,9 +10,9 @@ import SpotItem from "./SpotItem";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 
 export default function SpotsPanel({ openModal }) {
-  const { spots, loading } = useParkingSpots();
   const { floors } = useFloors();
-  const { filters, handleChange } = useFilterSpots();
+  const { spots, loading, filters, setFilters } = useParkingSpots();
+  const { handleChange } = useFilterSpots(filters, setFilters);
   const noSpots = spots.length === 0 && !loading;
   const isFirstLoad = spots.length === 0 && loading;
 

@@ -1,8 +1,4 @@
-import { useParkingSpots } from "./useParkingSpots";
-
-export function useFilterSpots() {
-  const { filters, setFilters } = useParkingSpots();
-
+export function useFilterSpots(filters, setFilters) {
   function handleChange(e) {
     setFilters((prev) => ({
       ...prev,
@@ -10,5 +6,5 @@ export function useFilterSpots() {
     }));
   }
 
-  return { filters, handleChange };
+  return { handleChange };
 }
