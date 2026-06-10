@@ -50,6 +50,17 @@ def get_all_roles():
     return UsersController.get_all_roles()
 
 
+@router.get(
+    "/by-stats",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
+    ]
+)
+def get_user_stats(payload: dict = Depends(verify_jwt)):
+    return UsersController.get_user_stats(payload)
+
+
 # Endpoint para obtener un usuario mediante el id
 @router.get(
     "/{user_id}",
