@@ -58,7 +58,7 @@ export default function FloorsPanel({ openModal }) {
               </div>
 
               <div className="flex-1 text-left">
-                <span className="font-semibold">Piso {floor.floor_number}</span>
+                <span className="font-semibold">{floor.name}</span>
               </div>
 
               <Icon

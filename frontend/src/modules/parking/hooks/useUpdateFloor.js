@@ -6,7 +6,7 @@ import { updateFloorService } from "../services/updateFloorService";
 
 export function useUpdateFloor(floor) {
   const [floorData, setFloorData] = useState({
-    floor_number: floor?.floor_number?.toString() ?? "",
+    name: floor.name || "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,11 +32,9 @@ export function useUpdateFloor(floor) {
       return;
     }
 
-    const updated = { floor_number: Number(floorData.floor_number) };
-    const changes = getChanges({ floor_number: floor.floor_number }, updated);
+    const changes = getChanges(floor, floorData);
 
     if (Object.keys(changes).length === 0) {
-      openInnerModal("error", triggerButton);
       return;
     }
 

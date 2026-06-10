@@ -29,7 +29,7 @@ export default function SpotsPanel({ openModal }) {
           miniVersion={true}
           options={floors.map((floor) => ({
             value: floor.id,
-            label: `Piso ${floor.floor_number}`,
+            label: floor.name,
           }))}
         />
       </div>

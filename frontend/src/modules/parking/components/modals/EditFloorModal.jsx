@@ -19,17 +19,16 @@ export default function EditFloorModal({ onClose, floor }) {
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
         icon={"stairs"}
-        text={floor.floor_number}
+        text={floorData.name}
         deleteButtonOnClick={(e) => openInnerModal("delete", e)}
         closeButtonOnClick={onClose}
       />
 
       <FormField
-        id={"floor_number"}
-        name={"floor_number"}
-        labelText={"Número de piso"}
-        type="number"
-        value={floorData.floor_number}
+        id={"name"}
+        name={"name"}
+        labelText={"Nombre"}
+        value={floorData.name}
         onChange={handleChange}
         autoComplete="off"
       />
