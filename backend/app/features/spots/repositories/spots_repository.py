@@ -169,3 +169,57 @@ class SpotsRepository:
 
         finally:
             cursor.close()
+
+    @staticmethod
+    def update_spot(
+        parking_id: int,
+        spot_id: int,
+        floor_id: int | None,
+        spot_label: str | None,
+        spot_status: int | None,
+        connection,
+    ):
+        cursor = connection.cursor()
+
+        SPOT_FIELDS = {
+            "floor_id": "floor_id",
+            "spot": "spot",
+            "spot_status": "spot_status",
+        }
+
+        try:
+            values: dict = {}
+
+            if floor_id is not None:
+                values["floor_id"] = floor_id
+
+            if spot_label is not None:
+                values["spot"] = spot_label
+
+            if spot_status is not None:
+                values["spot_status"] = spot_status
+
+            if not values:
+                return None, True, "Sin cambios para aplicar"
+
+            set_clause = ", ".join(f"{col} = %s" for col in values.keys())
+            params = list(values.values()) + [parking_id, spot_id]
+
+            cursor.execute(
+                f"""
+                UPDATE SPOTS AS s
+                INNER JOIN FLOORS AS f ON f.id = s.floor_id
+                SET {set_clause}
+                WHERE f.parking_id = %s AND s.spot_id = %s
+                """,
+                params,
+            )
+
+            return None, True, "Plaza actualizada correctamente"
+
+        except Exception as e:
+            logger.error("Error en update_spot: %s", e, exc_info=True)
+            return "Error al actualizar la plaza", False, None
+
+        finally:
+            cursor.close()

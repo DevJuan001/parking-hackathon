@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
 from app.middlewares.jwt_middleware import verify_jwt
 from app.features.spots.controllers.spots_controller import SpotsController
-from app.features.spots.models.spots_schemas import SpotsFiltersSchema, CreateSpotSchema, UpdateSpotStatusSchema
+from app.features.spots.models.spots_schemas import (
+    SpotsFiltersSchema,
+    CreateSpotSchema,
+    UpdateSpotStatusSchema,
+    UpdateSpotSchema,
+)
 
 router = APIRouter(
     prefix="/api/spots",
@@ -13,7 +18,7 @@ router = APIRouter(
 @router.get(
     "/",
     dependencies=[
-        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(RateLimiter(times=100, seconds=60)),
     ]
 )
 def get_all_spots(
@@ -61,3 +66,17 @@ def update_spot_status(
     payload: dict = Depends(verify_jwt)
 ):
     return SpotsController.update_spot_status(spot_id, status_data, payload)
+
+
+@router.put(
+    "/update/{spot_id}",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+    ]
+)
+def update_spot(
+    spot_id: int,
+    spot_data: UpdateSpotSchema,
+    payload: dict = Depends(verify_jwt)
+):
+    return SpotsController.update_spot(spot_id, spot_data, payload)
