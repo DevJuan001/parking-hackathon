@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class FloorsFiltersSchema(BaseModel):
@@ -6,8 +6,8 @@ class FloorsFiltersSchema(BaseModel):
 
 
 class CreateFloorSchema(BaseModel):
-    floor_number: int
+    name: str = Field(min_length=1, max_length=50)
 
 
 class UpdateFloorSchema(BaseModel):
-    floor_number: int | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=50)
