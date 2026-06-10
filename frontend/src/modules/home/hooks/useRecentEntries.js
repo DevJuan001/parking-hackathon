@@ -1,22 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllSpotsService } from "../services/getAllSpotsService";
+import { getRecentEntriesService } from "../services/getRecentEntriesService";
 
-export function useParkingPlaces() {
+export function useRecentEntries() {
   const query = useQuery({
-    queryKey: ["parkingSpots"],
-    queryFn: getAllSpotsService,
+    queryKey: ["recentEntries"],
+    queryFn: getRecentEntriesService,
     refetchInterval: 25_000,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
     staleTime: 10_000,
   });
 
-  const spots = query.data?.data ?? [];
+  const entries = query.data?.data ?? [];
 
   return {
-    spots,
+    entries,
     loading: query.isLoading,
     error: query.error,
-    refetch: query.refetch,
   };
 }
