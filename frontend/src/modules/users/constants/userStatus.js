@@ -3,7 +3,7 @@ export const userStatus = {
     text: "Deshabilitado",
     modalType: "enableUser",
     optionText: "Deshabilitar",
-    optionStyles: "hover:bg-red-100 text-red-600 dark:hover:bg-[#450a0a8a]",
+    optionStyles: "text-red-600 dark:hover:bg-[#450a0a8a]",
     visibilityIcon: false,
     icon: "block",
     fill: false,
@@ -14,11 +14,10 @@ export const userStatus = {
     text: "Activo",
     modalType: "disableUser",
     optionText: "Habilitar",
-    optionStyles: "hover:bg-green-100 text-green-600 dark:hover:bg-[#052e1a8a]",
+    optionStyles: "text-green-600 dark:hover:bg-[#052e1a8a]",
     visibilityIcon: true,
     icon: "circle",
     fill: true,
-    styles:
-      "bg-green-100 text-green-600 hover:bg-[#EAE8EB] dark:bg-[#1e1e20cb]",
+    styles: "bg-green-100 text-green-600 dark:bg-[#1e1e20cb]",
   },
 };
