@@ -60,6 +60,22 @@ export default function ExitsTable({ exits, loading }) {
 
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
+                    <Icon name={"attach_money"} size={20} fill />
+
+                    <span>Monto pagado</span>
+                  </div>
+                </th>
+
+                <th className="font-medium text-sm pl-4 text-start">
+                  <div className="flex gap-1">
+                    <Icon name={"wallet"} size={20} />
+
+                    <span>Metodo de pago</span>
+                  </div>
+                </th>
+
+                <th className="font-medium text-sm pl-4 text-start">
+                  <div className="flex gap-1">
                     <Icon name={"calendar_today"} size={20} fill />
 
                     <span>Fecha de salida</span>
@@ -79,6 +95,14 @@ export default function ExitsTable({ exits, loading }) {
                 >
                   <th className="font-medium text-sm pl-4 text-start">
                     {exit.plate}
+                  </th>
+
+                  <th className="font-semibold text-sm pl-4 text-start">
+                    {`$${exit.value}`}
+                  </th>
+
+                  <th className="font-medium text-sm pl-4 text-start">
+                    {exit.payment_method}
                   </th>
 
                   <th className="font-medium text-sm pl-4 text-start">

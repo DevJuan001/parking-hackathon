@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { loginService } from "../services/loginService";
 import { useLogout } from "../../../globals/hooks/useLogout";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { useCurrentUser } from "../../../globals/hooks/useCurrentUser";
 
 export function useLogin(openModal) {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export function useLogin(openModal) {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const { logout } = useLogout();
+  const { hasRole } = useCurrentUser();
   const { validate, fieldError, clearError } = useFormValidation();
 
   function handleChange(e) {
@@ -39,7 +41,7 @@ export function useLogin(openModal) {
       const response = await loginService(form);
 
       if (response.success === true) {
-        navigate("/home");
+        hasRole(["Cliente"]) ? navigate("/check-in") : navigate("/home");
       } else {
         openModal(null, "error", currentTarget);
       }
