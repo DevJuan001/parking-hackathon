@@ -25,15 +25,16 @@ export default function DeleteFloorModal({
       onClose={onClose}
       type={"delete"}
       title={"Eliminar plaza"}
-      growDirection="center"
+      growDirection="center-right"
       triggerRef={triggerRef}
     >
       <div className="flex flex-col">
         <span>
-          Deseas eliminar el piso <strong>{floor.name}</strong> ?
+          Deseas eliminar el <strong>{floor.name}</strong>?
         </span>
 
         <ConfirmCancelButtons
+          itemsPosition="end"
           confirmText={loading ? <Loader /> : "Eliminar"}
           confirmBgColor="#ff0000"
           disabled={loading}
