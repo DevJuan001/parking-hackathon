@@ -217,4 +217,6 @@ def _format_floor_name(name: str) -> str:
         raise ServiceError(
             "El nombre del piso no puede estar vacio, ingresa un valor e intentalo nuevamente"
         )
+    if "piso" in cleaned.lower():
+        return cleaned
     return f"Piso {cleaned}"

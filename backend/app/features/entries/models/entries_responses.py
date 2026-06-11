@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class EntryResponse(BaseModel):
     id: int
     plate: str
-    vehicle_type: str
+    vehicle_type: int
     spot_id: int
     spot: str
     created_at: datetime
