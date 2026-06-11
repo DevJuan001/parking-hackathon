@@ -40,6 +40,17 @@ def get_exits_by_plate(
 
 
 @router.get(
+    "/stats",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
+    ]
+)
+def get_exit_stats(payload: dict = Depends(verify_jwt)):
+    return ExitsController.get_exit_stats(payload)
+
+
+@router.get(
     "/{exit_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
