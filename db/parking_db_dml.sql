@@ -10,13 +10,13 @@ INSERT INTO PARKINGS (name, address) VALUES
 -- USERS
 INSERT INTO USERS (role_id, parking_id, name, first_surname, second_surname, email, password, status) VALUES
   (1, 1, 'Juan', 'Test', 'Test', 'juanesyt7@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2),
-  (1, 1, 'Juan', 'Cliente', 'Test', 'juanalvout38@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2);
+  (2, 1, 'Juan', 'Cliente', 'Test', 'juanalvout38@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2);
 
 -- VEHICLE_TYPES
 INSERT INTO VEHICLE_TYPES (name) VALUES
-  ('Car'),
-  ('Motorcycle'),
-  ('Truck'),
+  ('Carro'),
+  ('Moto'),
+  ('Camión'),
   ('Van'),
   ('Bus');
 
