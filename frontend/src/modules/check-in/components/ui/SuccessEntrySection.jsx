@@ -1,7 +1,7 @@
 import Icon from "../../../../globals/components/ui/Icon";
 
-export default function SuccessEntrySection({ setActiveSection }) {
-  setTimeout(() => setActiveSection("createEntry"), 5000);
+export default function SuccessEntrySection({ setActiveSection, message }) {
+  setTimeout(() => setActiveSection("createEntry"), 8000);
 
   return (
     <section className="w-full h-full flex flex-col animate-blur-down">
@@ -11,9 +11,7 @@ export default function SuccessEntrySection({ setActiveSection }) {
         </div>
         <span className="text-3xl text-[#75777E]">¡Gracias por elegirnos!</span>
 
-        <span className="text-6xl font-semibold">
-          Dirigete al piso 1 y a la plaza A-01
-        </span>
+        <span className="text-6xl font-semibold">{message}</span>
       </div>
     </section>
   );

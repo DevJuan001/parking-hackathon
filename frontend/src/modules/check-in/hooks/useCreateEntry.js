@@ -8,6 +8,7 @@ export function useCreateEntry(setActiveSection) {
   const { validate } = useFormValidation();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   function handleChange(e) {
     setEntryData((prev) => ({
@@ -34,6 +35,7 @@ export function useCreateEntry(setActiveSection) {
 
       if (response.success === true) {
         setActiveSection("successEntry");
+        setMessage(response.message);
       } else {
         setError(response.error);
         openInnerModal("error", triggerButton);
@@ -52,6 +54,7 @@ export function useCreateEntry(setActiveSection) {
 
   return {
     entryData,
+    message,
     loading,
     error,
     handleChange,

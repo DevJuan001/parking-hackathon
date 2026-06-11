@@ -1,5 +1,4 @@
 // Hooks
-import { useCreateEntry } from "../../hooks/usecreateEntry";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Componentes
 import Icon from "../../../../globals/components/ui/Icon";
@@ -7,11 +6,15 @@ import Loader from "../../../../globals/components/ui/Loader";
 // Modales
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
-export default function CreateEntrySection({ setActiveSection }) {
+export default function CreateEntrySection({
+  entryData,
+  loading,
+  error,
+  handleChange,
+  handleSubmit,
+}) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
-  const { entryData, loading, error, handleChange, handleSubmit } =
-    useCreateEntry(setActiveSection);
 
   return (
     <section className="w-full h-full flex flex-col">
@@ -38,7 +41,7 @@ export default function CreateEntrySection({ setActiveSection }) {
           placeholder="ABC123"
           name="plate"
           autoComplete="off"
-          value={entryData.plate}
+          value={entryData.plate || ""}
           onChange={handleChange}
           className="w-full h-44 px-3 rounded-3xl bg-[#00000008] text-7xl text-center font-semibold outline-0
             placeholder:text-[#1b1b1e52]"
