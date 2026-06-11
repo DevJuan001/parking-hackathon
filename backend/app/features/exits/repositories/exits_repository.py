@@ -1,5 +1,6 @@
 from app.utils.logger import get_logger
 from app.features.exits.models.exits_responses import ExitResponse
+from app.features.exits.models.exits_schemas import ExitsFiltersSchema
 
 logger = get_logger("exits.repository")
 
@@ -7,8 +8,10 @@ logger = get_logger("exits.repository")
 class ExitsRepository:
 
     @staticmethod
-    def find_all_exits(parking_id: int, connection):
+    def find_all_exits(parking_id: int, filters_data: ExitsFiltersSchema, connection):
         cursor = connection.cursor()
+
+        data = filters_data.model_dump(exclude_none=True)
 
         query = """
         SELECT
@@ -17,12 +20,27 @@ class ExitsRepository:
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p ON p.id = e.plate_id
-        WHERE e.parking_id = %s
-        ORDER BY e.created_at DESC
         """
 
+        filters = ["e.parking_id = %s"]
+        values = [parking_id]
+
+        if "plate_id" in data:
+            filters.append("p.id = %s")
+            values.append(data["plate_id"])
+
+        if "start_date" in data:
+            filters.append("DATE(e.created_at) >= %s")
+            values.append(data["start_date"])
+
+        if "end_date" in data:
+            filters.append("DATE(e.created_at) <= %s")
+            values.append(data["end_date"])
+
+        query += " WHERE " + " AND ".join(filters)
+
         try:
-            cursor.execute(query, (parking_id,))
+            cursor.execute(query, values)
             results = cursor.fetchall()
 
             exits = [
@@ -166,6 +184,42 @@ class ExitsRepository:
         except Exception as e:
             logger.error("Error en create_exit: %s", e, exc_info=True)
             return "Error al intentar registrar la salida", False, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def count_exit_stats(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN DATE(e.created_at) = CURDATE() THEN 1 ELSE 0 END) AS today,
+            SUM(CASE WHEN e.created_at >= (NOW() - INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS this_week,
+            SUM(
+                CASE WHEN YEAR(e.created_at) = YEAR(CURDATE())
+                          AND MONTH(e.created_at) = MONTH(CURDATE())
+                     THEN 1 ELSE 0 END
+            ) AS this_month
+        FROM EXITS AS e
+        WHERE e.parking_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            result = cursor.fetchone()
+
+            return None, {
+                "total": int(result[0] or 0),
+                "today": int(result[1] or 0),
+                "this_week": int(result[2] or 0),
+                "this_month": int(result[3] or 0)
+            }
+
+        except Exception as e:
+            logger.error("Error en count_exit_stats: %s", e, exc_info=True)
+            return "Error al intentar obtener las estadisticas de salidas", None
 
         finally:
             cursor.close()

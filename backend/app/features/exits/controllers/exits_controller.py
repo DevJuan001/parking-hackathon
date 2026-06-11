@@ -61,3 +61,16 @@ class ExitsController:
             "success": success,
             "message": message
         }
+
+    @staticmethod
+    def get_exit_stats(payload: dict):
+        error, stats = ExitsService.get_exit_stats(
+            int(payload["parking_id"])
+        )
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": stats
+        }

@@ -167,3 +167,41 @@ class PaymentsRepository:
 
         finally:
             cursor.close()
+
+    @staticmethod
+    def sum_payment_stats(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            COALESCE(SUM(value), 0) AS total,
+            COALESCE(SUM(CASE WHEN DATE(p.created_at) = CURDATE() THEN value ELSE 0 END), 0) AS today,
+            COALESCE(SUM(CASE WHEN p.created_at >= (NOW() - INTERVAL 7 DAY) THEN value ELSE 0 END), 0) AS this_week,
+            COALESCE(
+                SUM(
+                    CASE WHEN YEAR(p.created_at) = YEAR(CURDATE())
+                              AND MONTH(p.created_at) = MONTH(CURDATE())
+                         THEN value ELSE 0 END
+                ), 0
+            ) AS this_month
+        FROM PAYMENTS AS p
+        WHERE p.parking_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            result = cursor.fetchone()
+
+            return None, {
+                "total": float(result[0] or 0),
+                "today": float(result[1] or 0),
+                "this_week": float(result[2] or 0),
+                "this_month": float(result[3] or 0)
+            }
+
+        except Exception as e:
+            logger.error("Error en sum_payment_stats: %s", e, exc_info=True)
+            return "Error al intentar obtener las estadisticas de pagos", None
+
+        finally:
+            cursor.close()
