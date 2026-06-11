@@ -55,7 +55,7 @@ CREATE TABLE VEHICLE_TYPES (
 CREATE TABLE PLATES (
   id               INT          NOT NULL AUTO_INCREMENT,
   parking_id       INT          NOT NULL,
-  plate            VARCHAR(15)  NOT NULL,
+  plate            VARCHAR(6)  NOT NULL,
   vehicle_type_id  INT          NOT NULL,
   created_at       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
