@@ -8,6 +8,7 @@ from app.features.exits.repositories.exits_repository import ExitsRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
 from app.features.tariffs.repositories.tariffs_repository import TariffsRepository
 from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.payments.models.payments_responses import CalculatePaymentResponse
 from app.features.payments.repositories.payments_repository import PaymentsRepository
 from app.features.payments.models.payments_schemas import CreatePaymentSchema, PaymentsFiltersSchema
@@ -102,6 +103,34 @@ class PaymentsService:
             connection.close()
 
     @staticmethod
+    def get_all_payment_methods():
+        connection = get_connection()
+
+        try:
+            error, methods = PaymentsRepository.find_all_payment_methods(
+                connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, methods
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_all_payment_methods: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los metodos de pago", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     def calculate_payment(parking_id: int, plate: str):
         connection = get_connection()
 
@@ -113,7 +142,9 @@ class PaymentsService:
             )
 
             if error or not plate_data:
-                raise ServiceError(error or "Placa no encontrada")
+                raise ServiceError(
+                    error or "No se encontro esta placa, revisa que este escrita correctamente e intentalo de nuevo"
+                )
 
             plate_id = plate_data[0].id
             vehicle_type = plate_data[0].vehicle_type
@@ -165,8 +196,8 @@ class PaymentsService:
 
             return None, CalculatePaymentResponse(
                 plate=plate_data[0].plate,
-                entry_time=date_formatter(entry_time),
-                exit_time=date_formatter(exit_time),
+                entry_time=entry_time,
+                exit_time=exit_time,
                 hours_parked=hours_parked,
                 rate_value=rate_value,
                 total=total
@@ -273,6 +304,16 @@ class PaymentsService:
 
             if error or not success:
                 raise ServiceError(error)
+
+            if entry.spot_id is not None:
+                error, success, message = SpotsRepository.update_spot_status(
+                    parking_id, entry.spot_id, 2, connection
+                )
+
+                if error or not success:
+                    raise ServiceError(
+                        error or "Error al liberar la plaza"
+                    )
 
             connection.commit()
 

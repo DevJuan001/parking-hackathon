@@ -26,7 +26,7 @@ def get_all_payments(
 
 
 @router.get(
-    "/calculate",
+    "/calculate/",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
         Depends(require_roles(["Cliente"])),
@@ -37,6 +37,17 @@ def calculate_payment(
     payload: dict = Depends(verify_jwt)
 ):
     return PaymentsController.calculate_payment(params, payload)
+
+
+@router.get(
+    "/payment-methods",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin", "Cliente"])),
+    ]
+)
+def get_all_payment_methods(payload: dict = Depends(verify_jwt)):
+    return PaymentsController.get_all_payment_methods(payload)
 
 
 @router.get(

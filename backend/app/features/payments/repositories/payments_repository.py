@@ -1,7 +1,7 @@
 from datetime import datetime
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
-from app.features.payments.models.payments_responses import PaymentResponse
+from app.features.payments.models.payments_responses import PaymentResponse, PaymentMethodResponse
 
 logger = get_logger("payments.repository")
 
@@ -164,6 +164,39 @@ class PaymentsRepository:
         except Exception as e:
             logger.error("Error en create_payment: %s", e, exc_info=True)
             return "Error al intentar registrar el pago", False, None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_all_payment_methods(connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT id, name, icon
+        FROM PAYMENT_METHODS
+        ORDER BY id ASC
+        """
+
+        try:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            methods = [
+                PaymentMethodResponse(
+                    id=item[0],
+                    name=item[1],
+                    icon=item[2]
+                )
+                for item in results
+            ]
+            return None, methods
+
+        except Exception as e:
+            logger.error(
+                "Error en find_all_payment_methods: %s", e, exc_info=True
+            )
+            return "Error al intentar obtener los metodos de pago", None
 
         finally:
             cursor.close()

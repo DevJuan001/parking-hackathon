@@ -48,6 +48,17 @@ class PaymentsController:
         }
 
     @staticmethod
+    def get_all_payment_methods(payload: dict):
+        error, methods = PaymentsService.get_all_payment_methods()
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": methods
+        }
+
+    @staticmethod
     def calculate_payment(params: CalculatePaymentSchema, payload: dict):
         error, result = PaymentsService.calculate_payment(
             int(payload["parking_id"]),
