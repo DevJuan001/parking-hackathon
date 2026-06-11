@@ -97,6 +97,34 @@ class EntriesService:
             connection.close()
 
     @staticmethod
+    def get_entry_stats(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, stats = EntriesRepository.count_entry_stats(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, stats
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_entry_stats: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener las estadisticas de ingresos", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     def get_entries_by_plate(parking_id: int, plate_id: int):
         connection = get_connection()
 

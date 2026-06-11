@@ -61,6 +61,19 @@ class EntriesController:
         }
 
     @staticmethod
+    def get_entry_stats(payload: dict):
+        error, stats = EntriesService.get_entry_stats(
+            int(payload["parking_id"])
+        )
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": stats
+        }
+
+    @staticmethod
     async def create_entry(entry_data: CreateEntrySchema, payload: dict):
         error, success, message = await EntriesService.create_entry(
             int(payload["parking_id"]),
