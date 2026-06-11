@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginService } from "../services/loginService";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCurrentUser } from "../../../globals/hooks/useCurrentUser";
+import { loginService } from "../services/loginService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
 export function useLogin(openModal) {
@@ -14,7 +13,6 @@ export function useLogin(openModal) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { user } = useCurrentUser();
   const queryClient = useQueryClient();
 
   const { validate, fieldError, clearError } = useFormValidation();
@@ -37,7 +35,6 @@ export function useLogin(openModal) {
     setLoading(true);
 
     try {
-
       const response = await loginService(form);
 
       if (response.success === true) {
