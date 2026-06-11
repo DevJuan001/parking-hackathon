@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -10,10 +11,16 @@ class PaymentResponse(BaseModel):
     payment_method: int
 
 
+class PaymentMethodResponse(BaseModel):
+    id: int
+    name: str
+    icon: str
+
+
 class CalculatePaymentResponse(BaseModel):
     plate: str
-    entry_time: str
-    exit_time: str
+    entry_time: datetime
+    exit_time: datetime
     hours_parked: float
     rate_value: float
     total: float

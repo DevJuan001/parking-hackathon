@@ -164,6 +164,12 @@ class EntriesService:
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
 
+            if len(plate_text) != 6:
+                raise ServiceError("La placa debe tener 6 caracteres")
+
+            if not plate_text[:3].isalpha():
+                raise ServiceError("La placa debe iniciar con tres letras")
+
             if plate_text[-1].isalpha():
                 vehicle_type_id = 2
             else:
