@@ -95,7 +95,7 @@ export const useFlipModal = ({
       // FLIP — paso "First": capturamos el estado actual del trigger (posición, tamaño,
       // borderRadius, colores). Este será el punto de inicio de la animación.
       const state = Flip.getState([element, ...triggerShared], {
-        props: "borderRadius,backgroundColor,color,padding",
+        props: "borderRadius,color,padding",
       });
 
       // Ocultamos el trigger mientras el modal está visible para que no se vea doble.
@@ -378,7 +378,6 @@ export const useFlipModal = ({
         width: triggerRect.width,
         height: triggerRect.height,
         padding: triggerStyles.padding,
-        backgroundColor: triggerStyles.backgroundColor,
         color: triggerStyles.color,
         overflow: "hidden",
         margin: 0,
