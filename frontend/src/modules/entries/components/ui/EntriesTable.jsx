@@ -1,11 +1,8 @@
-// Hooks
-import { useEntries } from "../../hooks/useEntries";
 // Componentes
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 
-export default function EntriesTable() {
-  const { entries, loading } = useEntries();
+export default function EntriesTable({ entries, loading }) {
   const noEntries = entries.length === 0 && !loading;
   const isFirstLoad = entries.length === 0 && loading;
 
