@@ -54,6 +54,7 @@ export function useCreateEntry(setActiveSection) {
 
   return {
     entryData,
+    setEntryData,
     message,
     loading,
     error,
