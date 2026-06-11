@@ -11,6 +11,7 @@ All conventions live in `.agents/`. Load the relevant skill for your task:
 - **Backend (Python/FastAPI):** `.agents/backend/SKILL.md`
 - **Frontend (React/Vite/JS):** `.agents/frontend/SKILL.md`
 - **Database (MySQL):** `.agents/database/SKILL.md`
+- **Testing (Serenity/Cucumber/Screenplay):** `.agents/testing/SKILL.md`
 
 ---
 
