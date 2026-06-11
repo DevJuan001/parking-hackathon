@@ -204,7 +204,7 @@ class EntriesService:
             if active:
                 raise ServiceError("La placa ya tiene un ingreso activo")
 
-            error, spot_id, spot_label = SpotsRepository.find_available_spot(
+            error, spot_id, spot_label, floor_name = SpotsRepository.find_available_spot(
                 parking_id, connection
             )
 
@@ -230,7 +230,7 @@ class EntriesService:
 
             connection.commit()
 
-            return None, True, f"Ingreso registrado correctamente en plaza {spot_label}"
+            return None, True, f"Dirigete al piso {floor_name} y a la plaza {spot_label}"
 
         except ServiceError as e:
             connection.rollback()
