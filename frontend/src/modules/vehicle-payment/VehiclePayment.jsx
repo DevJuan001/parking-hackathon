@@ -10,6 +10,7 @@ export default function VehiclePayment() {
   const [activeSection, setActiveSection] = useState("calculatePayment");
   const {
     paymentData,
+    setPaymentData,
     paymentDetails,
     loading,
     error,
@@ -35,8 +36,13 @@ export default function VehiclePayment() {
           paymentDetails={paymentDetails}
         />
       )}
- 
-      {activeSection === "successPayment" && <SuccessPaymentSection setActiveSection={setActiveSection} />}
+
+      {activeSection === "successPayment" && (
+        <SuccessPaymentSection
+          setActiveSection={setActiveSection}
+          setPaymentData={setPaymentData}
+        />
+      )}
     </section>
   );
 }

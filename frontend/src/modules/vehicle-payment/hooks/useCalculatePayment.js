@@ -52,6 +52,7 @@ export function useCalculatePayment(setActiveSection) {
 
   return {
     paymentData,
+    setPaymentData,
     paymentDetails,
     loading,
     error,
