@@ -46,6 +46,105 @@ useQuery({
 - `staleTime: 10_000` (10s) prevents duplicate fetches when a mutation invalidates right before the next interval tick.
 - On error, React Query keeps `data` populated with the last successful response — no UI overlay, no toast, no flicker. Surface the error in dev only.
 
+## Read with filters (filterable list page)
+
+When a list page needs date / status / foreign-key filters, the read hook owns the filter state, bakes it into the `queryKey`, and passes the object to the service. The service serializes the object into a query string. The page passes `filters` + `setFilters` down to the FilterModal so the modal is a controlled view over the same state — no local copy.
+
+```js
+// src/modules/<name>/hooks/use<X>.js
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAll<X>Service } from "../services/getAll<X>Service";
+
+export function use<X>() {
+  const [filters, setFilters] = useState({
+    // seed with the filterable fields the backend accepts, all as strings
+    plate_id: "",
+    start_date: "",
+    end_date: "",
+  });
+
+  const query = useQuery({
+    queryKey: ["<name>", filters],
+    queryFn: () => getAll<X>Service(filters),
+    refetchInterval: 25_000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
+    staleTime: 10_000,
+  });
+
+  return {
+    items: query.data?.data ?? [],
+    loading: query.isLoading,
+    error: query.error,
+    filters,
+    setFilters,
+  };
+}
+```
+
+```js
+// src/modules/<name>/services/getAll<X>Service.js
+import { apiRoutes } from "../../../config/apiRoutes";
+import { buildQueryParams } from "../../../utils/buildQueryParams";
+import { fetchWithAuth } from "../../../utils/fetchWithAuth";
+
+export async function getAll<X>Service(filters) {
+  const params = buildQueryParams(filters);
+
+  const response = await fetchWithAuth(
+    `${apiRoutes.apiUrl}${apiRoutes.<name>}/?${params}`,
+    { method: "GET" },
+  );
+
+  if (!response.ok) {
+    throw new Error("Error al intentar obtener los <items>");
+  }
+
+  return await response.json();
+}
+```
+
+Three rules:
+
+1. **Filters live in the read hook**, not in the FilterModal. The modal is a controlled view — it reads `filters` and calls `setFilters`. No `useState` inside the modal.
+2. **`queryKey: ["<name>", filters]`** — putting `filters` in the key is what triggers the refetch. `useQuery` deep-compares, so editing a single field changes the key and forces a re-fetch.
+3. **`buildQueryParams(filters)` drops empty values**, so an all-empty filter object produces `?...` with no params (equivalent to no filter at all). Don't pre-filter the object in the hook.
+
+### FilterModal contract (shared global)
+
+`src/globals/components/modals/FilterModal.jsx` is the shared shell for filterable list pages. It always renders the date range (`start_date` / `end_date` via `DateField`), accepts a `children` slot for module-specific selects, and exposes apply + clean actions. Each feature module wraps it with its own selects and wires the apply/clean callbacks.
+
+| Prop | Type | Notes |
+|---|---|---|
+| `orderByStartDateValue` | `string` | `filters.start_date`, or empty / placeholder |
+| `orderByStartDateOnChange` | `(e) => void` | Receives the event from the `DateField` named `start_date`; the hook's `handleChange` works because the field's `name` matches the filter key |
+| `orderByFinishDateValue` | `string` | `filters.end_date` |
+| `orderByFinishDateOnChange` | `(e) => void` | Same, named `end_date` |
+| `fieldName` | `string` | Label for the date section ("Creación" by default, could be "Ingreso", "Movimiento", etc.) |
+| `children` | `ReactNode` | Module-specific selects (plate, role, status, etc.). Each select uses the shared `handleChange` from `useFilter<X>` so the `name` prop on the select matches the filter key |
+| `seeCleanFiltersButton` | `boolean` | Show the "Limpiar filtros" button. Set to `Object.keys(filters).length > 0` (i.e. only when at least one filter is active) |
+| `cleanFiltersOnClick` | `() => void` | Resets `filters` to `{}` and closes the modal |
+| `applyButtonOnClick` | `() => void` | Triggers a refetch by re-setting `filters` to a fresh object (React Query compares by reference) and closes the modal |
+
+The `applyButtonOnClick` is the key bit: just `setFilters({ ...filters })` is enough to force a re-render and trigger React Query to re-run the queryFn, because the new object reference changes the `queryKey`. The `cleanFiltersOnClick` calls `setFilters({})` to clear.
+
+### The `useFilter<X>` wrapper hook
+
+Tiny hook that just wraps `setFilters` in a stable `handleChange`. The page calls it once and passes the result to the FilterModal children.
+
+```js
+// src/modules/<name>/hooks/useFilter<X>.js
+export function useFilter<X>(setFilters) {
+  function handleChange(e) {
+    setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+  return { handleChange };
+}
+```
+
+The `useFilter<X>` hook is **not** the same as the read hook. The read hook (`use<X>`) owns the state; `useFilter<X>` just produces a stable `handleChange` for the FilterModal children to use. Pass the **read hook's** `setFilters` into `useFilter<X>` so they share state.
+
 ## Write hook (no `useMutation`)
 
 Write hooks call write services inside a `try` / `catch`. The service returns the backend body on success (shape `{ success: true, message: "..." }`) or an envelope `{ error, data: null }` on HTTP failure. The hook inspects `response.success` and falls back to a hardcoded Spanish message for both the `success !== true` branch and the `catch` block. The hook exposes `error` (the last set value) so the modal can render it.

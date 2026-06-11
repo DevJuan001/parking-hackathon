@@ -27,7 +27,7 @@ src/
 
 ### Global vs Feature components
 
-- **`src/globals/components/ui/`** — Shared, reusable across modules. Use when 2+ modules need the same component (Button, CreateButton, ActionButtons, TopSection, Modal, Input, Select, etc.). Follow naming: PascalCase, one component per file.
+- **`src/globals/components/ui/`** — Shared, reusable across modules. Use when 2+ modules need the same component (Button, CreateButton, ActionButtons, TopSection, Modal, Input, Select, FilterModal, etc.). Follow naming: PascalCase, one component per file.
 - **`src/modules/<name>/components/`** — Feature-specific. Only used within that module. Private to the feature.
 - **Never** put a feature-specific component in `globals/`.
 
