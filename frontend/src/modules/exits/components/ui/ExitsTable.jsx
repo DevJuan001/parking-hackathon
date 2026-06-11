@@ -9,17 +9,23 @@ export default function ExitsTable({ exits, loading }) {
   const isFirstLoad = exits.length === 0 && loading;
 
   return (
-    <div className="w-full h-full border rounded-2xl">
+    <div
+      className="w-full h-full border rounded-2xl
+      dark:border-[#17171a]"
+    >
       {noExits && (
         <div
           className="h-[700px] flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]
-          dark:text-[#E4E2E5]"
+          dark:text-[#E4E2E5] dark:bg-black"
         >
           <div className="flex items-center justify-center w-24 h-24 rounded-full">
             <Icon name={"border_clear"} size={60} />
           </div>
 
-          <span className="text-xl font-medium text-center">
+          <span
+            className="text-xl font-medium text-center
+            dark:text-[#E4E2E5]"
+          >
             No hay salidas registradas
           </span>
         </div>
@@ -37,8 +43,11 @@ export default function ExitsTable({ exits, loading }) {
         />
       ) : (
         !noExits && (
-          <table className="h-full w-full">
-            <thead className="sticky h-12 border-b">
+          <table className="h-full w-full dark:bg-black">
+            <thead
+              className="sticky h-12 border-b
+              dark:border-[#17171a]"
+            >
               <tr>
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
