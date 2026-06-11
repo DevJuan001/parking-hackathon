@@ -14,7 +14,7 @@
   --animate-blur-up: blur-up 0.3s ease-in forwards;
   --animate-rotation: rotation 0.8s linear infinite;
   --animate-shake: shake 0.35s ease-in;
-  --animate-shimmer: shimmer 1.5s linear infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
 
   @keyframes blur-up {
     0% {
