@@ -87,11 +87,11 @@ INSERT INTO EXITS (parking_id, plate_id, created_at) VALUES
   (1, 10, '2024-06-01 16:00:00');
 
 -- PAYMENT_METHODS
-INSERT INTO PAYMENT_METHODS (name) VALUES
-  ("Tarjeta de credito"),
-  ("Tarjeta de debito"),
-  ("Efectivo"),
-  ("Bitcoin");
+INSERT INTO PAYMENT_METHODS (name, icon) VALUES
+  ("Tarjeta de credito", "credit_card"),
+  ("Tarjeta de debito", "account_balance_wallet"),
+  ("Efectivo", "payments"),
+  ("Bitcoin", "savings");
 
 -- PAYMENTS
 INSERT INTO PAYMENTS (parking_id, plate_id, spot_id, value, created_at, payment_method_id) VALUES
