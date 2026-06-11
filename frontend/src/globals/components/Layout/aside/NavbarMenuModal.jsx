@@ -1,4 +1,5 @@
 // Hooks
+import { useLogout } from "../../../hooks/useLogout";
 import { useInnerModal } from "../../../hooks/useInnerModal";
 // Constants
 import { secondSectionItems } from "../../../constants/asideMenuItems";
@@ -12,6 +13,7 @@ import ProfileModal from "../../modals/profileModal/ProfileModal";
 export default function NavbarMenuModal({ isOpen, triggerRef, onClose }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
+  const { logout } = useLogout();
 
   return (
     <Modal
@@ -30,6 +32,7 @@ export default function NavbarMenuModal({ isOpen, triggerRef, onClose }) {
           path={item.path}
           name={item.name}
           icon={item.icon}
+          onClick={logout}
         />
       ))}
 

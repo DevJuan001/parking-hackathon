@@ -37,7 +37,7 @@ export default function Navbar({ hasRole }) {
       <button
         id="more-options-aside-button"
         onClick={(e) => openModal(null, "menu", e.currentTarget)}
-        className="self-end w-auto h-16 flex flex-col items-center justify-center py-2.5 px-5 rounded-full bg-black cursor-pointer group
+        className="self-end w-auto h-16 flex flex-col items-center justify-center py-2.5 px-5 rounded-[40px] bg-black cursor-pointer group
         dark:bg-white"
       >
         <Icon

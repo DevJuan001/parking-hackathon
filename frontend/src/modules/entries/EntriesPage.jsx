@@ -10,9 +10,12 @@ import TopSection from "../../globals/components/ui/TopSection";
 // Modales
 import Modal from "../../globals/components/modals/Modal";
 import CreateEntryModal from "./components/modals/CreateEntryModal";
+import FilterEntriesModal from "./components/modals/FilterEntriesModal";
+import { useEntries } from "./hooks/useEntries";
 
 export default function EntriesPage() {
   const { isOpen, modalType, triggerRef, openModal, closeModal } = useModal();
+  const { entries, loading, filters, setFilters } = useEntries();
 
   return (
     <Layout>
@@ -21,13 +24,13 @@ export default function EntriesPage() {
         addButtonText={"Registrar Ingreso"}
         createButtonVisibility={true}
         createOnClick={(e) => openModal(null, "createEntry", e.currentTarget)}
-        filterOnClick={(e) => openModal(null, "filterEntries", e.currentTarget)}
+        filterOnClick={(e) => openModal(null, "filter", e.currentTarget)}
       />
 
       <div className="flex flex-col gap-4">
         <EntriesKpis />
 
-        <EntriesTable />
+        <EntriesTable entries={entries} loading={loading} />
       </div>
 
       {modalType && (
@@ -42,6 +45,14 @@ export default function EntriesPage() {
         >
           {modalType === "createEntry" && (
             <CreateEntryModal onClose={closeModal} />
+          )}
+
+          {modalType === "filter" && (
+            <FilterEntriesModal
+              filters={filters}
+              setFilters={setFilters}
+              onClose={closeModal}
+            />
           )}
         </Modal>
       )}

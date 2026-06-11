@@ -8,7 +8,13 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
-export default function DeleteSpotModal({ isOpen, triggerRef, onClose, onDeleted, spot }) {
+export default function DeleteSpotModal({
+  isOpen,
+  triggerRef,
+  onClose,
+  onDeleted,
+  spot,
+}) {
   const { handleDelete, loading, error } = useDeleteSpot(spot);
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
@@ -19,15 +25,16 @@ export default function DeleteSpotModal({ isOpen, triggerRef, onClose, onDeleted
       onClose={onClose}
       type={"delete"}
       title={"Eliminar plaza"}
-      growDirection="center"
+      growDirection="center-right"
       triggerRef={triggerRef}
     >
       <div className="flex flex-col">
-        <span>
-          Deseas eliminar el spot <strong>{spot.spot}</strong> ?
+        <span className="text-base">
+          Deseas eliminar el spot <strong>{spot.spot}</strong>?
         </span>
 
         <ConfirmCancelButtons
+          itemsPosition="end"
           confirmText={loading ? <Loader /> : "Eliminar"}
           confirmBgColor="#ff0000"
           disabled={loading}

@@ -37,6 +37,7 @@ export function useCreateEntry() {
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        await queryClient.invalidateQueries({ queryKey: ["entriesStats"] });
         openInnerModal("success", triggerButton);
       } else {
         setError("No se pudo registrar el ingreso, intentalo nuevamente mas tarde.");

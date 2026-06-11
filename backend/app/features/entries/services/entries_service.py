@@ -97,6 +97,34 @@ class EntriesService:
             connection.close()
 
     @staticmethod
+    def get_entry_stats(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, stats = EntriesRepository.count_entry_stats(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, stats
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_entry_stats: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener las estadisticas de ingresos", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     def get_entries_by_plate(parking_id: int, plate_id: int):
         connection = get_connection()
 
@@ -135,6 +163,12 @@ class EntriesService:
 
             if not plate_text:
                 raise ServiceError("La placa no puede estar vacía")
+
+            if len(plate_text) != 6:
+                raise ServiceError("La placa debe tener 6 caracteres")
+
+            if not plate_text[:3].isalpha():
+                raise ServiceError("La placa debe iniciar con tres letras")
 
             if plate_text[-1].isalpha():
                 vehicle_type_id = 2
@@ -176,7 +210,7 @@ class EntriesService:
             if active:
                 raise ServiceError("La placa ya tiene un ingreso activo")
 
-            error, spot_id, spot_label = SpotsRepository.find_available_spot(
+            error, spot_id, spot_label, floor_name = SpotsRepository.find_available_spot(
                 parking_id, connection
             )
 
@@ -202,7 +236,7 @@ class EntriesService:
 
             connection.commit()
 
-            return None, True, f"Ingreso registrado correctamente en plaza {spot_label}"
+            return None, True, f"Dirigete al piso {floor_name} y a la plaza {spot_label}"
 
         except ServiceError as e:
             connection.rollback()

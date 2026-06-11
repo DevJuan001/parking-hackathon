@@ -1,20 +1,22 @@
 -- ROLES
 INSERT INTO ROLES (name) VALUES
-  ("Admin");
+  ("Admin"),
+  ("Cliente");
 
 -- PARKINGS
 INSERT INTO PARKINGS (name, address) VALUES
   ('Parking Central', 'Cra 1 # 2-3, Bogota');
 
 -- USERS
-INSERT INTO USERS (role_id, parking_id, name, first_surname, second_surname, email, password, status)
-VALUES (1, 1, 'Juan', 'Test', 'Test', 'juanesyt7@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2);
+INSERT INTO USERS (role_id, parking_id, name, first_surname, second_surname, email, password, status) VALUES
+  (1, 1, 'Juan', 'Test', 'Test', 'juanesyt7@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2),
+  (2, 1, 'Juan', 'Cliente', 'Test', 'juanalvout38@gmail.com', '$2b$12$Xlhm1tb3S/hC6ululYDuY.Xm698XL2xAHr2CLdEmsBRprA6Yqm8eG', 2);
 
 -- VEHICLE_TYPES
 INSERT INTO VEHICLE_TYPES (name) VALUES
-  ('Car'),
-  ('Motorcycle'),
-  ('Truck'),
+  ('Carro'),
+  ('Moto'),
+  ('Camión'),
   ('Van'),
   ('Bus');
 
@@ -85,11 +87,11 @@ INSERT INTO EXITS (parking_id, plate_id, created_at) VALUES
   (1, 10, '2024-06-01 16:00:00');
 
 -- PAYMENT_METHODS
-INSERT INTO PAYMENT_METHODS (name) VALUES
-  ("Tarjeta de credito"),
-  ("Tarjeta de debito"),
-  ("Efectivo"),
-  ("Bitcoin");
+INSERT INTO PAYMENT_METHODS (name, icon) VALUES
+  ("Tarjeta de credito", "credit_card"),
+  ("Tarjeta de debito", "account_balance_wallet"),
+  ("Efectivo", "payments"),
+  ("Bitcoin", "savings");
 
 -- PAYMENTS
 INSERT INTO PAYMENTS (parking_id, plate_id, spot_id, value, created_at, payment_method_id) VALUES

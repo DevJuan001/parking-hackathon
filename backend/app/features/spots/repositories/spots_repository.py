@@ -106,7 +106,7 @@ class SpotsRepository:
         cursor = connection.cursor()
 
         query = """
-        SELECT s.spot_id, s.spot
+        SELECT s.spot_id, s.spot, f.name
         FROM SPOTS AS s
         INNER JOIN FLOORS AS f ON f.id = s.floor_id
         WHERE f.parking_id = %s AND s.spot_status = 2
@@ -118,13 +118,13 @@ class SpotsRepository:
             result = cursor.fetchone()
 
             if not result:
-                return "No hay plazas disponibles", None, None
+                return "Lo sentimos, No hay plazas disponibles por momento", None, None, None
 
-            return None, result[0], result[1]
+            return None, result[0], result[1], result[2]
 
         except Exception as e:
             logger.error("Error en find_available_spot: %s", e, exc_info=True)
-            return "Error al buscar plaza disponible", None, None
+            return "Error al buscar plaza disponible", None, None, None
 
         finally:
             cursor.close()

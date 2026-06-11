@@ -36,7 +36,7 @@ export default function HomePage() {
           )}
 
           {modalType === "createSpot" && (
-            <CreateSpotModal onClose={closeModal} />
+            <CreateSpotModal floor={modalData} onClose={closeModal} />
           )}
         </Modal>
       )}

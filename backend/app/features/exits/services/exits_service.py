@@ -6,7 +6,9 @@ from app.features.exits.repositories.exits_repository import ExitsRepository
 from app.features.spots.repositories.spots_repository import SpotsRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
 from app.features.entries.repositories.entries_repository import EntriesRepository
+from app.features.payments.repositories.payments_repository import PaymentsRepository
 from app.features.exits.models.exits_schemas import CreateExitSchema, ExitsFiltersSchema
+from app.features.exits.models.exits_responses import ExitStatsResponse
 
 
 logger = get_logger("exits.service")
@@ -20,7 +22,7 @@ class ExitsService:
 
         try:
             error, exits = ExitsRepository.find_all_exits(
-                parking_id, connection
+                parking_id, filters, connection
             )
 
             if error:
@@ -172,6 +174,52 @@ class ExitsService:
                 exc_info=True
             )
             return "Error al intentar registrar la salida", False, None
+
+        finally:
+            connection.close()
+
+    @staticmethod
+    def get_exit_stats(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, exits = ExitsRepository.count_exit_stats(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            error, revenue = PaymentsRepository.sum_payment_stats(
+                parking_id, connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            stats = ExitStatsResponse(
+                total_exits=exits["total"],
+                today_exits=exits["today"],
+                this_week_exits=exits["this_week"],
+                this_month_exits=exits["this_month"],
+                total_revenue=revenue["total"],
+                today_revenue=revenue["today"],
+                this_week_revenue=revenue["this_week"],
+                this_month_revenue=revenue["this_month"]
+            )
+
+            return None, stats
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_exit_stats: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener las estadisticas de salidas", None
 
         finally:
             connection.close()

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getModalTrigger } from "../../../utils/getModalTrigger";
-import { updateSpotService } from "../../home/services/updateSpotService";
+import { updateSpotService } from "../services/updateSpotService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
 export function useUpdateSpot(spot) {
@@ -21,7 +21,7 @@ export function useUpdateSpot(spot) {
     }));
   }
 
-  async function handleSubmit(e, openInnerModal) {
+  async function handleSubmit(e, openInnerModal, onClose) {
     e.preventDefault();
 
     const triggerButton = getModalTrigger(e);
@@ -29,17 +29,12 @@ export function useUpdateSpot(spot) {
     const isValid = validate(spotData);
 
     if (!isValid) {
-      openInnerModal("error", triggerButton);
       return;
     }
 
-    const changes = getChanges(
-      { spot: spot.spot, spot_status: spot.spot_status },
-      spotData,
-    );
+    const changes = getChanges(spot, spotData);
 
     if (Object.keys(changes).length === 0) {
-      openInnerModal("error", triggerButton);
       return;
     }
 
@@ -50,11 +45,9 @@ export function useUpdateSpot(spot) {
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["spots"] });
-        openInnerModal("success", triggerButton);
+        onClose();
       } else {
-        setError(
-          "No se pudo editar la plaza, intentalo nuevamente mas tarde.",
-        );
+        setError("No se pudo editar la plaza, intentalo nuevamente mas tarde.");
         openInnerModal("error", triggerButton);
       }
     } catch {

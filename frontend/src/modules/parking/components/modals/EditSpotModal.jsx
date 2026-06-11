@@ -17,7 +17,8 @@ import DeleteSpotModal from "./DeleteSpotModal";
 export default function EditSpotModal({ onClose, spot }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
-  const { handleChange, handleSubmit, spotData, loading, error } = useUpdateSpot(spot);
+  const { handleChange, handleSubmit, spotData, loading, error } =
+    useUpdateSpot(spot);
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -51,7 +52,7 @@ export default function EditSpotModal({ onClose, spot }) {
 
       <ConfirmCancelButtons
         confirmText={loading ? <Loader /> : "Guardar"}
-        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
+        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal, onClose)}
         cancelButtonOnClick={onClose}
       />
 

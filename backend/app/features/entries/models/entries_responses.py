@@ -9,3 +9,10 @@ class EntryResponse(BaseModel):
     spot_id: int
     spot: str
     created_at: datetime
+
+
+class EntryStatsResponse(BaseModel):
+    total: int
+    today: int
+    this_week: int
+    this_month: int

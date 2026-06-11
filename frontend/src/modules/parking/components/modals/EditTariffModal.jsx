@@ -48,7 +48,7 @@ export default function EditTariffModal({ onClose, tariff }) {
 
       <ConfirmCancelButtons
         confirmText={loading ? <Loader /> : "Guardar"}
-        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
+        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal, onClose)}
         cancelButtonOnClick={onClose}
       />
 

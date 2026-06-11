@@ -1,5 +1,5 @@
 from app.utils.logger import get_logger
-from app.features.entries.models.entries_responses import EntryResponse
+from app.features.entries.models.entries_responses import EntryResponse, EntryStatsResponse
 from app.features.entries.models.entries_schemas import EntriesFiltersSchema
 
 logger = get_logger("entries.repository")
@@ -155,6 +155,44 @@ class EntriesRepository:
         except Exception as e:
             logger.error("Error en find_recent_entries: %s", e, exc_info=True)
             return "Error al intentar obtener los ingresos recientes", None
+
+        finally:
+            cursor.close()
+
+    # Obtener estadisticas de ingresos del parking
+    @staticmethod
+    def count_entry_stats(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN DATE(e.created_at) = CURDATE() THEN 1 ELSE 0 END) AS today,
+            SUM(CASE WHEN e.created_at >= (NOW() - INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS this_week,
+            SUM(
+                CASE WHEN YEAR(e.created_at) = YEAR(CURDATE())
+                          AND MONTH(e.created_at) = MONTH(CURDATE())
+                     THEN 1 ELSE 0 END
+            ) AS this_month
+        FROM ENTRIES AS e
+        WHERE e.parking_id = %s
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            result = cursor.fetchone()
+
+            stats = EntryStatsResponse(
+                total=int(result[0] or 0),
+                today=int(result[1] or 0),
+                this_week=int(result[2] or 0),
+                this_month=int(result[3] or 0)
+            )
+            return None, stats
+
+        except Exception as e:
+            logger.error("Error en count_entry_stats: %s", e, exc_info=True)
+            return "Error al intentar obtener las estadisticas de ingresos", None
 
         finally:
             cursor.close()
