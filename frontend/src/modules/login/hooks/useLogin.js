@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginService } from "../services/loginService";
-import { useLogout } from "../../../globals/hooks/useLogout";
-import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCurrentUser } from "../../../globals/hooks/useCurrentUser";
+import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
 export function useLogin(openModal) {
   const navigate = useNavigate();
@@ -14,8 +14,9 @@ export function useLogin(openModal) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { logout } = useLogout();
-  const { hasRole } = useCurrentUser();
+  const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
+
   const { validate, fieldError, clearError } = useFormValidation();
 
   function handleChange(e) {
@@ -36,12 +37,14 @@ export function useLogin(openModal) {
     setLoading(true);
 
     try {
-      await logout();
 
       const response = await loginService(form);
 
       if (response.success === true) {
-        hasRole(["Cliente"]) ? navigate("/check-in") : navigate("/home");
+        await queryClient.refetchQueries({ queryKey: ["currentUser"] });
+        const freshData = queryClient.getQueryData(["currentUser"]);
+        const userRole = freshData?.data?.[0]?.role;
+        userRole === "Cliente" ? navigate("/check-in") : navigate("/home");
       } else {
         openModal(null, "error", currentTarget);
       }
