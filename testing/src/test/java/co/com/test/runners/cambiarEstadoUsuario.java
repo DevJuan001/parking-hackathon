@@ -7,11 +7,11 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-        features = "src/test/resources/features/editar_email_usuario.feature",
+        features = "src/test/resources/features/cambiar_estado_usuario.feature",
         glue = {"co.com.test.stepsdefinitions", "co.com.test.utils.hooks"},
         plugin = {"pretty", "html:target/cucumber-reports"},
         snippets = SnippetType.CAMELCASE
 )
-public class editarEmailUsuario {
+public class cambiarEstadoUsuario {
 
 }

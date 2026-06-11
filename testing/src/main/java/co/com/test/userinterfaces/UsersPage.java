@@ -8,6 +8,8 @@ public class UsersPage {
             .located(By.xpath("//button[.//span[text()='Crear Usuario']]"));
     public static final Target BTN_EDITAR_USUARIO = Target.the("boton editar usuario")
             .located(By.xpath("//button[contains(@id,'edit-user-')]"));
+    public static final Target BTN_CAMBIAR_ESTADO = Target.the("boton cambiar estado usuario")
+            .located(By.xpath("//button[contains(@id,'delete-user-')]"));
     public static final Target BTN_CONFIRMAR_EXITO = Target.the("boton confirmar modal exito")
             .located(By.id("confirm-button"));
     public static final Target INPUT_NOMBRE = Target.the("input nombre")
