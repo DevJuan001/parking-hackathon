@@ -9,9 +9,9 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
-// Constants
-import { vehicleTypeOptions } from "../../constants/vehicleTypes";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
+// Constants
+import { vehicleTypeOptions, vehicleTypes } from "../../constants/vehicleTypes";
 
 export default function EditTariffModal({ onClose, tariff }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -22,7 +22,7 @@ export default function EditTariffModal({ onClose, tariff }) {
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
         icon={"payments"}
-        text={tariff.vehicle_type}
+        text={vehicleTypes[tariff.vehicle_type]}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={onClose}
       />
