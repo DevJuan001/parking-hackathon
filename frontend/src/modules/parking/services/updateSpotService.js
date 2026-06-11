@@ -19,5 +19,5 @@ export async function updateSpotService(spot_id, changes) {
     return { error: json.detail || "Error en la petición", data: null };
   }
 
-  return { error: null, data: json };
+  return json;
 }

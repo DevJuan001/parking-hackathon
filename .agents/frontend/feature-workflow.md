@@ -46,13 +46,13 @@ Use Conventional Commits (see `commits-and-prs.md`).
    - Commit: `feat(frontend): add <name> constants`
 2. **Services** — `services/<action><Name>Service.js`, **one file per action** (e.g. `getAllSpotsService.js`, `createSpotService.js`, `updateSpotService.js`). API calls here. Do not group actions in a single `spotsService.js` barrel.
    - Commit: `feat(frontend): add <name> services`
-3. **Read hook** — `hooks/use<Name>.js` (with polling when needed).
+3. **Read hook** — `hooks/use<Name>.js` (with polling when needed). **If the page is filterable**, the read hook owns the `filters` state, bakes it into the `queryKey`, and the corresponding `getAll<X>Service` accepts a `filters` object and runs it through `buildQueryParams` — see `data-fetching.md` → "Read with filters".
    - Commit: `feat(frontend): add use<Name> hook`
-4. **Write hooks** — one hook per mutation (create, update, etc.) using `useState` + `loading`/`error` flags + `queryClient.invalidateQueries`. See `data-fetching.md`.
+4. **Write hooks** — one hook per mutation (create, update, etc.) using `useState` + `loading`/`error` flags + `queryClient.invalidateQueries` for **all** related queries (the list, the stats, anything else the write could have changed). See `data-fetching.md`.
    - Commit: `feat(frontend): add use<Name> mutation hook(s)`
-5. **Components** — feature-specific components in `components/`.
+5. **Components** — feature-specific components in `components/`. If the page is filterable, build the `Filter<X>Modal` here (it wraps the shared `FilterModal` and adds the module-specific selects — see `data-fetching.md` → "FilterModal contract").
    - Commit: `feat(frontend): add <name> components`
-6. **Page** — `<name>Page.jsx`. Composes everything.
+6. **Page** — `<name>Page.jsx`. Composes everything; wires the `TopSection`'s filter button to `openModal(null, "filter", ...)` and renders `Filter<X>Modal` in the modal map.
    - Commit: `feat(frontend): add <name> page`
 7. **Routing** — add route in `src/App.jsx` or module's `routes/`.
    - Commit: `chore(frontend): add <name> route`

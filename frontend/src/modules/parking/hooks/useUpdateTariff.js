@@ -21,7 +21,7 @@ export function useUpdateTariff(tariff) {
     }));
   }
 
-  async function handleSubmit(e, openInnerModal) {
+  async function handleSubmit(e, openInnerModal, onClose) {
     e.preventDefault();
 
     const triggerButton = getModalTrigger(e);
@@ -29,18 +29,10 @@ export function useUpdateTariff(tariff) {
     const isValid = validate(tariffData);
 
     if (!isValid) {
-      openInnerModal("error", triggerButton);
       return;
     }
 
-    const updated = {
-      vehicle_type: Number(tariffData.vehicle_type),
-      value: Number(tariffData.value),
-    };
-    const changes = getChanges(
-      { vehicle_type: tariff.vehicle_type, value: tariff.value },
-      updated,
-    );
+    const changes = getChanges(tariff, tariffData);
 
     if (Object.keys(changes).length === 0) {
       openInnerModal("error", triggerButton);
@@ -54,7 +46,7 @@ export function useUpdateTariff(tariff) {
     try {
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["tariffs"] });
-        openInnerModal("success", triggerButton);
+        onClose();
       } else {
         setError(
           "No se pudo editar la tarifa, intentalo nuevamente mas tarde.",

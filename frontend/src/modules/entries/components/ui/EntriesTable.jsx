@@ -1,11 +1,10 @@
-// Hooks
-import { useEntries } from "../../hooks/useEntries";
 // Componentes
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
+// Utils
+import { formatDateTime } from "../../../../utils/formatDateTime";
 
-export default function EntriesTable() {
-  const { entries, loading } = useEntries();
+export default function EntriesTable({ entries, loading }) {
   const noEntries = entries.length === 0 && !loading;
   const isFirstLoad = entries.length === 0 && loading;
 
@@ -13,7 +12,7 @@ export default function EntriesTable() {
     <div className="w-full h-full border rounded-2xl">
       {noEntries && (
         <div
-          className="flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]
+          className="h-[700px] flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]
           dark:text-[#E4E2E5]"
         >
           <div className="flex items-center justify-center w-24 h-24 rounded-full">
@@ -29,7 +28,8 @@ export default function EntriesTable() {
       {isFirstLoad ? (
         <Skeleton
           width="100%"
-          height="100%"
+          height="700px"
+          borderRadius={"15px"}
           backgroundColor={"#F3EEF5"}
           darkModeBackgroundColor={"#101012"}
           shineColor="#C5C1C7"
@@ -40,7 +40,13 @@ export default function EntriesTable() {
           <table className="h-full w-full">
             <thead className="sticky h-12 border-b">
               <tr>
-                <th className="font-medium text-sm pl-4 text-start">Placa</th>
+                <th className="font-medium text-sm pl-4 text-start">
+                  <div className="flex gap-1">
+                    <Icon name={"emoji_transportation"} size={20} fill />
+
+                    <span>Placa</span>
+                  </div>
+                </th>
 
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
@@ -60,7 +66,7 @@ export default function EntriesTable() {
 
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
-                    <Icon name={"pin_drop"} size={20} fill />
+                    <Icon name={"calendar_today"} size={20} fill />
 
                     <span>Fecha de ingreso</span>
                   </div>
@@ -91,7 +97,7 @@ export default function EntriesTable() {
                   </th>
 
                   <th className="font-medium text-sm pl-4 text-start">
-                    {entry.created_at}
+                    {formatDateTime(entry.created_at)}
                   </th>
                 </tr>
               ))}
