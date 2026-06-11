@@ -46,7 +46,8 @@ export default function ExitsTable({ exits, loading }) {
           <table className="h-full w-full dark:bg-black">
             <thead
               className="sticky h-12 border-b
-              dark:border-[#17171a]"
+              hover:bg-[#f5f3f6]
+              dark:border-[#17171a] dark:text-[#E4E2E5] dark:hover:bg-[#101012]"
             >
               <tr>
                 <th className="font-medium text-sm pl-4 text-start">
@@ -67,11 +68,14 @@ export default function ExitsTable({ exits, loading }) {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="dark:text-white">
               {exits.map((exit) => (
                 <tr
                   key={exit.id}
-                  className="h-12 transition-colors duration-200 hover:bg-[#f5f3f6]"
+                  className="h-12 transition-colors duration-200
+                  hover:bg-[#f5f3f6]
+                  dark:hover:bg-[#101012]
+                  "
                 >
                   <th className="font-medium text-sm pl-4 text-start">
                     {exit.plate}
