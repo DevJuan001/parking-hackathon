@@ -1,10 +1,12 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ExitResponse(BaseModel):
     id: int
     plate: str
+    value: float = 0.0
+    payment_method: str = "No registrado"
     created_at: datetime
 
 
