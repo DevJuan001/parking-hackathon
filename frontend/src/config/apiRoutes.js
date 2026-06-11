@@ -9,4 +9,5 @@ export const apiRoutes = {
   floors: "/floors",
   tariffs: "/tariffs",
   dashboard: "/dashboard",
+  payments: "/payments",
 };

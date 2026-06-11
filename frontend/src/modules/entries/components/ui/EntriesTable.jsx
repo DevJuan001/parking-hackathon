@@ -9,7 +9,7 @@ export default function EntriesTable({ entries, loading }) {
   const isFirstLoad = entries.length === 0 && loading;
 
   return (
-    <div className="w-full h-full border rounded-2xl">
+    <div className="w-full h-auto max-h-[700px] border rounded-2xl overflow-y-auto">
       {noEntries && (
         <div
           className="h-[700px] flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]
@@ -38,7 +38,7 @@ export default function EntriesTable({ entries, loading }) {
       ) : (
         !noEntries && (
           <table className="h-full w-full">
-            <thead className="sticky h-12 border-b">
+            <thead className="sticky top-0 z-10 h-12 border-b bg-[#FBF9FC]">
               <tr>
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
@@ -86,7 +86,15 @@ export default function EntriesTable({ entries, loading }) {
 
                   <th className="font-medium text-sm pl-4 text-start">
                     <div className="flex gap-1">
-                      <Icon name={"directions_car"} size={18} fill />
+                      <Icon
+                        name={
+                          entry.vehicle_type === "Car"
+                            ? "directions_car"
+                            : "two_wheeler"
+                        }
+                        size={18}
+                        fill
+                      />
 
                       <span>{entry.vehicle_type}</span>
                     </div>
