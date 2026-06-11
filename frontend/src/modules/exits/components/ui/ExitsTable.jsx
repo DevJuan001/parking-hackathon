@@ -9,10 +9,7 @@ export default function ExitsTable({ exits, loading }) {
   const isFirstLoad = exits.length === 0 && loading;
 
   return (
-    <div
-      className="w-full h-full border rounded-2xl
-      dark:border-[#17171a]"
-    >
+    <div className="w-full h-auto max-h-[700px] border rounded-2xl overflow-y-auto">
       {noExits && (
         <div
           className="h-[700px] flex flex-col items-center justify-center gap-1 rounded-2xl text-[#7E8088] bg-[#f5f3f6]

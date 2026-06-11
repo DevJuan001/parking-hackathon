@@ -1,9 +1,20 @@
 import Icon from "../../ui/Icon";
 import { NavLink } from "react-router-dom";
 
-export default function NavItem({ itemId, path, name, icon, showName }) {
+export default function NavItem({
+  itemId,
+  path,
+  name,
+  icon,
+  showName,
+  onClick,
+}) {
   return (
-    <NavLink to={path} className={"transition-all duration-700"}>
+    <NavLink
+      to={path}
+      className={"transition-all duration-700"}
+      onClick={onClick}
+    >
       {({ isActive }) => (
         <div
           id={`${itemId}-aside-button`}
