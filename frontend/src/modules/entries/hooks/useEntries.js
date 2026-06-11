@@ -11,7 +11,7 @@ export function useEntries() {
 
   const query = useQuery({
     queryKey: ["entries", filters],
-    queryFn: getAllEntriesService(filters),
+    queryFn: () => getAllEntriesService(filters),
     refetchInterval: 25_000,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
