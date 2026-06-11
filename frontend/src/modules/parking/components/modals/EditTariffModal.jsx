@@ -1,6 +1,11 @@
 // Hooks
 import { useUpdateTariff } from "../../hooks/useUpdateTariff";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
+// Constants
+import {
+  vehicleTypeOptions,
+  vehicleTypes,
+} from "../../../../globals/constants/vehicleTypes";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
@@ -10,8 +15,6 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
-// Constants
-import { vehicleTypeOptions, vehicleTypes } from "../../constants/vehicleTypes";
 
 export default function EditTariffModal({ onClose, tariff }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -22,7 +25,7 @@ export default function EditTariffModal({ onClose, tariff }) {
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
         icon={"payments"}
-        text={vehicleTypes[tariff.vehicle_type]}
+        text={vehicleTypes[tariff.vehicle_type]?.text}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={onClose}
       />

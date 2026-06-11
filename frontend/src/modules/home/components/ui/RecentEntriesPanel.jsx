@@ -41,7 +41,7 @@ export default function RecentEntriesPanel() {
 
         <ul className="w-full h-full flex flex-col gap-2">
           {entries.map((entry) => (
-            <RecentEntriesList entry={entry} />
+            <RecentEntriesList key={entry.id} entry={entry} />
           ))}
         </ul>
       </div>
