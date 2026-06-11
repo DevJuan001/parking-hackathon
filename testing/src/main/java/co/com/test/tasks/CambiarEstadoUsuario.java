@@ -25,11 +25,19 @@ public class CambiarEstadoUsuario implements Task {
 
     @Override
     public <T extends Actor> void performAs(T actor) {
-        List<WebElementFacade> botonesEstado = BTN_CAMBIAR_ESTADO.resolveAllFor(actor);
-        if (botonesEstado.size() <= 1) {
-            throw new IllegalStateException("No hay suficientes usuarios para cambiar estado (se necesita al menos 2)");
+        String emailLogueado = actor.recall("usuario");
+        List<WebElementFacade> todosLosBotones = BTN_CAMBIAR_ESTADO.resolveAllFor(actor);
+        List<WebElementFacade> botonesEstado = new java.util.ArrayList<>();
+        for (WebElementFacade boton : todosLosBotones) {
+            String emailFila = boton.findElement(By.xpath("ancestor::tr/th[5]")).getText().trim();
+            if (!emailFila.equals(emailLogueado)) {
+                botonesEstado.add(boton);
+            }
         }
-        int indiceAleatorio = new Random().nextInt(botonesEstado.size() - 1) + 1;
+        if (botonesEstado.isEmpty()) {
+            throw new IllegalStateException("No hay otros usuarios para cambiar estado");
+        }
+        int indiceAleatorio = new Random().nextInt(botonesEstado.size());
         WebElementFacade botonAleatorio = botonesEstado.get(indiceAleatorio);
 
         String botonId = botonAleatorio.getAttribute("id");
