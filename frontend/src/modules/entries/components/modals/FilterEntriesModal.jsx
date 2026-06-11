@@ -7,14 +7,19 @@ export default function FilterEntriesModal({ filters, setFilters, onClose }) {
 
   return (
     <FilterModal
-      onClose={onClose}
       orderByStartDateValue={filters.start_date}
       orderByStartDateOnChange={handleChange}
       orderByFinishDateValue={filters.end_date}
       orderByFinishDateOnChange={handleChange}
-      applyButtonOnClick={onClose}
+      applyButtonOnClick={() => {
+        setFilters({ ...filters });
+        onClose();
+      }}
       seeCleanFiltersButton={Object.keys(filters).length > 0}
-      cleanFiltersOnClick={() => setFilters({})}
+      cleanFiltersOnClick={() => {
+        setFilters({});
+        onClose();
+      }}
     >
       <div className="flex flex-col">
         <SelectMenu

@@ -1,14 +1,11 @@
-import DateField from "../ui/DateField";
 import Icon from "../ui/Icon";
-import ConfirmCancelButtons from "./ConfirmCancelButtons";
+import DateField from "../ui/DateField";
 
 export default function FilterModal({
-  applyButtonOnClick,
   orderByStartDateOnChange,
   orderByStartDateValue,
   orderByFinishDateOnChange,
   orderByFinishDateValue,
-  onClose,
   children,
   fieldName = "Creación",
   seeCleanFiltersButton = false,
@@ -40,18 +37,11 @@ export default function FilterModal({
 
       <div>{children}</div>
 
-      <div className="flex items-end justify-between gap-2">
-        {/* Botones de aplicar y cancelar */}
-        <ConfirmCancelButtons
-          confirmButtonOnClick={applyButtonOnClick}
-          confirmText="Aplicar"
-          cancelButtonOnClick={onClose}
-        />
-
+      <div className="flex items-end mt-3 gap-2">
         {seeCleanFiltersButton && (
           <button
             onClick={cleanFiltersOnClick}
-            className="h-11 flex items-center px-3 py-2.5 gap-1 text-[#c0392b] rounded-2xl border
+            className="h-11 flex items-center px-3 py-2.5 gap-2 text-[#c0392b] rounded-2xl border
             hover:bg-red-100 transition-colors duration-200
             dark:hover:bg-[#450a0a96] dark:border-[#28282ba1]
           "
