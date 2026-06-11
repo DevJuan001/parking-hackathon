@@ -17,9 +17,20 @@ class ExitsRepository:
         SELECT
             e.id,
             p.plate,
+            COALESCE(pay.value, 0) AS value,
+            COALESCE(pm.name, 'No registrado') AS payment_method,
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p ON p.id = e.plate_id
+        LEFT JOIN PAYMENTS AS pay ON pay.plate_id = e.plate_id
+            AND pay.parking_id = e.parking_id
+            AND pay.created_at = (
+                SELECT MAX(p2.created_at)
+                FROM PAYMENTS p2
+                WHERE p2.parking_id = pay.parking_id
+                  AND p2.plate_id   = pay.plate_id
+            )
+        LEFT JOIN PAYMENT_METHODS AS pm ON pm.id = pay.payment_method_id
         """
 
         filters = ["e.parking_id = %s"]
@@ -47,7 +58,9 @@ class ExitsRepository:
                 ExitResponse(
                     id=item[0],
                     plate=item[1],
-                    created_at=item[2]
+                    value=item[2],
+                    payment_method=item[3],
+                    created_at=item[4]
                 )
                 for item in results
             ]
@@ -68,9 +81,20 @@ class ExitsRepository:
         SELECT
             e.id,
             p.plate,
+            COALESCE(pay.value, 0) AS value,
+            COALESCE(pm.name, 'No registrado') AS payment_method,
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p ON p.id = e.plate_id
+        LEFT JOIN PAYMENTS AS pay ON pay.plate_id = e.plate_id
+            AND pay.parking_id = e.parking_id
+            AND pay.created_at = (
+                SELECT MAX(p2.created_at)
+                FROM PAYMENTS p2
+                WHERE p2.parking_id = pay.parking_id
+                  AND p2.plate_id   = pay.plate_id
+            )
+        LEFT JOIN PAYMENT_METHODS AS pm ON pm.id = pay.payment_method_id
         WHERE e.parking_id = %s AND e.id = %s
         """
 
@@ -84,7 +108,9 @@ class ExitsRepository:
             return None, ExitResponse(
                 id=result[0],
                 plate=result[1],
-                created_at=result[2]
+                value=result[2],
+                payment_method=result[3],
+                created_at=result[4]
             )
 
         except Exception as e:
@@ -102,10 +128,21 @@ class ExitsRepository:
         SELECT
             e.id,
             p.plate,
+            COALESCE(pay.value, 0) AS value,
+            COALESCE(pm.name, 'No registrado') AS payment_method,
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p
             ON p.id = e.plate_id
+        LEFT JOIN PAYMENTS AS pay ON pay.plate_id = e.plate_id
+            AND pay.parking_id = e.parking_id
+            AND pay.created_at = (
+                SELECT MAX(p2.created_at)
+                FROM PAYMENTS p2
+                WHERE p2.parking_id = pay.parking_id
+                  AND p2.plate_id   = pay.plate_id
+            )
+        LEFT JOIN PAYMENT_METHODS AS pm ON pm.id = pay.payment_method_id
         WHERE e.parking_id = %s AND e.plate_id = %s
         ORDER BY e.created_at DESC
         """
@@ -118,7 +155,9 @@ class ExitsRepository:
                 ExitResponse(
                     id=item[0],
                     plate=item[1],
-                    created_at=item[2]
+                    value=item[2],
+                    payment_method=item[3],
+                    created_at=item[4]
                 )
                 for item in results
             ]
@@ -139,10 +178,21 @@ class ExitsRepository:
         SELECT
             e.id,
             p.plate,
+            COALESCE(pay.value, 0) AS value,
+            COALESCE(pm.name, 'No registrado') AS payment_method,
             e.created_at
         FROM EXITS AS e
         INNER JOIN PLATES AS p
             ON p.id = e.plate_id
+        LEFT JOIN PAYMENTS AS pay ON pay.plate_id = e.plate_id
+            AND pay.parking_id = e.parking_id
+            AND pay.created_at = (
+                SELECT MAX(p2.created_at)
+                FROM PAYMENTS p2
+                WHERE p2.parking_id = pay.parking_id
+                  AND p2.plate_id   = pay.plate_id
+            )
+        LEFT JOIN PAYMENT_METHODS AS pm ON pm.id = pay.payment_method_id
         WHERE e.parking_id = %s AND e.plate_id = %s
         ORDER BY e.created_at DESC
         LIMIT 1
@@ -158,7 +208,9 @@ class ExitsRepository:
             return None, ExitResponse(
                 id=result[0],
                 plate=result[1],
-                created_at=result[2]
+                value=result[2],
+                payment_method=result[3],
+                created_at=result[4]
             )
 
         except Exception as e:

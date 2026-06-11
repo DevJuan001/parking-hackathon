@@ -29,6 +29,7 @@ def get_all_payments(
     "/calculate",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Cliente"])),
     ]
 )
 def calculate_payment(
@@ -70,6 +71,7 @@ def get_payment_by_id(
     "/create",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Cliente"])),
     ]
 )
 async def create_payment(
