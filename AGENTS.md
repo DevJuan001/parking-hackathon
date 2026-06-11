@@ -17,7 +17,7 @@ All conventions live in `.agents/`. Load the relevant skill for your task:
 
 ## Workflow: Requirement → Design → Implementation
 
-For any non-trivial change, walk through these three steps **in order**. Do not start coding until the first two are written down in the PR description.
+For any non-trivial change, walk through these three steps **in order** before coding. They are the thinking framework; the actual PR body is written from them.
 
 1. **Requirement** — What problem does this solve? Which endpoints/modules? In/out scope? Success and failure responses?
 2. **Design** — Which layers are touched? New env vars? DB changes? RBAC? Rate limits?
@@ -62,6 +62,13 @@ See `.agents/frontend/` for the full skill. Key rules:
 ## Opening PRs
 
 **Create directly on GitHub. Do not ask. Do not wait.**
+
+The PR **body** must follow the template defined in the relevant skill. Do not freeform it.
+
+- Frontend work → `.agents/frontend/commits-and-prs.md` (## Summary, ## Labels, ## Changes grouped by Pages / Components / Services & hooks / Routing / Styles)
+- Backend work → `.agents/backend/commits-and-prs.md`
+- Database work → `.agents/database/commits-and-prs.md`
+- Testing work → `.agents/testing/commits-and-prs.md`
 
 ```bash
 gh pr create --base main --head <branch> --title "<title>" --body "<body>"
