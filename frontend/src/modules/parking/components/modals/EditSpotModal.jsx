@@ -45,8 +45,6 @@ export default function EditSpotModal({ onClose, spot }) {
           name={"spot"}
           labelText={"Placa del vehiculo"}
           value={spot.plate}
-          onChange={handleChange}
-          autoComplete="off"
           disabled={true}
         />
       )}
