@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { loginService } from "../services/loginService";
+import { getCurrentUserService } from "../../../globals/services/getCurrentUserService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 
 export function useLogin(openModal) {
@@ -38,8 +39,10 @@ export function useLogin(openModal) {
       const response = await loginService(form);
 
       if (response.success === true) {
-        await queryClient.refetchQueries({ queryKey: ["currentUser"] });
-        const freshData = queryClient.getQueryData(["currentUser"]);
+        const freshData = await queryClient.fetchQuery({
+          queryKey: ["currentUser"],
+          queryFn: getCurrentUserService,
+        });
         const userRole = freshData?.data?.[0]?.role;
         userRole === "Cliente" ? navigate("/check-in") : navigate("/home");
       } else {
