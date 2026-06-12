@@ -19,7 +19,7 @@ def round_up_to_next_50(value: float) -> float:
         round_up_to_next_50(1234) -> 1250
     """
     if value <= 0:
-        return 0.0
+        return 50
 
     step = Decimal("50")
     value_decimal = Decimal(str(value))
