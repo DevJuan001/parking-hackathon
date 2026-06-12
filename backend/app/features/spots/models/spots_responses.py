@@ -9,3 +9,4 @@ class SpotResponse(BaseModel):
     spot_status: int
     created_at: str
     vehicle_type_id: Optional[int] = None
+    plate: Optional[str] = None
