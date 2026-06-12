@@ -23,10 +23,12 @@ export default function FilterEntriesModal({ filters, setFilters, onClose }) {
     >
       <div className="flex flex-col">
         <SelectMenu
+          showAllOption
           id={"plates-menu"}
           spanText={"Placa"}
           value={filters.plate_id}
           onChange={handleChange}
+          options={[]}
         />
       </div>
     </FilterModal>

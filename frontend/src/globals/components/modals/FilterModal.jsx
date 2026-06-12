@@ -57,8 +57,8 @@ export default function FilterModal({
 
       <div className="px-2">{children}</div>
 
-      <div className="flex items-end mt-3 gap-2">
-        {seeCleanFiltersButton && (
+      {seeCleanFiltersButton && (
+        <div className="flex items-end gap-2 px-2">
           <button
             onClick={cleanFiltersOnClick}
             className="h-11 flex items-center px-3 py-2.5 gap-2 text-[#c0392b] rounded-2xl border
@@ -68,8 +68,8 @@ export default function FilterModal({
             <Icon name={"filter_list_off"} size={20} />
             <span className="text-xs md:text-sm">Limpiar filtros</span>
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

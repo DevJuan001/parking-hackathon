@@ -20,15 +20,6 @@ export default function FilterExitsModal({ filters, setFilters, onClose }) {
         setFilters({});
         onClose();
       }}
-    >
-      <div className="flex flex-col">
-        <SelectMenu
-          id={"plates-menu"}
-          spanText={"Placa"}
-          value={filters.plate_id}
-          onChange={handleChange}
-        />
-      </div>
-    </FilterModal>
+    />
   );
 }
