@@ -1,7 +1,7 @@
 import Icon from "../../../../globals/components/ui/Icon";
 import { placeStatus } from "../../constants/spotStatus";
 
-export default function SpotItem({ name, status = 2, onClick }) {
+export default function SpotItem({ name, status = 2, icon, onClick }) {
   const config = placeStatus[status] || placeStatus[2];
 
   return (
@@ -13,11 +13,7 @@ export default function SpotItem({ name, status = 2, onClick }) {
       <span className="font-semibold">{name}</span>
 
       <div className="flex flex-col items-center gap-1">
-        <Icon
-          name={config.icon}
-          size={14}
-          fill={config.fill}
-        />
+        <Icon name={icon} size={14} fill={config.fill} />
 
         <span className="text-xs">{config.text}</span>
       </div>

@@ -9,6 +9,7 @@ import Skeleton from "../../../../globals/components/ui/Skeleton";
 import SpotItem from "./SpotItem";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import CreateButton from "../../../../globals/components/ui/CreateButton";
+import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 
 export default function SpotsPanel({ openModal }) {
   const { floors } = useFloors();
@@ -72,6 +73,7 @@ export default function SpotsPanel({ openModal }) {
                 key={spot.spot_id}
                 name={spot.spot}
                 status={spot.spot_status}
+                icon={vehicleTypes[spot.vehicle_type_id]?.icon || "circle"}
                 onClick={(e) => openModal(spot, "editSpot", e.currentTarget)}
               />
             ))}

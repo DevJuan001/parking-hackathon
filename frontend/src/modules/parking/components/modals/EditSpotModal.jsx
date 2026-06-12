@@ -8,11 +8,12 @@ import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Constants
 import { placeStatus } from "../../constants/spotStatus";
+import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 // Modals
+import DeleteSpotModal from "./DeleteSpotModal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
-import DeleteSpotModal from "./DeleteSpotModal";
 
 export default function EditSpotModal({ onClose, spot }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
@@ -23,7 +24,7 @@ export default function EditSpotModal({ onClose, spot }) {
   return (
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
-        icon={"garage"}
+        icon={vehicleTypes[spot.vehicle_type_id]?.icon || "garage"}
         text={spotData.spot}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={(e) => openInnerModal("delete", e)}
@@ -37,6 +38,18 @@ export default function EditSpotModal({ onClose, spot }) {
         onChange={handleChange}
         autoComplete="off"
       />
+
+      {spot.plate && (
+        <FormField
+          id={"spot"}
+          name={"spot"}
+          labelText={"Placa del vehiculo"}
+          value={spot.plate}
+          onChange={handleChange}
+          autoComplete="off"
+          disabled={true}
+        />
+      )}
 
       <SelectMenu
         id={"spot_status"}
