@@ -7,5 +7,5 @@ export const vehicleTypes = {
 };
 
 export const vehicleTypeOptions = Object.entries(vehicleTypes).map(
-  ([id, label]) => ({ value: Number(id), label }),
+  (id, label) => ({ value: Number(id), label }),
 );
