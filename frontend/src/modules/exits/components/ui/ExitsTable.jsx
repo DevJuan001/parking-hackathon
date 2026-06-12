@@ -2,7 +2,10 @@
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 // Utils
-import { formatDateTime } from "../../../../utils/formatDateTime";
+import {
+  formatDateTime,
+  formatTimeDate,
+} from "../../../../utils/formatDateTime";
 
 export default function ExitsTable({ exits, loading }) {
   const noExits = exits.length === 0 && !loading;
@@ -73,6 +76,14 @@ export default function ExitsTable({ exits, loading }) {
 
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
+                    <Icon name={"nest_clock_farsight_analog"} size={20} />
+
+                    <span>Hora de salida</span>
+                  </div>
+                </th>
+
+                <th className="font-medium text-sm pl-4 text-start">
+                  <div className="flex gap-1">
                     <Icon name={"calendar_today"} size={20} fill />
 
                     <span>Fecha de salida</span>
@@ -100,6 +111,10 @@ export default function ExitsTable({ exits, loading }) {
 
                   <th className="font-medium text-sm pl-4 text-start">
                     {exit.payment_method}
+                  </th>
+
+                  <th className="font-medium text-sm pl-4 text-start">
+                    {formatTimeDate(exit.created_at)}
                   </th>
 
                   <th className="font-medium text-sm pl-4 text-start">
