@@ -9,8 +9,9 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
+import { vehicleTypeOptions } from "../../../../globals/constants/vehicleTypes";
 // Constants
-import { vehicleTypeOptions } from "../../constants/vehicleTypes";
+
 
 export default function CreateTariffModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();

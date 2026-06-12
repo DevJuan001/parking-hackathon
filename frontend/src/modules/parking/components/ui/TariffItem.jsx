@@ -1,5 +1,5 @@
 import Icon from "../../../../globals/components/ui/Icon";
-import { vehicleTypes } from "../../constants/vehicleTypes";
+import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 
 export default function TariffItem({ openModal, tariff }) {
   return (
@@ -14,7 +14,7 @@ export default function TariffItem({ openModal, tariff }) {
 
       <div className="flex flex-col items-center justify-between">
         <span className="font-semibold">
-          {vehicleTypes[tariff.vehicle_type] ?? `Tipo ${tariff.vehicle_type}`}
+          {vehicleTypes[tariff.vehicle_type].text ?? `Tipo ${tariff.vehicle_type}`}
         </span>
 
         <span className="text-sm text-gray-500 dark:text-gray-400">

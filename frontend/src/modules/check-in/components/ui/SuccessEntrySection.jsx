@@ -1,7 +1,14 @@
 import Icon from "../../../../globals/components/ui/Icon";
 
-export default function SuccessEntrySection({ setActiveSection, message }) {
-  setTimeout(() => setActiveSection("createEntry"), 8000);
+export default function SuccessEntrySection({
+  setActiveSection,
+  message,
+  setEntryData,
+}) {
+  setTimeout(() => {
+    setEntryData({});
+    setActiveSection("createEntry");
+  }, 2000);
 
   return (
     <section className="w-full h-full flex flex-col animate-blur-down">

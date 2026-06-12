@@ -1,7 +1,7 @@
 // Components
 import EarningsPanel from "./EarningsPanel";
-import SpotsPanel from "../../../parking/components/ui/SpotsPanel";
 import RecentEntriesPanel from "./RecentEntriesPanel";
+import SpotsPanel from "../../../parking/components/ui/SpotsPanel";
 
 export default function HomeSectionsContainer({ openModal }) {
   return (
