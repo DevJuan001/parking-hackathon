@@ -4,6 +4,7 @@ from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.utils.date_formatter import date_formatter
 from app.utils.plate_formatter import plate_formatter
+from app.utils.round_to_50 import round_up_to_next_50
 from app.features.exits.repositories.exits_repository import ExitsRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
 from app.features.tariffs.repositories.tariffs_repository import TariffsRepository
@@ -192,7 +193,8 @@ class PaymentsService:
 
             rate_value = rate.value
 
-            total = round(hours_parked * rate_value, 2)
+            total_raw = round(hours_parked * rate_value, 2)
+            total = round_up_to_next_50(total_raw)
 
             return None, CalculatePaymentResponse(
                 plate=plate_data[0].plate,
@@ -275,12 +277,14 @@ class PaymentsService:
             if error or not rate:
                 raise ServiceError(error or "Tarifa no encontrada")
 
-            value = round(hours_parked * rate.value, 2)
+            value_raw = round(hours_parked * rate.value, 2)
 
-            if value < 0:
+            if value_raw < 0:
                 raise ServiceError(
                     "El valor calculado del pago es invalido"
                 )
+
+            value = round_up_to_next_50(value_raw)
 
             error, success, message = ExitsRepository.create_exit(
                 parking_id=parking_id,
