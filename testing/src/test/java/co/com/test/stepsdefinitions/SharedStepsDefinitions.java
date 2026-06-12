@@ -34,6 +34,17 @@ public class SharedStepsDefinitions {
         theActorInTheSpotlight().attemptsTo(Autenticarse.aute(credenciales));
     }
 
+    @Cuando("^el cliente ha iniciado sesion$")
+    public void elClienteHaIniciadoSesion() {
+        CredencialesInicioSesion credencial = new CredencialesInicioSesion();
+        credencial.setUsuario("juanalvout38@gmail.com");
+        credencial.setClave("J%a2tojIk4NR");
+        List<CredencialesInicioSesion> credenciales = new ArrayList<>();
+        credenciales.add(credencial);
+        theActorInTheSpotlight().attemptsTo(AbrirPagina.laPagina());
+        theActorInTheSpotlight().attemptsTo(Autenticarse.aute(credenciales));
+    }
+
     @Cuando("^navega a la seccion (.*)$")
     public void navegaALaSeccion(String seccion) {
         switch (seccion) {
