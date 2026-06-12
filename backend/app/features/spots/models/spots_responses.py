@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -7,3 +8,4 @@ class SpotResponse(BaseModel):
     spot: str
     spot_status: int
     created_at: str
+    vehicle_type_id: Optional[int] = None
