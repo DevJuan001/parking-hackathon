@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post(
     "/login",
     dependencies=[
-        Depends(RateLimiter(times=3, seconds=60))
+        Depends(RateLimiter(times=10, seconds=60))
     ]
 )
 def login(credentials: LoginModelSchema, response: Response):
