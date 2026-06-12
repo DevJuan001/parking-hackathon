@@ -13,7 +13,16 @@ public class CrearEntradaStepsDefinitions {
 
     @Cuando("^crea una nueva entrada$")
     public void creaUnaNuevaEntrada() {
-        String nombrePlaca = "PLACA" + (System.currentTimeMillis() % 10000);
+
+        String letras = "";
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        for (int i = 0; i < 3; i++) {
+            int indice = (int) (System.currentTimeMillis() % 26) + i;
+            letras += abecedario.charAt(indice % 26);
+        }
+
+        String nombrePlaca = letras + (100 + (System.currentTimeMillis() % 900));
         DatosEntrada datos = new DatosEntrada();
         datos.setPlaca(nombrePlaca);
         List<DatosEntrada> datosEntrada = new ArrayList<>();
