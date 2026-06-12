@@ -18,6 +18,7 @@ export function useEnableUser(user) {
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["users"] });
+        await queryClient.invalidateQueries({ queryKey: ["userStats"] });
         onDeleted();
       } else {
         setError(response.error);
