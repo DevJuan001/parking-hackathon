@@ -8,7 +8,7 @@ export default function SuccessEntrySection({
   setTimeout(() => {
     setEntryData({});
     setActiveSection("createEntry");
-  }, 2000);
+  }, 6000);
 
   return (
     <section className="w-full h-full flex flex-col animate-blur-down">
