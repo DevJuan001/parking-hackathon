@@ -129,6 +129,7 @@ Reusable helpers live in `app/utils/` and are imported by services and controlle
 - **`app/utils/logger.py`** — `get_logger(name)`. Use this everywhere; never `print()`.
 - **`app/utils/date_formatter.py`** — converts DB datetimes to display strings.
 - **`app/utils/plate_formatter.py`** — normalizes a plate string (strip whitespace, remove dashes, uppercase). Every service that does plate lookups MUST call this first to avoid duplicate lookups for `ABC-123` vs `ABC123`.
+- **`app/utils/round_to_50.py`** — `round_up_to_next_50(value)`. Rounds a monetary value up to the next multiple of 50; returns 0 for non-positive inputs. Used in payment flows to enforce the "bills always end in .00 or .50, and a positive total charges at least 50" rule.
 - **`app/utils/base_schema.py`** — `BaseSchema` with date-string conversion for pydantic models.
 
 ## `app/core/security.py` rules
@@ -143,6 +144,7 @@ Services are responsible for business-rule validation. A few that recur:
 - **Time ranges**: when computing `diff = exit_time - entry_time`, validate `exit_time > entry_time` and raise `ServiceError` with a domain message. Negative or zero deltas must never produce a payment.
 - **Minimum billing**: parking charges a minimum of 1 hour. After computing `hours_parked = round(diff.total_seconds() / 3600, 2)`, clamp with `max(hours_parked, 1.0)` so the customer is never billed less than the rate for one hour.
 - **Negative monetary values**: before persisting, assert `value >= 0` and raise `ServiceError` if not. This is a safety net for unexpected arithmetic; the previous checks should already prevent it.
+- **Round up to next 50**: after computing the raw total (`hours_parked * rate`), apply `round_up_to_next_50(total_raw)`. A positive total must always end in `.00` or `.50`, and the minimum charge for any positive total is 50. The helper handles 0 correctly by returning 0. Apply in both `calculate_payment` (for the response preview) and `create_payment` (for the persisted value).
 
 ## What "done" looks like for a code change
 
