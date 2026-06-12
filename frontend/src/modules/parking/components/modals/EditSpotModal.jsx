@@ -24,7 +24,7 @@ export default function EditSpotModal({ onClose, spot }) {
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
         icon={"garage"}
-        text={spot.spot}
+        text={spotData.spot}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={(e) => openInnerModal("delete", e)}
       />
