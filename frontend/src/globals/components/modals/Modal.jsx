@@ -86,7 +86,7 @@ export default function Modal({
         dark:border dark:bg-black dark:border-[#1e1e209f] font-poppins`}
       >
         <div ref={contentRef}>
-          {!["calendar", "select", "menu", "editStatus", "editTariff", "editSpot", "editFloor"].includes(
+          {!["calendar", "select", "menu", "editStatus", "editTariff", "editSpot", "editFloor", "filter"].includes(
             type,
           ) && (
             <header className="flex justify-between items-center mb-2">
