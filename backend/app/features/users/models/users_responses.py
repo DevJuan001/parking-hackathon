@@ -31,3 +31,7 @@ class UserStatsResponse(BaseModel):
     active: int
     disabled: int
     created_this_week: int
+
+
+class SurnameResponse(BaseModel):
+    surname: str
