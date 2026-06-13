@@ -1,5 +1,6 @@
 // Hooks
 import { useModal } from "../../globals/hooks/useModal";
+import { useUsers } from "./hooks/useUsers";
 // Constantes
 import { modalTitles } from "./constants/modalTitles";
 // Componentes
@@ -13,17 +14,18 @@ import EditUserModal from "./components/modals/EditUserModal";
 import CreateUserModal from "./components/modals/CreateUserModal";
 import EnableUserModal from "./components/modals/EnableUserModal";
 import DisableUserModal from "./components/modals/DisableUserModal";
+import FilterUsersModal from "./components/modals/FilterUsersModal";
 
 export default function UsersPage() {
   const { isOpen, modalType, modalData, triggerRef, openModal, closeModal } =
     useModal();
+  const { users, loading, filters, setFilters } = useUsers();
 
   return (
     <Layout>
       <TopSection
         sectionName={"Usuarios"}
         addButtonText={"Crear Usuario"}
-        filterButton={false}
         createOnClick={(e) => openModal(null, "createUser", e.currentTarget)}
         filterOnClick={(e) => openModal(null, "filterUsers", e.currentTarget)}
       />
@@ -31,7 +33,7 @@ export default function UsersPage() {
       <div className="flex flex-col gap-4">
         <UsersKpis />
 
-        <UsersTable openModal={openModal} />
+        <UsersTable users={users} loading={loading} openModal={openModal} />
       </div>
 
       {modalType && (
@@ -58,6 +60,14 @@ export default function UsersPage() {
 
           {modalType === "enableUser" && (
             <EnableUserModal user={modalData} onClose={closeModal} />
+          )}
+
+          {modalType === "filterUsers" && (
+            <FilterUsersModal
+              filters={filters}
+              setFilters={setFilters}
+              onClose={closeModal}
+            />
           )}
         </Modal>
       )}
