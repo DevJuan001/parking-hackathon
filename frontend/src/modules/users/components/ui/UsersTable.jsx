@@ -1,5 +1,3 @@
-// Hooks
-import { useUsers } from "../../hooks/useUsers";
 // Constantes
 import { userStatus } from "../../constants/userStatus";
 // Componentes
@@ -7,8 +5,7 @@ import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 import ActionButtons from "../../../../globals/components/ui/ActionButtons";
 
-export default function UsersTable({ openModal }) {
-  const { users, loading } = useUsers();
+export default function UsersTable({ users, loading, openModal }) {
   const noUsers = users.length === 0 && !loading;
   const isFirstLoad = users.length === 0 && loading;
 
