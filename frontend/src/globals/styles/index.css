@@ -12,11 +12,11 @@
 
 @theme {
   --animate-blur-up: blur-up 0.3s ease-in forwards;
-  --animate-blur-down: blur-down 0.7s ease-in forwards;
+  --animate-blur-down: blur-down 0.8s ease-in forwards;
   --animate-rotation: rotation 0.8s linear infinite;
   --animate-shake: shake 0.35s ease-in;
   --animate-shimmer: shimmer 3s linear infinite;
-  --animate-jump: jump 8s ease-in-out infinite;
+  --animate-jump: jump 2s infinite;
 
   @keyframes blur-up {
     0% {
@@ -69,17 +69,18 @@
   }
 
   @keyframes jump {
-    0% {
-      transform: translateY(-10px);
+    0%,
+    100% {
+      transform: translateY(0) scale(1.1, 0.8);
+    }
+    10% {
+      transform: translateY(5px) scale(1, 1);
     }
     50% {
-      transform: translateY(8px);
+      transform: translateY(-10px) scale(0.9, 1.1);
     }
-    75% {
-      transform: translateY(-10px);
-    }
-    100% {
-      transform: translateY(8px);
+    90% {
+      transform: translateY(0) scale(1, 1);
     }
   }
 

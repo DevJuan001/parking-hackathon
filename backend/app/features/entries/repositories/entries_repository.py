@@ -17,7 +17,7 @@ class EntriesRepository:
         SELECT
             e.id,
             p.plate,
-            vt.name,
+            vt.id,
             s.spot_id,
             s.spot,
             e.created_at

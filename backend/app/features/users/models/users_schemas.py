@@ -4,6 +4,7 @@ from pydantic import BaseModel, EmailStr
 
 class UsersFiltersSchema(BaseModel):
     role_order: Optional[int] = None
+    first_surname: Optional[str] = None
     name_order: Optional[str] = None
     start_date: Optional[str] = None
     end_date: Optional[str] = None

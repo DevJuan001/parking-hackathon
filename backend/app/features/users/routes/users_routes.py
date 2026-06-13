@@ -50,6 +50,18 @@ def get_all_roles():
     return UsersController.get_all_roles()
 
 
+# Endpoint para obtener los apellidos (first_surname) distintos del parking
+@router.get(
+    "/surnames",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"]))
+    ]
+)
+def get_all_surnames(payload: dict = Depends(verify_jwt)):
+    return UsersController.get_all_surnames(payload)
+
+
 @router.get(
     "/by-stats",
     dependencies=[

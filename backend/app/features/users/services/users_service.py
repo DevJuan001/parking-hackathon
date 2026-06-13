@@ -151,6 +151,35 @@ class UsersService:
             return "Error al intentar obtener los roles", None
 
     @staticmethod
+    def get_all_surnames(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, surnames = UsersRepository.find_all_surnames(
+                parking_id,
+                connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, surnames
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_all_surnames: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los apellidos de los usuarios", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     async def create_user(user_data: CreateUserSchema, parking_id: int):
         data = user_data.model_dump()
 

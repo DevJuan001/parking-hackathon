@@ -23,7 +23,7 @@ export default function CreateEntrySection({
           <span className="text-3xl text-start text-[#7E777E]">Bienvenido</span>
 
           <div className="flex items-center gap-2">
-            <span className="text-6xl font-semibold animate-jump">
+            <span className="text-6xl font-semibold">
               Escribe tu placa aqui
             </span>
 

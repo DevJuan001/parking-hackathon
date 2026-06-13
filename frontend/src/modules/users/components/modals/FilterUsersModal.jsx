@@ -1,9 +1,11 @@
-import { useFilterEntries } from "../../hooks/useFilterEntries";
+import { useFilterUsers } from "../../hooks/useFilterUsers";
+import { useSurnames } from "../../hooks/useSurnames";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import FilterModal from "../../../../globals/components/modals/FilterModal";
 
-export default function FilterEntriesModal({ filters, setFilters, onClose }) {
-  const { handleChange } = useFilterEntries(setFilters);
+export default function FilterUsersModal({ filters, setFilters, onClose }) {
+  const { handleChange } = useFilterUsers(setFilters);
+  const { surnames } = useSurnames();
 
   return (
     <FilterModal
@@ -24,11 +26,15 @@ export default function FilterEntriesModal({ filters, setFilters, onClose }) {
       <div className="flex flex-col">
         <SelectMenu
           showAllOption
-          id={"plates-menu"}
-          spanText={"Placa"}
-          value={filters.plate_id}
+          id={"surnames-menu"}
+          spanText={"Apellido"}
+          name={"first_surname"}
+          value={filters.first_surname}
           onChange={handleChange}
-          options={[]}
+          options={surnames.map((surname) => ({
+            value: surname.surname,
+            label: surname.surname,
+          }))}
         />
       </div>
     </FilterModal>

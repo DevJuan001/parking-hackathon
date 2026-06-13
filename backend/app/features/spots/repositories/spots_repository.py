@@ -20,7 +20,34 @@ class SpotsRepository:
             s.floor_id,
             s.spot,
             s.spot_status,
-            s.created_at
+            s.created_at,
+            (
+                SELECT vt.id
+                FROM ENTRIES AS e
+                INNER JOIN PLATES AS p ON p.id = e.plate_id
+                INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+                WHERE e.spot_id = s.spot_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM EXITS AS x
+                      WHERE x.plate_id = e.plate_id
+                        AND x.created_at > e.created_at
+                  )
+                ORDER BY e.created_at DESC
+                LIMIT 1
+            ) AS vehicle_type_id,
+            (
+                SELECT p.plate
+                FROM ENTRIES AS e
+                INNER JOIN PLATES AS p ON p.id = e.plate_id
+                WHERE e.spot_id = s.spot_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM EXITS AS x
+                      WHERE x.plate_id = e.plate_id
+                        AND x.created_at > e.created_at
+                  )
+                ORDER BY e.created_at DESC
+                LIMIT 1
+            ) AS plate
         FROM SPOTS AS s
         INNER JOIN FLOORS AS f
         ON f.id = s.floor_id
@@ -49,7 +76,9 @@ class SpotsRepository:
                     floor_id=item[1],
                     spot=item[2],
                     spot_status=item[3],
-                    created_at=date_formatter(item[4])
+                    created_at=date_formatter(item[4]),
+                    vehicle_type_id=item[5],
+                    plate=item[6]
                 )
                 for item in results
             ]
@@ -72,7 +101,34 @@ class SpotsRepository:
             s.floor_id,
             s.spot,
             s.spot_status,
-            s.created_at
+            s.created_at,
+            (
+                SELECT vt.id
+                FROM ENTRIES AS e
+                INNER JOIN PLATES AS p ON p.id = e.plate_id
+                INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
+                WHERE e.spot_id = s.spot_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM EXITS AS x
+                      WHERE x.plate_id = e.plate_id
+                        AND x.created_at > e.created_at
+                  )
+                ORDER BY e.created_at DESC
+                LIMIT 1
+            ) AS vehicle_type_id,
+            (
+                SELECT p.plate
+                FROM ENTRIES AS e
+                INNER JOIN PLATES AS p ON p.id = e.plate_id
+                WHERE e.spot_id = s.spot_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM EXITS AS x
+                      WHERE x.plate_id = e.plate_id
+                        AND x.created_at > e.created_at
+                  )
+                ORDER BY e.created_at DESC
+                LIMIT 1
+            ) AS plate
         FROM SPOTS AS s
         INNER JOIN FLOORS AS f ON f.id = s.floor_id
         WHERE f.parking_id = %s AND s.spot_id = %s
@@ -90,7 +146,9 @@ class SpotsRepository:
                 floor_id=result[1],
                 spot=result[2],
                 spot_status=result[3],
-                created_at=date_formatter(result[4])
+                created_at=date_formatter(result[4]),
+                vehicle_type_id=result[5],
+                plate=result[6]
             )
             return None, spot
 

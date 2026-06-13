@@ -236,7 +236,7 @@ class EntriesService:
 
             connection.commit()
 
-            return None, True, f"Dirigete al piso {floor_name} y a la plaza {spot_label}"
+            return None, True, f"Dirigete al {floor_name} y a la plaza {spot_label}"
 
         except ServiceError as e:
             connection.rollback()

@@ -9,6 +9,7 @@ export default function FormField({
   autoComplete = "off",
   children,
   className,
+  disabled,
 }) {
   return (
     <div
@@ -26,14 +27,17 @@ export default function FormField({
         value={value}
         type={type}
         id={id}
+        disabled={disabled}
         autoComplete={autoComplete}
         className={`
           w-full h-16 pt-7 px-4 pb-2 outline-none
           bg-transparent rounded-xl
           transition-all duration-200
           dark:text-[#E4E2E5] dark:placeholder:text-[#b4aab4]
+          ${disabled ? "text-[#0000007a]" : "text-black"}
         `}
       />
+
       {labelText && (
         <label
           htmlFor={id}

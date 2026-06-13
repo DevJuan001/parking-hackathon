@@ -3,4 +3,5 @@ export const modalTitles = {
   createUser: "Crear Usuario",
   disableUser: "Deshabilitar Usuario",
   enableUser: "Habilitar Usuario",
+  filterUsers: "Filtrar Usuarios",
 };

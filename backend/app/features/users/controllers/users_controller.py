@@ -83,6 +83,19 @@ class UsersController:
         }
 
     @staticmethod
+    def get_all_surnames(payload: dict):
+        error, data = UsersService.get_all_surnames(
+            int(payload["parking_id"])
+        )
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": data
+        }
+
+    @staticmethod
     def get_all_cities():
         error, cities = UsersService.get_all_cities()
 

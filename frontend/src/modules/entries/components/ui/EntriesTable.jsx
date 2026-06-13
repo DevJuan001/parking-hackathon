@@ -1,8 +1,12 @@
 // Componentes
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
+import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 // Utils
-import { formatDateTime } from "../../../../utils/formatDateTime";
+import {
+  formatDateTime,
+  formatTimeDate,
+} from "../../../../utils/formatDateTime";
 
 export default function EntriesTable({ entries, loading }) {
   const noEntries = entries.length === 0 && !loading;
@@ -66,6 +70,14 @@ export default function EntriesTable({ entries, loading }) {
 
                 <th className="font-medium text-sm pl-4 text-start">
                   <div className="flex gap-1">
+                    <Icon name={"nest_clock_farsight_analog"} size={20} />
+
+                    <span>Hora de ingreso</span>
+                  </div>
+                </th>
+
+                <th className="font-medium text-sm pl-4 text-start">
+                  <div className="flex gap-1">
                     <Icon name={"calendar_today"} size={20} fill />
 
                     <span>Fecha de ingreso</span>
@@ -87,21 +99,21 @@ export default function EntriesTable({ entries, loading }) {
                   <th className="font-medium text-sm pl-4 text-start">
                     <div className="flex gap-1">
                       <Icon
-                        name={
-                          entry.vehicle_type === "Car"
-                            ? "directions_car"
-                            : "two_wheeler"
-                        }
+                        name={vehicleTypes[entry.vehicle_type].icon}
                         size={18}
                         fill
                       />
 
-                      <span>{entry.vehicle_type}</span>
+                      <span>{vehicleTypes[entry.vehicle_type].text}</span>
                     </div>
                   </th>
 
                   <th className="font-medium text-sm pl-4 text-start">
                     {entry.spot}
+                  </th>
+
+                  <th className="font-medium text-sm pl-4 text-start">
+                    {formatTimeDate(entry.created_at)}
                   </th>
 
                   <th className="font-medium text-sm pl-4 text-start">
