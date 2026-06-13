@@ -27,7 +27,7 @@ export default function UsersPage() {
         sectionName={"Usuarios"}
         addButtonText={"Crear Usuario"}
         createOnClick={(e) => openModal(null, "createUser", e.currentTarget)}
-        filterOnClick={(e) => openModal(null, "filterUsers", e.currentTarget)}
+        filterOnClick={(e) => openModal(null, "filter", e.currentTarget)}
       />
 
       <div className="flex flex-col gap-4">
@@ -62,7 +62,7 @@ export default function UsersPage() {
             <EnableUserModal user={modalData} onClose={closeModal} />
           )}
 
-          {modalType === "filterUsers" && (
+          {modalType === "filter" && (
             <FilterUsersModal
               filters={filters}
               setFilters={setFilters}
