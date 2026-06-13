@@ -2,7 +2,7 @@ import bcrypt
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
 from app.features.users.models.users_schemas import CreateUserSchema, UpdateUserSchema, UsersFiltersSchema
-from app.features.users.models.users_responses import UserByIdResponse, UserResponse, UserStatsResponse
+from app.features.users.models.users_responses import SurnameResponse, UserByIdResponse, UserResponse, UserStatsResponse
 
 logger = get_logger("users.repository")
 
@@ -39,6 +39,10 @@ class UsersRepository:
         if "role_order" in data:
             filters.append("r.id = %s")
             values.append(data["role_order"])
+
+        if "first_surname" in data:
+            filters.append("u.first_surname = %s")
+            values.append(data["first_surname"])
 
         if "start_date" in data:
             filters.append("DATE(u.created_at) >= %s")
@@ -79,6 +83,36 @@ class UsersRepository:
         except Exception as e:
             logger.error("Error en find_all_users: %s", e, exc_info=True)
             return "Error al intentar obtener todos los usuarios", None
+
+        finally:
+            cursor.close()
+
+    # Obtener los apellidos (first_surname) distintos de los usuarios del parking
+    @staticmethod
+    def find_all_surnames(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT DISTINCT first_surname
+        FROM USERS
+        WHERE parking_id = %s
+        ORDER BY first_surname ASC
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+
+            results = cursor.fetchall()
+
+            surnames = [
+                SurnameResponse(surname=item[0])
+                for item in results
+            ]
+            return None, surnames
+
+        except Exception as e:
+            logger.error("Error en find_all_surnames: %s", e, exc_info=True)
+            return "Error al intentar obtener los apellidos de los usuarios", None
 
         finally:
             cursor.close()
