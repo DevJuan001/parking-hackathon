@@ -84,7 +84,22 @@ export default function RegisterModal() {
             <Icon name={showPassword ? "visibility_off" : "visibility"} />
           </button>
         </FormField>
-        
+
+        <div className="mt-2.5 flex items-center gap-2">
+          <input required type="checkbox" className="transition-transform duration-100" />
+
+          <p className="text-xs">
+            He leído y acepto la {""}
+            <a href="/privacy" className="text-blue-800 border-b">
+              Politica de Privacidad {""}
+            </a>
+            y los {""}
+            <a href="/terms" className="text-blue-800 border-b">
+              Términos y Condiciones
+            </a>
+          </p>
+        </div>
+
         <LoginAndRegisterButtons
           confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
           confirmButtonText={loading ? <Loader /> : "Crear cuenta"}
