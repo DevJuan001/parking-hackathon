@@ -6,7 +6,7 @@ export default function NavBar({ openModal }) {
 
   return (
     <nav
-      className={`h-[60px] sticky top-5 flex items-center justify-between px-3 py-2 rounded-full bg-[#ffffff99] transition-all duration-500
+      className={`h-[60px] sticky z-10 top-5 flex items-center justify-between px-3 py-2 rounded-full bg-[#ffffff99] transition-all duration-500
         dark:bg-[#00000099]
         ${
           scrolled
