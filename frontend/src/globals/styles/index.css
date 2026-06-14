@@ -105,6 +105,14 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  background-color: #FBF9FC;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark html{
+  background-color: #0a0a0a;
 }
 
 * {
