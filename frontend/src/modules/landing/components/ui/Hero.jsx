@@ -2,14 +2,14 @@ export default function Hero({ openModal }) {
   return (
     <section
       id="hero"
-      className="w-full my-32 flex flex-col items-center gap-5
+      className="w-full mt-36 mb-28 flex flex-col items-center gap-5
       dark:text-white"
     >
-      <h1 className="text-6xl font-semibold dark:text-[#e4e2e5]">
+      <h1 className="text-6xl font-semibold dark:text-[#E4E2E5]">
         Gestiona tu Parqueadero Fácil
       </h1>
 
-      <p className="text-2xl text-center text-[#7e8088] font-medium w-xl">
+      <p className="text-2xl text-center text-[#7E8088] font-medium w-xl">
         Registra vehículos, asigna plazas, calcula tarifas automáticamente y
         administra toda tu operación desde un único panel.
       </p>
