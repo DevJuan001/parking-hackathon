@@ -2,7 +2,7 @@ import bcrypt
 from typing import Optional
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
-from app.features.users.models.users_schemas import CreateUserSchema, UpdateUserSchema, UsersFiltersSchema
+from app.features.users.models.users_schemas import CompleteUserOnboardingSchema, CreateUserSchema, UpdateUserSchema, UsersFiltersSchema
 from app.features.users.models.users_responses import SurnameResponse, UserByIdResponse, UserResponse, UserStatsResponse
 
 logger = get_logger("users.repository")
@@ -207,6 +207,61 @@ class UsersRepository:
         finally:
             cursor.close()
 
+    # Obtener un usuario por su ID unicamente (no requiere parking_id).
+    # Util cuando el usuario todavia no completo el onboarding y su
+    # parking_id es NULL.
+    @staticmethod
+    def find_user_by_id_global(user_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            r.name,
+            u.id,
+            u.name,
+            u.first_surname,
+            u.second_surname,
+            u.email,
+            u.created_at,
+            u.status
+        FROM USERS AS u
+        INNER JOIN ROLES AS r
+            ON r.id = u.role_id
+        WHERE u.id = %s
+        """
+
+        try:
+            cursor.execute(query, (user_id,))
+
+            result = cursor.fetchall()
+
+            if not result:
+                return "Usuario no encontrado", None
+
+            data = [
+                UserByIdResponse(
+                    role=item[0],
+                    id=item[1],
+                    name=item[2],
+                    first_surname=item[3],
+                    second_surname=item[4],
+                    email=item[5],
+                    created_at=date_formatter(item[6]),
+                    status=item[7]
+                )
+                for item in result
+            ]
+            return None, data
+
+        except Exception as e:
+            logger.error(
+                "Error en find_user_by_id_global: %s", e, exc_info=True
+            )
+            return "Error al intentar obtener el usuario mediante el id", None
+
+        finally:
+            cursor.close()
+
     @staticmethod
     def find_user_password_by_id(parking_id: int, user_id: int, connection):
         cursor = connection.cursor()
@@ -312,14 +367,12 @@ class UsersRepository:
         finally:
             cursor.close()
 
-    # Completar el onboarding de un usuario (asignar parking + datos personales + flag)
+    # Completar el onboarding de un usuario (datos personales + parking + flag)
     @staticmethod
     def complete_user_onboarding(
         user_id: int,
         parking_id: int,
-        name: str,
-        first_surname: str,
-        second_surname: Optional[str],
+        user_data: CompleteUserOnboardingSchema,
         connection
     ):
         cursor = connection.cursor()
@@ -339,9 +392,9 @@ class UsersRepository:
                 query,
                 (
                     parking_id,
-                    name,
-                    first_surname,
-                    (second_surname or "").strip(),
+                    user_data.name,
+                    user_data.first_surname,
+                    (user_data.second_surname or "").strip(),
                     user_id
                 )
             )

@@ -18,6 +18,12 @@ class CreateUserSchema(BaseModel):
     email: EmailStr
 
 
+class CompleteUserOnboardingSchema(BaseModel):
+    name: str
+    first_surname: str
+    second_surname: Optional[str] = None
+
+
 class UpdateUserSchema(BaseModel):
     role_id: Optional[int] = None
     name: Optional[str] = None
