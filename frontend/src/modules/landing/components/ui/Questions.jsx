@@ -18,7 +18,7 @@ export default function Questions() {
   };
 
   return (
-    <section className="w-full flex flex-col items-center gap-3">
+    <section id="questions" className="w-full flex flex-col items-center gap-3">
       <span className="mt-28 text-5xl font-semibold dark:text-[#e4e2e5]">
         Preguntas Frecuentes
       </span>
@@ -32,7 +32,7 @@ export default function Questions() {
         parqueaderos.
       </p>
 
-      <div className="min-h-[750px] w-4xl flex flex-col gap-2">
+      <div className="w-4xl flex flex-col gap-2">
         {questions.map((question, index) => {
           const isOpen = openQuestions.has(index);
 
