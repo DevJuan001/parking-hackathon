@@ -6,7 +6,7 @@ export default function NavBar({ openModal }) {
 
   return (
     <nav
-      className={`h-[60px] sticky z-10 top-5 flex items-center justify-between px-3 py-2 rounded-full bg-[#ffffff99] transition-all duration-500
+      className={`h-[60px] sticky z-10 top-5 flex items-center justify-between px-3 py-2 rounded-full bg-[#ffffff4f] transition-all duration-500
         dark:bg-[#00000099]
         ${
           scrolled
@@ -62,9 +62,15 @@ export default function NavBar({ openModal }) {
 
       <button
         onClick={(e) => openModal(null, "logIn", e.currentTarget)}
-        className="px-5 py-2 border border-[#e5e7eb] font-semibold rounded-3xl transition-colors duration-300
+        className={`px-5 py-2.5 font-semibold rounded-3xl transition-all duration-300
+          ${
+            scrolled
+              ? `bg-black text-white hover:scale-[1.03]
+            dark:bg-white dark:text-black`
+              : "border border-[#e5e7eb]"
+          }
         hover:bg-black hover:text-white
-        dark:text-[#758088] dark:border-[#202222] dark:hover:bg-[#202022]"
+        dark:text-[#758088] dark:border-[#202222] dark:hover:bg-[#202022]`}
       >
         Iniciar sesión
       </button>
