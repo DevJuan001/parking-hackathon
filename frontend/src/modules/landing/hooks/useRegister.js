@@ -43,9 +43,8 @@ export function useRegister() {
           queryKey: ["currentUser"],
           queryFn: getCurrentUserService,
         });
-        const user = freshData?.data?.[0];
 
-        if (user?.onboarding_completed === false) {
+        if (freshData.onboarding_completed === false) {
           navigate("/on-boarding");
         } else {
           navigate("/home");
