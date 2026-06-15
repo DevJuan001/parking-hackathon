@@ -1,18 +1,34 @@
 from datetime import timedelta
 
+import bcrypt
 import jwt
 from jwt import PyJWTError
 from pydantic import EmailStr
 from fastapi import Request, Response
 
 from app.core.config import settings
-from app.utils.logger import get_logger
+from app.core.database import get_connection
 from app.core.exception import ServiceError
-from app.tasks.email_tasks import recovery_password_email
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    set_auth_cookies,
+    verify_password,
+)
+from app.tasks.email_tasks import (
+    recovery_password_email,
+    send_welcome_registration_email,
+)
+from app.utils.logger import get_logger
+from app.features.auth.models.auth_schema import (
+    OnboardingSchema,
+    RegisterSchema,
+    VerifyRoleModelSchema,
+)
 from app.features.parking.services.parking_service import ParkingService
+from app.features.users.models.users_schemas import CreateUserSchema
+from app.features.users.repositories.users_repository import UsersRepository
 from app.features.users.services.users_service import UsersService
-from app.features.auth.models.auth_schema import RegisterSchema, VerifyRoleModelSchema
-from app.core.security import create_access_token, create_refresh_token, set_auth_cookies, verify_password
 
 logger = get_logger("auth.service")
 
@@ -60,7 +76,107 @@ class AuthService:
 
     @staticmethod
     async def register(data: RegisterSchema, response: Response):
+        connection = get_connection()
+
         try:
+            if data.password != data.repeat_password:
+                raise ServiceError("Las contraseñas no coinciden")
+
+            error, existing_user = UsersService.get_user_by_email(data.email)
+
+            if error:
+                raise ServiceError(error)
+
+            if existing_user:
+                raise ServiceError(
+                    "Este correo ya esta registrado, intenta ingresar otro correo e intentalo nuevamente"
+                )
+
+            password_bytes = data.password.encode("utf-8")
+            hash_password = bcrypt.hashpw(
+                password_bytes, bcrypt.gensalt(rounds=12)
+            ).decode("utf-8")
+
+            shell_user = CreateUserSchema(
+                role_id=1,
+                name="",
+                first_surname="",
+                second_surname="",
+                email=data.email
+            )
+
+            error, success, message = UsersRepository.create_user(
+                user_data=shell_user,
+                hash_password=hash_password,
+                parking_id=None,
+                connection=connection
+            )
+
+            if error or not success:
+                raise ServiceError(error or message)
+
+            error, new_user = UsersRepository.find_user_by_email(
+                email=data.email,
+                connection=connection
+            )
+
+            if error or not new_user:
+                raise ServiceError(error or "No se pudo obtener el usuario creado")
+
+            user_id = new_user[1]
+            role_name = new_user[0]
+
+            connection.commit()
+
+            expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
+
+            access_token = create_access_token(
+                {
+                    "sub": str(user_id),
+                    "role": role_name,
+                    "onboarding_completed": False
+                },
+                expires_delta=expires
+            )
+
+            refresh_token = create_refresh_token(
+                {
+                    "sub": str(user_id),
+                    "role": role_name,
+                    "onboarding_completed": False
+                }
+            )
+
+            set_auth_cookies(response, access_token, refresh_token)
+
+            return None, True, "Registro exitoso"
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, False, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error("Error en register: %s", e, exc_info=True)
+            return "Error al intentar registrar el usuario", False, None
+
+        finally:
+            connection.close()
+
+    @staticmethod
+    async def complete_onboarding(
+        data: OnboardingSchema,
+        payload: dict,
+        response: Response
+    ):
+        connection = get_connection()
+
+        try:
+            user_id = int(payload["user_id"])
+
+            if payload.get("onboarding_completed"):
+                raise ServiceError("El usuario ya completó el onboarding")
+
             error, parking_id, parking_message = ParkingService.create_parking(
                 name=data.parking_name,
                 address=data.parking_address
@@ -69,39 +185,72 @@ class AuthService:
             if error or not parking_id:
                 raise ServiceError(error or parking_message)
 
-            error, user_id, role_name, user_message = await UsersService.create_user_with_password(
+            error, success, message = UsersRepository.complete_user_onboarding(
+                user_id=user_id,
+                parking_id=parking_id,
                 name=data.name,
                 first_surname=data.first_surname,
                 second_surname=data.second_surname,
-                email=data.email,
-                password=data.password,
-                parking_id=parking_id
+                connection=connection
             )
 
-            if error or not user_id or not role_name:
-                raise ServiceError(error or user_message)
+            if error or not success:
+                raise ServiceError(error or message)
+
+            error, user = UsersRepository.find_user_by_id(
+                parking_id=parking_id,
+                user_id=user_id,
+                connection=connection
+            )
+
+            if error or not user:
+                raise ServiceError(error or "Usuario no encontrado")
+
+            role_name = user[0]
+            user_email = user[5]
+
+            connection.commit()
+
+            send_welcome_registration_email.delay(
+                user_name=data.name,
+                user_first_surname=data.first_surname,
+                user_email=user_email
+            )
 
             expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
 
             access_token = create_access_token(
-                {"sub": str(user_id), "role": role_name},
+                {
+                    "sub": str(user_id),
+                    "role": role_name,
+                    "onboarding_completed": True
+                },
                 expires_delta=expires
             )
 
             refresh_token = create_refresh_token(
-                {"sub": str(user_id), "role": role_name}
+                {
+                    "sub": str(user_id),
+                    "role": role_name,
+                    "onboarding_completed": True
+                }
             )
 
             set_auth_cookies(response, access_token, refresh_token)
 
-            return None, True, "Registro exitoso"
+            return None, True, "Onboarding completado"
 
         except ServiceError as e:
+            connection.rollback()
             return e.message, False, None
 
         except Exception as e:
-            logger.error("Error en register: %s", e, exc_info=True)
-            return "Error al intentar registrar el usuario", False, None
+            connection.rollback()
+            logger.error("Error en complete_onboarding: %s", e, exc_info=True)
+            return "Error al intentar completar el onboarding", False, None
+
+        finally:
+            connection.close()
 
     @staticmethod
     def refresh_tokens(request: Request, response: Response):
@@ -123,14 +272,16 @@ class AuthService:
 
             new_access_token = create_access_token({
                 "sub": str(user_id),
-                "role": payload.get("role")
+                "role": payload.get("role"),
+                "onboarding_completed": payload.get("onboarding_completed", False)
             },
                 expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
             )
 
             new_refresh_token = create_refresh_token({
                 "sub": user_id,
-                "role": payload.get("role")
+                "role": payload.get("role"),
+                "onboarding_completed": payload.get("onboarding_completed", False)
             })
 
             set_auth_cookies(response, new_access_token, new_refresh_token)

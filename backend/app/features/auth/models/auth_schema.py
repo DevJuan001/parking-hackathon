@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -15,10 +16,14 @@ class VerifyRoleModelSchema(BaseModel):
 
 
 class RegisterSchema(BaseModel):
-    parking_name: str
-    parking_address: str
-    name: str
-    first_surname: str
-    second_surname: str
     email: EmailStr
     password: str
+    repeat_password: str
+
+
+class OnboardingSchema(BaseModel):
+    name: str
+    first_surname: str
+    second_surname: Optional[str] = None
+    parking_name: str
+    parking_address: str

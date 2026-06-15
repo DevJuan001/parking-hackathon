@@ -32,11 +32,13 @@ async def verify_jwt(access_token: str = Cookie(None)):
         raise credentials_exception
 
     parking_id = _get_user_parking_id(int(user_id))
+    onboarding_completed = _get_user_onboarding_status(int(user_id))
 
     return {
         "user_id": user_id,
         "role": role,
-        "parking_id": parking_id
+        "parking_id": parking_id,
+        "onboarding_completed": onboarding_completed
     }
 
 
@@ -59,6 +61,30 @@ def _get_user_parking_id(user_id: int):
 
     except Exception:
         return None
+
+    finally:
+        connection.close()
+
+
+def _get_user_onboarding_status(user_id: int):
+    connection = get_connection()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT onboarding_completed FROM USERS WHERE id = %s",
+            (user_id,)
+        )
+        result = cursor.fetchone()
+        cursor.close()
+
+        if not result:
+            return False
+
+        return bool(result[0])
+
+    except Exception:
+        return False
 
     finally:
         connection.close()
