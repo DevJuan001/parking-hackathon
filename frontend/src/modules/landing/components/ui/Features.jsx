@@ -36,7 +36,7 @@ export default function Features() {
             dark:bg-[#121214]`}
           >
             <img
-              src="/public/parking-1.png"
+              src="/parking-1.png"
               alt={`${feature.name}-image`}
               className="h-[400px] rounded-2xl aspect-video"
             />
