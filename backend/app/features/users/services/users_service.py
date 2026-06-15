@@ -8,7 +8,7 @@ from app.tasks.email_tasks import send_welcome_email
 from app.core.security import generate_temporal_password, verify_password
 from app.features.users.repositories.roles_repository import RolesRepository
 from app.features.users.repositories.users_repository import UsersRepository
-from app.features.users.models.users_schemas import UpdatePasswordSchema, UsersFiltersSchema, CreateUserSchema, UpdateUserSchema
+from app.features.users.models.users_schemas import CreateUserSchema, UpdatePasswordSchema, UpdateUserSchema, UsersFiltersSchema
 
 logger = get_logger("users.service")
 
@@ -94,6 +94,32 @@ class UsersService:
         except Exception as e:
             logger.error(
                 "Error en get_user_by_id: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener el usuario mediante el id", None
+
+    @staticmethod
+    def get_user_by_id_global(user_id: int):
+        connection = get_connection()
+
+        try:
+            error, user = UsersRepository.find_user_by_id_global(
+                user_id,
+                connection
+            )
+
+            if error or not user:
+                raise ServiceError(error)
+
+            return None, user
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_user_by_id_global: %s",
                 e,
                 exc_info=True
             )
