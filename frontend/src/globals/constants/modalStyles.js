@@ -8,5 +8,7 @@ export const modal_styles = {
   filter: "pt-3 px-3 pb-4 w-[365px] sm:w-[400px]",
   menu: "p-2 w-[210px]",
   user: "p-7 w-[400px] md:w-[650px]",
+  logIn: "p-7 w-[400px] md:w-[900px]",
+  register: "p-7 w-[400px] md:w-[900px]",
   default: "p-7 w-[400px] md:w-[500px]",
 };

@@ -1,4 +1,5 @@
 /* Archivos de estilos */
+@import url("./inputs.css");
 @import url("./autofill.css");
 
 /* Fuentes */
@@ -105,12 +106,25 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  background-color: #fbf9fc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
+html.dark {
+  background-color: #0a0a0a;
+}
+
+html {
   border-color: #e5e7eb;
 }
 
 button {
   cursor: pointer;
+}
+
+/* Clase para ocultar la barra de navegación */
+::-webkit-scrollbar {
+  display: none;
 }
