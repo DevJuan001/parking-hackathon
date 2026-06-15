@@ -5,9 +5,16 @@ import EntriesPage from "../../modules/entries/EntriesPage";
 import ParkingPage from "../../modules/parking/ParkingPage";
 import FinancePage from "../../modules/finance/FinancePage";
 import CheckInPage from "../../modules/check-in/CheckInPage";
+import OnBoardingPage from "../../modules/on-boarding/onBoardingPage";
 import VehiclePayment from "../../modules/vehicle-payment/VehiclePayment";
 
 export const routesConfig = [
+  {
+    path: "/on-boarding",
+    component: OnBoardingPage,
+    roles: ["Admin"],
+  },
+
   {
     path: "/home",
     component: HomePage,
