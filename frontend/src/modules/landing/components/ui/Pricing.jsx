@@ -8,7 +8,9 @@ export default function Pricing() {
       className="w-full flex flex-col items-center
       dark:text-white"
     >
-      <span className="mt-10 text-5xl font-semibold dark:text-[#e4e2e5]">Elige el plan ideal</span>
+      <span className="mt-32 text-5xl font-semibold dark:text-[#e4e2e5]">
+        Elige el plan ideal
+      </span>
 
       <div className="mt-14 w-7xl flex items-center justify-center gap-2">
         {pricingPlans.map((plan) => (
@@ -17,7 +19,9 @@ export default function Pricing() {
             className="w-full h-[680px] flex flex-col gap-2 border p-7 rounded-3xl
             dark:border-[#202022]"
           >
-            <span className="text-5xl font-medium dark:text-[#e4e2e5]">{plan.title}</span>
+            <span className="text-5xl font-medium dark:text-[#e4e2e5]">
+              {plan.title}
+            </span>
 
             <p className="text-xl text-[#758088] leading-7">
               {plan.description}
