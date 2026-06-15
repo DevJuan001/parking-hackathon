@@ -101,12 +101,12 @@ export default function RegisterModal() {
             He leído y acepto la {""}
             <a
               href="/privacy"
-              className="text-blue-800 border-b border-blue-800"
+              className="text-blue-700 border-b border-blue-700"
             >
               Politica de Privacidad {""}
             </a>
             y los {""}
-            <a href="/terms" className="text-blue-800 border-b border-blue-800">
+            <a href="/terms" className="text-blue-700 border-b border-blue-700">
               Términos y Condiciones
             </a>
           </p>
