@@ -49,3 +49,31 @@ def recovery_password_email(self, user_email: EmailStr, user_name: str):
 
     except Exception as e:
         raise self.retry(exc=e, countdown=60)
+
+
+@celery.task(bind=True, max_retries=3)
+def send_welcome_registration_email(
+    self,
+    user_name: str,
+    user_first_surname: str,
+    user_email: EmailStr
+):
+    try:
+        message = MessageSchema(
+            subject="Bienvenido a Parking Hackathon",
+            recipients=[user_email],
+            template_body={
+                "name": user_name,
+                "surname": user_first_surname
+            },
+            subtype="html",
+        )
+
+        asyncio.run(
+            fm.send_message(
+                message, template_name="welcome_registration_mail.html"
+            )
+        )
+
+    except Exception as e:
+        raise self.retry(exc=e, countdown=60)
