@@ -17,7 +17,7 @@ export default function LandingPage() {
   const { isOpen, modalType, triggerRef, openModal, closeModal } = useModal();
 
   return (
-    <div className="relative flex flex-col items-center font-dmsans">
+    <div className="relative mt-5 flex flex-col items-center font-dmsans">
       <NavBar openModal={openModal} />
 
       <Hero openModal={openModal} />

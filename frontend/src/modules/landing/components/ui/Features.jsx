@@ -33,7 +33,7 @@ export default function Features() {
           <div
             key={feature.name}
             className={`w-full flex ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"} p-2 bg-[#f5f3f6] rounded-3xl
-            dark:bg-[#101012]`}
+            dark:bg-[#121214]`}
           >
             <img
               src="/public/parking-1.png"
