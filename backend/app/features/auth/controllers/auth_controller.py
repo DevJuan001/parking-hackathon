@@ -2,7 +2,7 @@ from fastapi import HTTPException, Request, Response
 from pydantic import EmailStr
 
 from app.features.auth.services.auth_service import AuthService
-from app.features.auth.models.auth_schema import VerifyRoleModelSchema
+from app.features.auth.models.auth_schema import RegisterSchema, VerifyRoleModelSchema
 
 
 class AuthController:
@@ -16,6 +16,18 @@ class AuthController:
             raise HTTPException(
                 status_code=401, detail="Credenciales invalidas"
             )
+
+        return {
+            "success": success,
+            "message": message
+        }
+
+    @staticmethod
+    async def register(data: RegisterSchema, response: Response):
+        error, success, message = await AuthService.register(data, response)
+
+        if error or not success:
+            raise HTTPException(status_code=400, detail=error)
 
         return {
             "success": success,
