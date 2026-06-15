@@ -89,7 +89,7 @@ class AuthService:
 
             if existing_user:
                 raise ServiceError(
-                    "Este correo ya esta registrado, intenta ingresar otro correo e intentalo nuevamente"
+                    "Lo sentimos por el momento no podemos crear tu cuenta, por favor intentalo nuevamente más tarde"
                 )
 
             password_bytes = data.password.encode("utf-8")
