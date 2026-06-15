@@ -22,13 +22,14 @@ CREATE TABLE PARKINGS (
 
 CREATE TABLE USERS (
   role_id INT NOT NULL,
-  parking_id INT NOT NULL,
+  parking_id INT NULL,
 	id INT NOT NULL AUTO_INCREMENT,
-  name TEXT NOT NULL,
-  first_surname TEXT NOT NULL,
-  second_surname TEXT NOT NULL,
+  name TEXT NULL,
+  first_surname TEXT NULL,
+  second_surname TEXT NULL,
   email TEXT NOT NULL,
   password TEXT NOT NULL,
+  onboarding_completed TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   status INT NOT NULL DEFAULT 2,
   PRIMARY KEY(id),
