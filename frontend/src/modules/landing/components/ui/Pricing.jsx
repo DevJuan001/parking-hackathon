@@ -1,22 +1,31 @@
 import Icon from "../../../../globals/components/ui/Icon";
 import { pricingPlans } from "../../data/pricingPlans";
 
-export default function Pricing() {
+export default function Pricing({ openModal }) {
   return (
     <section
       id="pricing"
-      className="w-full flex flex-col items-center
+      className="w-full flex flex-col items-center gap-3
       dark:text-white"
     >
-      <span className="mt-32 text-5xl font-semibold dark:text-[#e4e2e5]">
-        Elige el plan ideal
+      <span className="mt-28 text-5xl font-semibold dark:text-[#e4e2e5]">
+        Precios simples y sin complicaciones
       </span>
 
-      <div className="mt-14 w-7xl flex items-center justify-center gap-2">
+      <p
+        className="max-w-2xl text-xl text-center text-[#75777e] font-medium
+        dark:text-[#7E8088]"
+      >
+        Paga únicamente por el plan que necesitas. Accede a una plataforma
+        completa para administrar tu parqueadero, optimizar la operación diaria
+        y mejorar el control de tus ingresos desde cualquier lugar.
+      </p>
+
+      <div className="mt-8 w-7xl flex items-center justify-center gap-2">
         {pricingPlans.map((plan) => (
           <div
             key={plan.title}
-            className="w-full h-[680px] flex flex-col gap-2 border p-7 rounded-3xl
+            className="w-full h-[680px] flex flex-col p-7 gap-2 border border-[#e5e7eb] rounded-3xl transition-all duration-500]
             dark:border-[#202022]"
           >
             <span className="text-5xl font-medium dark:text-[#e4e2e5]">
@@ -52,6 +61,7 @@ export default function Pricing() {
             <span className="text-xs text-[#758088]">IVA incluido</span>
 
             <button
+              onClick={(e) => openModal(null, "register", e.currentTarget)}
               className="w-full p-5 text-xl bg-black text-white rounded-xl font-medium transition-transform duration-500
               hover:scale-[1.03]
               dark:bg-white dark:text-black"
