@@ -2,18 +2,21 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { registerService } from "../services/registerService";
 import { useFormValidation } from "../../../globals/hooks/useFormValidation";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUserService } from "../../../globals/services/getCurrentUserService";
 
 export function useRegister() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
     repeat_password: "",
   });
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { fieldError, clearError, validate } = useFormValidation();
-  const queryClient = useQueryClient();
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -32,11 +35,15 @@ export function useRegister() {
 
     try {
       const response = await registerService(form);
-      
+
       if (response.success === true) {
-        console.log("a");
+        await queryClient.fetchQuery({
+          queryKey: ["currentUser"],
+          queryFn: getCurrentUserService,
+        });
+
+        navigate("/home");
       } else {
-        setError(response.error);
         openInnerModal("error", e);
       }
     } catch {
