@@ -1,4 +1,5 @@
 import bcrypt
+from typing import Optional
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
 from app.features.users.models.users_schemas import CreateUserSchema, UpdateUserSchema, UsersFiltersSchema
@@ -275,7 +276,7 @@ class UsersRepository:
 
     # Crear un usuario
     @staticmethod
-    def create_user(user_data: CreateUserSchema, hash_password: str, parking_id: int, connection):
+    def create_user(user_data: CreateUserSchema, hash_password: str, parking_id: Optional[int], connection):
         data = user_data.model_dump()
 
         cursor = connection.cursor()
@@ -307,6 +308,51 @@ class UsersRepository:
         except Exception as e:
             logger.error("Error en create_user: %s", e, exc_info=True)
             return "Error al intentar crear el usuario", False, None
+
+        finally:
+            cursor.close()
+
+    # Completar el onboarding de un usuario (asignar parking + datos personales + flag)
+    @staticmethod
+    def complete_user_onboarding(
+        user_id: int,
+        parking_id: int,
+        name: str,
+        first_surname: str,
+        second_surname: Optional[str],
+        connection
+    ):
+        cursor = connection.cursor()
+
+        query = """
+        UPDATE USERS
+        SET parking_id = %s,
+            name = %s,
+            first_surname = %s,
+            second_surname = %s,
+            onboarding_completed = 1
+        WHERE id = %s
+        """
+
+        try:
+            cursor.execute(
+                query,
+                (
+                    parking_id,
+                    name,
+                    first_surname,
+                    (second_surname or "").strip(),
+                    user_id
+                )
+            )
+
+            return None, True, "Onboarding completado correctamente"
+
+        except Exception as e:
+            logger.error(
+                "Error en complete_user_onboarding: %s", e, exc_info=True
+            )
+            return "Error al intentar completar el onboarding", False, None
 
         finally:
             cursor.close()
