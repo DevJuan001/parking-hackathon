@@ -61,7 +61,10 @@ export default function Pricing({ openModal }) {
             <span className="text-xs text-[#758088]">IVA incluido</span>
 
             <button
-              onClick={(e) => openModal(null, "register", e.currentTarget)}
+              onClick={(e) => {
+                e.stopPropagation();
+                openModal(null, "register", e.currentTarget);
+              }}
               className="w-full p-5 text-xl bg-black text-white rounded-xl font-medium transition-transform duration-500
               hover:scale-[1.03]
               dark:bg-white dark:text-black"

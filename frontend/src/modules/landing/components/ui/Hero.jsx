@@ -17,7 +17,7 @@ export default function Hero({ openModal }) {
       <div className="flex gap-2 mt-3">
         <button
           onClick={(e) => {
-            e.preventDefault();
+            e.stopPropagation();
             openModal(null, "register", e.currentTarget);
           }}
           className="px-7 py-3 border rounded-3xl font-semibold bg-black text-white transition-transform duration-300
@@ -29,7 +29,7 @@ export default function Hero({ openModal }) {
 
         <button
           onClick={(e) => {
-            e.preventDefault();
+            e.stopPropagation();
             openModal(null, "logIn", e.currentTarget);
           }}
           className="px-6 py-3 border border-[#e5e7eb] rounded-3xl font-semibold transition-colors duration-300

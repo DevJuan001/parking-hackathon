@@ -61,7 +61,10 @@ export default function NavBar({ openModal }) {
       </ul>
 
       <button
-        onClick={(e) => openModal(null, "logIn", e.currentTarget)}
+        onClick={(e) => {
+          e.stopPropagation();
+          openModal(null, "logIn", e.currentTarget);
+        }}
         className={`px-5 py-2.5 font-semibold rounded-3xl transition-all duration-300
           ${
             scrolled
