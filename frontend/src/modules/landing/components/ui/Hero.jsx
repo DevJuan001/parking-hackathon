@@ -2,7 +2,7 @@ export default function Hero({ openModal }) {
   return (
     <section
       id="hero"
-      className="w-full my-32 flex flex-col items-center gap-4
+      className="w-full my-32 flex flex-col items-center gap-5
       dark:text-white"
     >
       <h1 className="text-6xl font-semibold dark:text-[#e4e2e5]">
