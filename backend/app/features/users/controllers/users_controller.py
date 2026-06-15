@@ -48,8 +48,7 @@ class UsersController:
 
     @staticmethod
     def get_current_user(payload: dict):
-        error, user = UsersService.get_user_by_id(
-            int(payload["parking_id"]),
+        error, user = UsersService.get_user_by_id_global(
             int(payload["user_id"])
         )
 
@@ -57,7 +56,8 @@ class UsersController:
             raise HTTPException(status_code=404, detail=error)
 
         return {
-            "data": user
+            "data": user,
+            "onboarding_completed": bool(payload.get("onboarding_completed"))
         }
 
     @staticmethod
