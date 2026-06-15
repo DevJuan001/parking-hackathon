@@ -112,11 +112,11 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.dark html {
+html.dark {
   background-color: #0a0a0a;
 }
 
-* {
+html {
   border-color: #e5e7eb;
 }
 
@@ -128,4 +128,3 @@ button {
 ::-webkit-scrollbar {
   display: none;
 }
-
