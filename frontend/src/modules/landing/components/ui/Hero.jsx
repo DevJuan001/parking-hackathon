@@ -32,7 +32,7 @@ export default function Hero({ openModal }) {
             e.preventDefault();
             openModal(null, "logIn", e.currentTarget);
           }}
-          className="px-6 py-3 border rounded-3xl font-semibold transition-colors duration-300
+          className="px-6 py-3 border border-[#e5e7eb] rounded-3xl font-semibold transition-colors duration-300
           hover:bg-gray-200
           dark:text-[#e4e2e5] dark:border-[#202022] dark:hover:bg-[#202022]"
         >

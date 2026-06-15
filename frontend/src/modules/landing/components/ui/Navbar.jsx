@@ -62,7 +62,7 @@ export default function NavBar({ openModal }) {
 
       <button
         onClick={(e) => openModal(null, "logIn", e.currentTarget)}
-        className="px-5 py-2 border font-semibold rounded-3xl transition-colors duration-300
+        className="px-5 py-2 border border-[#e5e7eb] font-semibold rounded-3xl transition-colors duration-300
         hover:bg-black hover:text-white
         dark:text-[#758088] dark:border-[#202222] dark:hover:bg-[#202022]"
       >

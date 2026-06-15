@@ -24,9 +24,9 @@ export default function LoginAndRegisterButtons({
           disabled={disabled}
           type="button"
           onClick={recoverPasswordButtonOnClick}
-          className="w-full h-15 px-5 py-2.5 rounded-2xl text-sm font-medium transition duration-300 border
-        hover:bg-gray-200 hover:cursor-pointer
-        dark:border-[#1e1e20cb] dark:text-white dark:hover:bg-[#28282bbd]"
+          className="w-full h-15 px-5 py-2.5 rounded-2xl text-sm font-medium transition duration-300 border border-[#e5e7eb]
+          hover:bg-gray-200 hover:cursor-pointer
+          dark:border-[#1e1e20cb] dark:text-white dark:hover:bg-[#28282bbd]"
         >
           <span>Recuperar contraseña</span>
         </button>
