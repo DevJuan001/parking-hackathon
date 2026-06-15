@@ -6,7 +6,7 @@ function App() {
   useTheme();
 
   return (
-    <div className="w-screen h-screen">
+    <div>
       <BrowserRouter>
         <AppRouter />
       </BrowserRouter>
