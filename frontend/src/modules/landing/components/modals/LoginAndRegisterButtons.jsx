@@ -22,6 +22,7 @@ export default function LoginAndRegisterButtons({
         <button
           id="recover-password-button"
           disabled={disabled}
+          type="button"
           onClick={recoverPasswordButtonOnClick}
           className="w-full h-15 px-5 py-2.5 rounded-2xl text-sm font-medium transition duration-300 border
         hover:bg-gray-200 hover:cursor-pointer

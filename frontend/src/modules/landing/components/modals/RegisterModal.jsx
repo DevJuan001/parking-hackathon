@@ -31,11 +31,13 @@ export default function RegisterModal() {
         <span className="font-semibold dark:text-white">Parking</span>
       </div>
 
-      <span className="text-4xl font-medium">Crea tu cuenta</span>
+      <span className="text-4xl font-medium dark:text-white">
+        Crea tu cuenta
+      </span>
 
       <form
         action={(e) => handleChange(e, openInnerModal)}
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-2 dark:text-white"
       >
         <FormField
           id={"email"}
@@ -45,6 +47,7 @@ export default function RegisterModal() {
           onChange={handleChange}
           placeholder={"Escribe tu correo"}
           className={fieldError("email")}
+          autoComplete="off"
         />
 
         <FormField
@@ -56,6 +59,7 @@ export default function RegisterModal() {
           onChange={handleChange}
           placeholder={"Escribe tu contraseña"}
           className={fieldError("password")}
+          autoComplete="off"
         >
           <button
             className="flex items-center pr-1"
@@ -75,6 +79,7 @@ export default function RegisterModal() {
           onChange={handleChange}
           placeholder={"Repite tu contraseña"}
           className={fieldError("password")}
+          autoComplete="off"
         >
           <button
             className="flex items-center pr-1"
@@ -86,15 +91,22 @@ export default function RegisterModal() {
         </FormField>
 
         <div className="mt-2.5 flex items-center gap-2">
-          <input required type="checkbox" className="transition-transform duration-100" />
+          <input
+            required
+            type="checkbox"
+            className="transition-transform duration-100"
+          />
 
           <p className="text-xs">
             He leído y acepto la {""}
-            <a href="/privacy" className="text-blue-800 border-b">
+            <a
+              href="/privacy"
+              className="text-blue-800 border-b border-blue-800"
+            >
               Politica de Privacidad {""}
             </a>
             y los {""}
-            <a href="/terms" className="text-blue-800 border-b">
+            <a href="/terms" className="text-blue-800 border-b border-blue-800">
               Términos y Condiciones
             </a>
           </p>

@@ -30,7 +30,7 @@ export default function LoginModal() {
         <span className="font-semibold dark:text-white">Parking</span>
       </div>
 
-      <span className="text-4xl font-medium">Iniciar sesión</span>
+      <span className="text-4xl font-medium dark:text-white">Iniciar sesión</span>
 
       <form
         action={(e) => handleChange(e, openInnerModal)}
