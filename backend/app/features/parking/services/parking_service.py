@@ -3,6 +3,7 @@ from app.core.exception import ServiceError
 from app.core.database import get_connection
 from app.utils.plate_formatter import plate_formatter
 from app.features.parking.models.parking_schemas import CreatePlateSchema
+from app.features.parking.repositories.parkings_repository import ParkingsRepository
 from app.features.parking.repositories.plates_repository import PlatesRepository
 from app.features.parking.repositories.vehicle_types_repository import VehicleTypesRepository
 from app.features.spots.models.spots_schemas import SpotsFiltersSchema
@@ -12,6 +13,50 @@ logger = get_logger("parking.service")
 
 
 class ParkingService:
+
+    @staticmethod
+    def create_parking(name: str, address: str):
+        connection = get_connection()
+
+        try:
+            if not name or not name.strip():
+                raise ServiceError(
+                    "El nombre del parking no puede estar vacío"
+                )
+
+            if not address or not address.strip():
+                raise ServiceError(
+                    "La dirección del parking no puede estar vacía"
+                )
+
+            error, success, parking_id = ParkingsRepository.create_parking(
+                name=name.strip(),
+                address=address.strip(),
+                connection=connection
+            )
+
+            if error or not success or not parking_id:
+                raise ServiceError(error or "No se pudo crear el parking")
+
+            connection.commit()
+
+            return None, parking_id, "Parking creado correctamente"
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, None, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en create_parking: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar crear el parking", None, None
+
+        finally:
+            connection.close()
 
     @staticmethod
     def get_all_plates(parking_id: int):
