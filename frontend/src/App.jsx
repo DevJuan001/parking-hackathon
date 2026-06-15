@@ -6,7 +6,7 @@ function App() {
   useTheme();
 
   return (
-    <div className="w-screen h-screen bg-[#FBF9FC] dark:bg-[#0a0a0a]">
+    <div className="w-screen h-screen">
       <BrowserRouter>
         <AppRouter />
       </BrowserRouter>
