@@ -9,8 +9,9 @@ from app.core.config import settings
 from app.utils.logger import get_logger
 from app.core.exception import ServiceError
 from app.tasks.email_tasks import recovery_password_email
+from app.features.parking.services.parking_service import ParkingService
 from app.features.users.services.users_service import UsersService
-from app.features.auth.models.auth_schema import VerifyRoleModelSchema
+from app.features.auth.models.auth_schema import RegisterSchema, VerifyRoleModelSchema
 from app.core.security import create_access_token, create_refresh_token, set_auth_cookies, verify_password
 
 logger = get_logger("auth.service")
@@ -56,6 +57,51 @@ class AuthService:
         except Exception as e:
             logger.error("Error en login: %s", e, exc_info=True)
             return "No autorizado", False, None
+
+    @staticmethod
+    async def register(data: RegisterSchema, response: Response):
+        try:
+            error, parking_id, parking_message = ParkingService.create_parking(
+                name=data.parking_name,
+                address=data.parking_address
+            )
+
+            if error or not parking_id:
+                raise ServiceError(error or parking_message)
+
+            error, user_id, role_name, user_message = await UsersService.create_user_with_password(
+                name=data.name,
+                first_surname=data.first_surname,
+                second_surname=data.second_surname,
+                email=data.email,
+                password=data.password,
+                parking_id=parking_id
+            )
+
+            if error or not user_id or not role_name:
+                raise ServiceError(error or user_message)
+
+            expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE)
+
+            access_token = create_access_token(
+                {"sub": str(user_id), "role": role_name},
+                expires_delta=expires
+            )
+
+            refresh_token = create_refresh_token(
+                {"sub": str(user_id), "role": role_name}
+            )
+
+            set_auth_cookies(response, access_token, refresh_token)
+
+            return None, True, "Registro exitoso"
+
+        except ServiceError as e:
+            return e.message, False, None
+
+        except Exception as e:
+            logger.error("Error en register: %s", e, exc_info=True)
+            return "Error al intentar registrar el usuario", False, None
 
     @staticmethod
     def refresh_tokens(request: Request, response: Response):

@@ -180,6 +180,93 @@ class UsersService:
             connection.close()
 
     @staticmethod
+    async def create_user_with_password(
+        name: str,
+        first_surname: str,
+        second_surname: str,
+        email: EmailStr,
+        password: str,
+        parking_id: int
+    ):
+        from app.tasks.email_tasks import send_welcome_registration_email
+
+        connection = get_connection()
+
+        try:
+            error, existing_user = UsersRepository.find_user_by_email(
+                email=email,
+                connection=connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            if existing_user:
+                raise ServiceError(
+                    "Este correo ya esta registrado, intenta ingresar otro correo e intentalo nuevamente"
+                )
+
+            user_data = CreateUserSchema(
+                role_id=1,
+                name=name,
+                first_surname=first_surname,
+                second_surname=second_surname,
+                email=email
+            )
+
+            password_bytes = password.encode("utf-8")
+            hash_password = bcrypt.hashpw(
+                password_bytes, bcrypt.gensalt(rounds=12)
+            ).decode("utf-8")
+
+            error, success, message = UsersRepository.create_user(
+                user_data=user_data,
+                hash_password=hash_password,
+                parking_id=parking_id,
+                connection=connection
+            )
+
+            if error or not success:
+                raise ServiceError(error or message)
+
+            error, new_user = UsersRepository.find_user_by_email(
+                email=email,
+                connection=connection
+            )
+
+            if error or not new_user:
+                raise ServiceError(error or "Usuario registrado no encontrado")
+
+            user_id = new_user[1]
+            role_name = new_user[0]
+
+            send_welcome_registration_email.delay(
+                user_name=name,
+                user_first_surname=first_surname,
+                user_email=email
+            )
+
+            connection.commit()
+
+            return None, user_id, role_name, "Usuario registrado correctamente"
+
+        except ServiceError as e:
+            connection.rollback()
+            return e.message, None, None, None
+
+        except Exception as e:
+            connection.rollback()
+            logger.error(
+                "Error en create_user_with_password: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar registrar el usuario", None, None, None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     async def create_user(user_data: CreateUserSchema, parking_id: int):
         data = user_data.model_dump()
 

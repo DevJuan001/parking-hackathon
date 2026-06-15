@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from fastapi_limiter.depends import RateLimiter
 
 from app.features.auth.controllers.auth_controller import AuthController
-from app.features.auth.models.auth_schema import LoginModelSchema, RecoverPasswordSchema, VerifyRoleModelSchema
+from app.features.auth.models.auth_schema import LoginModelSchema, RecoverPasswordSchema, RegisterSchema, VerifyRoleModelSchema
 from app.middlewares.jwt_middleware import verify_jwt
 
 
@@ -21,6 +21,17 @@ router = APIRouter(
 )
 def login(credentials: LoginModelSchema, response: Response):
     return AuthController.login(credentials.email, credentials.password, response)
+
+
+# Endpoint para registrar un nuevo parking y su administrador
+@router.post(
+    "/register",
+    dependencies=[
+        Depends(RateLimiter(times=3, seconds=60))
+    ]
+)
+async def register(data: RegisterSchema, response: Response):
+    return await AuthController.register(data, response)
 
 
 # Endpoint para actualizar el token de acceso
