@@ -1,8 +1,12 @@
 from fastapi import HTTPException, Request, Response
 from pydantic import EmailStr
 
+from app.features.auth.models.auth_schema import (
+    OnboardingSchema,
+    RegisterSchema,
+    VerifyRoleModelSchema,
+)
 from app.features.auth.services.auth_service import AuthService
-from app.features.auth.models.auth_schema import RegisterSchema, VerifyRoleModelSchema
 
 
 class AuthController:
@@ -31,7 +35,27 @@ class AuthController:
 
         return {
             "success": success,
-            "message": message
+            "message": message,
+            "onboarding_completed": False
+        }
+
+    @staticmethod
+    async def complete_onboarding(
+        data: OnboardingSchema,
+        payload: dict,
+        response: Response
+    ):
+        error, success, message = await AuthService.complete_onboarding(
+            data, payload, response
+        )
+
+        if error or not success:
+            raise HTTPException(status_code=400, detail=error)
+
+        return {
+            "success": success,
+            "message": message,
+            "onboarding_completed": True
         }
 
     @staticmethod
