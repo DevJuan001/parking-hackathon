@@ -8,6 +8,10 @@ import Pricing from "./components/ui/Pricing";
 import LoginModal from "./components/modals/LoginModal";
 import Modal from "../../globals/components/modals/Modal";
 import RegisterModal from "./components/modals/RegisterModal";
+import Questions from "./components/ui/Questions";
+import Footer from "./components/ui/Footer";
+import Features from "./components/ui/Features";
+import VideoSection from "./components/ui/VideoSection";
 
 export default function LandingPage() {
   const { isOpen, modalType, triggerRef, openModal, closeModal } = useModal();
@@ -18,7 +22,15 @@ export default function LandingPage() {
 
       <Hero openModal={openModal} />
 
+      <VideoSection />
+
+      <Features />
+
       <Pricing />
+
+      <Questions />
+
+      <Footer />
 
       {modalType && (
         <Modal
