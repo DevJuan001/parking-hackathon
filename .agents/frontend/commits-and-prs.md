@@ -72,16 +72,6 @@ docs(frontend): add README setup instructions
 ## Summary
 <one-sentence description of what this PR does and why>
 
-## Labels
-<!-- Run: gh pr edit <num> --add-label "refactor,enhancement,bug,documentation,database,api,frontend" -->
-- `refactor` — refactors / non-functional
-- `enhancement` — new features
-- `bug` — bug fixes
-- `documentation` — docs-only
-- `database` — DB schema/seed
-- `api` — backend API
-- `frontend` — frontend
-
 ## Changes
 <!-- Group by relevant section. Remove empty ones. -->
 
@@ -102,6 +92,8 @@ docs(frontend): add README setup instructions
 
 ```
 
+PR body must be written in English.
+
 ## Opening the PR
 
 Create the PR directly on GitHub. Do not ask. Do not wait.
@@ -111,7 +103,7 @@ gh pr create --base main --head <branch> --title "<title>" --body "<body>"
 gh pr edit <num> --add-label "<label1>,<label2>"
 ```
 
-Pick labels from: `refactor`, `enhancement`, `bug`, `documentation`, `database`, `api`, `frontend`.
+Labels are applied separately via `gh pr edit --add-label`, never inside the PR body. Pick labels from: `refactor`, `enhancement`, `bug`, `documentation`, `database`, `api`, `frontend`.
 
 ## After merge
 
