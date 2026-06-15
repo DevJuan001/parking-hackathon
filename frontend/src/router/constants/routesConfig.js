@@ -2,7 +2,6 @@ import HomePage from "../../modules/home/HomePage";
 import UsersPage from "../../modules/users/UsersPage";
 import ExitsPage from "../../modules/exits/ExitsPage";
 import EntriesPage from "../../modules/entries/EntriesPage";
-import TariffsPage from "../../modules/tariffs/TarrifsPage";
 import ParkingPage from "../../modules/parking/ParkingPage";
 import FinancePage from "../../modules/finance/FinancePage";
 import CheckInPage from "../../modules/check-in/CheckInPage";
@@ -36,12 +35,6 @@ export const routesConfig = [
   {
     path: "/exits",
     component: ExitsPage,
-    roles: ["Admin"],
-  },
-
-  {
-    path: "/tariffs",
-    component: TariffsPage,
     roles: ["Admin"],
   },
 
