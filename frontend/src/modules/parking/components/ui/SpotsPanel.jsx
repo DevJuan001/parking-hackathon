@@ -41,9 +41,16 @@ export default function SpotsPanel({ openModal }) {
 
       {noSpots && (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-          <Icon name={"border_clear"} size={90} />
+          <Icon
+            name={"border_clear"}
+            size={90}
+            className={"text-[#75777E] dark:text-[#7E8088]"}
+          />
 
-          <span className="text-xl font-semibold text-[#75777E]">
+          <span
+            className="text-xl font-semibold text-[#75777E]
+            dark:text-[#7E8088]"
+          >
             Aún no hay plazas registradas
           </span>
 
