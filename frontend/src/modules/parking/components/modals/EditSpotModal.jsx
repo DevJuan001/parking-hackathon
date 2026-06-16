@@ -24,7 +24,10 @@ export default function EditSpotModal({ onClose, spot }) {
     useUpdateSpot(spot);
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      className="flex flex-col items-center gap-2"
+    >
       <ModalHighSection
         text={spotData.spot}
         icon={vehicleTypesConstant[spot.vehicle_type_id]?.icon}
@@ -122,6 +125,6 @@ export default function EditSpotModal({ onClose, spot }) {
           }}
         />
       )}
-    </section>
+    </form>
   );
 }

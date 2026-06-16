@@ -18,7 +18,10 @@ export default function CreateTariffModal({ onClose }) {
     useCreateTariff();
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      className="flex flex-col items-center gap-2"
+    >
       <SelectMenu
         id={"vehicle_type"}
         spanText={"Tipo de vehículo"}
@@ -78,6 +81,6 @@ export default function CreateTariffModal({ onClose }) {
           onClose={() => openInnerModal(null)}
         />
       )}
-    </section>
+    </form>
   );
 }

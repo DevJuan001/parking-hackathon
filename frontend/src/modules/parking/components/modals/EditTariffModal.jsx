@@ -21,7 +21,10 @@ export default function EditTariffModal({ onClose, tariff }) {
     useUpdateTariff(tariff);
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      className="flex flex-col items-center gap-2"
+    >
       <ModalHighSection
         icon={"payments"}
         text={vehicleTypesConstant[tariffData.vehicle_type]?.text}
@@ -83,6 +86,6 @@ export default function EditTariffModal({ onClose, tariff }) {
           onClose={() => openInnerModal(null)}
         />
       )}
-    </section>
+    </form>
   );
 }

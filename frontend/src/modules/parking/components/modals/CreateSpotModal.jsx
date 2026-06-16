@@ -17,7 +17,10 @@ export default function CreateSpotModal({ floor, onClose }) {
     useCreateSpot(floor);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      className="flex flex-col items-center gap-2"
+    >
       <SelectMenu
         id={"vehicle-types-menu"}
         name={"vehicle_type_id"}
