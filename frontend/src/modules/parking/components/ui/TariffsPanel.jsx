@@ -11,8 +11,8 @@ export default function TariffsPanel({ openModal }) {
   const isFirstLoad = tariffs.length === 0 && loading;
 
   return (
-    <div
-      className="h-full w-full flex flex-col gap-2 px-7 py-6 rounded-[50px] border-3 border-[#EBE6E7] 
+    <section
+      className="h-full w-full flex flex-col gap-2 px-7 py-6 rounded-[50px] border-3 border-[#EBE6E7] animate-blur-up
       dark:text-white dark:border-[#202022]"
     >
       <div className="flex items-center">
@@ -64,6 +64,6 @@ export default function TariffsPanel({ openModal }) {
           </div>
         )
       )}
-    </div>
+    </section>
   );
 }

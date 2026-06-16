@@ -11,7 +11,7 @@ export default function FloorsPanel({ openModal }) {
   const isFirstLoad = floors.length === 0 && loading;
 
   return (
-    <div
+    <section
       className="h-full w-full flex flex-col px-7 py-5 rounded-[50px] border-3 border-[#EBE6E7]
       dark:text-white dark:border-[#202022]"
     >
@@ -70,6 +70,6 @@ export default function FloorsPanel({ openModal }) {
           ))
         )}
       </div>
-    </div>
+    </section>
   );
 }
