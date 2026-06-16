@@ -43,7 +43,8 @@ class SpotsController:
         error, success, message = SpotsService.create_spot(
             int(payload["parking_id"]),
             spot_data.floor_id,
-            spot_data.spot
+            spot_data.spot,
+            spot_data.vehicle_type_id,
         )
 
         if error:
@@ -78,6 +79,7 @@ class SpotsController:
             spot_data.floor_id,
             spot_data.spot,
             spot_data.spot_status,
+            spot_data.vehicle_type_id,
         )
 
         if error:

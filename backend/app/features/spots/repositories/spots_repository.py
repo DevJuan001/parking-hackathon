@@ -21,20 +21,7 @@ class SpotsRepository:
             s.spot,
             s.spot_status,
             s.created_at,
-            (
-                SELECT vt.id
-                FROM ENTRIES AS e
-                INNER JOIN PLATES AS p ON p.id = e.plate_id
-                INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
-                WHERE e.spot_id = s.spot_id
-                  AND NOT EXISTS (
-                      SELECT 1 FROM EXITS AS x
-                      WHERE x.plate_id = e.plate_id
-                        AND x.created_at > e.created_at
-                  )
-                ORDER BY e.created_at DESC
-                LIMIT 1
-            ) AS vehicle_type_id,
+            s.vehicle_type_id,
             (
                 SELECT p.plate
                 FROM ENTRIES AS e
@@ -102,20 +89,7 @@ class SpotsRepository:
             s.spot,
             s.spot_status,
             s.created_at,
-            (
-                SELECT vt.id
-                FROM ENTRIES AS e
-                INNER JOIN PLATES AS p ON p.id = e.plate_id
-                INNER JOIN VEHICLE_TYPES AS vt ON vt.id = p.vehicle_type_id
-                WHERE e.spot_id = s.spot_id
-                  AND NOT EXISTS (
-                      SELECT 1 FROM EXITS AS x
-                      WHERE x.plate_id = e.plate_id
-                        AND x.created_at > e.created_at
-                  )
-                ORDER BY e.created_at DESC
-                LIMIT 1
-            ) AS vehicle_type_id,
+            s.vehicle_type_id,
             (
                 SELECT p.plate
                 FROM ENTRIES AS e
@@ -188,16 +162,21 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
-    def create_spot(floor_id: int, spot_label: str, connection):
+    def create_spot(
+        floor_id: int,
+        spot_label: str,
+        vehicle_type_id: int,
+        connection,
+    ):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO SPOTS (floor_id, spot, spot_status)
-        VALUES (%s, %s, 2)
+        INSERT INTO SPOTS (floor_id, spot, spot_status, vehicle_type_id)
+        VALUES (%s, %s, 2, %s)
         """
 
         try:
-            cursor.execute(query, (floor_id, spot_label))
+            cursor.execute(query, (floor_id, spot_label, vehicle_type_id))
             return None, True, "Plaza registrada correctamente"
 
         except Exception as e:
@@ -312,6 +291,7 @@ class SpotsRepository:
         floor_id: int | None,
         spot_label: str | None,
         spot_status: int | None,
+        vehicle_type_id: int | None,
         connection,
     ):
         cursor = connection.cursor()
@@ -320,6 +300,7 @@ class SpotsRepository:
             "floor_id": "floor_id",
             "spot": "spot",
             "spot_status": "spot_status",
+            "vehicle_type_id": "vehicle_type_id",
         }
 
         try:
@@ -333,6 +314,9 @@ class SpotsRepository:
 
             if spot_status is not None:
                 values["spot_status"] = spot_status
+
+            if vehicle_type_id is not None:
+                values["vehicle_type_id"] = vehicle_type_id
 
             if not values:
                 return None, True, "Sin cambios para aplicar"

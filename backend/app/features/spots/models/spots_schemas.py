@@ -10,6 +10,7 @@ class SpotsFiltersSchema(BaseModel):
 class CreateSpotSchema(BaseModel):
     floor_id: int
     spot: str
+    vehicle_type_id: int
 
 
 class UpdateSpotStatusSchema(BaseModel):
@@ -20,3 +21,4 @@ class UpdateSpotSchema(BaseModel):
     floor_id: Optional[int] = None
     spot: Optional[str] = None
     spot_status: Optional[int] = None
+    vehicle_type_id: Optional[int] = None
