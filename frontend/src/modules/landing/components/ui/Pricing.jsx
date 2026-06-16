@@ -8,7 +8,7 @@ export default function Pricing({ openModal }) {
       className="w-full flex flex-col items-center gap-3
       dark:text-white"
     >
-      <span className="mt-28 text-5xl font-semibold dark:text-[#e4e2e5]">
+      <span className="mt-32 text-5xl font-semibold dark:text-[#e4e2e5]">
         Precios simples y sin complicaciones
       </span>
 

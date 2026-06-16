@@ -4,7 +4,7 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="mt-10 w-full flex flex-col gap-4 items-center"
+      className="mt-12 w-full flex flex-col gap-4 items-center"
     >
       <span
         className="font-medium

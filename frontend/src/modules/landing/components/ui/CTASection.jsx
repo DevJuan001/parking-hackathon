@@ -2,7 +2,7 @@ import Icon from "../../../../globals/components/ui/Icon";
 
 export default function CTASection({ openModal }) {
   return (
-    <section className="my-32 w-full flex flex-col gap-3 items-center">
+    <section className="my-44 w-full flex flex-col gap-3 items-center">
       <span
         className="text-5xl text-[#1b1b1e] font-semibold
         dark:text-[#e4e2e5]"
