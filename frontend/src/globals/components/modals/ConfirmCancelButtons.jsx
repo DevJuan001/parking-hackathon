@@ -21,6 +21,7 @@ export default function ConfirmCancelButtons({
       <button
         id="confirm-button"
         ref={confirmBtnRef}
+        type="submit"
         onClick={confirmButtonOnClick}
         disabled={disabled}
         style={{ backgroundColor: confirmBgColor }}
@@ -40,6 +41,7 @@ export default function ConfirmCancelButtons({
 
       <button
         id="cancel-button"
+        type="button"
         disabled={disabled}
         onClick={cancelButtonOnClick}
         className={`${cancelButtonWidth} h-11 px-5 py-2.5 rounded-2xl text-sm transition duration-300 bg-[#F5F3F6]

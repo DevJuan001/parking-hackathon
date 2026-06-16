@@ -18,7 +18,7 @@ export default function CreateSpotModal({ floor, onClose }) {
 
   return (
     <form
-      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      onSubmit={(e) => handleSubmit(e, openInnerModal, onClose)}
       className="flex flex-col items-center gap-2"
     >
       <SelectMenu
