@@ -8,6 +8,7 @@ export function useUpdateSpot(spot) {
   const [spotData, setSpotData] = useState({
     spot: spot?.spot || "",
     spot_status: spot?.spot_status ?? 2,
+    vehicle_type_id: spot?.vehicle_type_id || "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
