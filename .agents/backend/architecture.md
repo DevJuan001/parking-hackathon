@@ -61,7 +61,7 @@ Never shortcut a layer.
   - **`SpotsRepository`** (in `spots/repositories/`): the canonical home of all SPOTS queries. Other features (entries, exits) that need to update a spot's status import `SpotsRepository.update_spot_status` instead of duplicating the query.
 - The "table-per-repository" rule: **one repository owns one table**. Each table's queries live in exactly one place. Examples:
   - PLATES queries → `parking/repositories/plates_repository.py`
-  - SPOTS queries → `spots/repositories/spots_repository.py`
+  - SPOTS queries → `spots/repositories/spots_repository.py`. Since #82/#83, `SPOTS.vehicle_type_id` is a real column (FK to `VEHICLE_TYPES(id)`), not a derived value. All read paths (list, by-id, available-slot) read the column directly; the legacy correlated subquery that derived it from the latest active `ENTRIES` row has been removed. `find_available_spot` accepts a `vehicle_type_id` and filters by it (see `code-conventions.md` → "Vehicle type compatibility on spot assignment").
   - VEHICLE_TYPES queries → `parking/repositories/vehicle_types_repository.py`
   - RATES queries → `tariffs/repositories/tariffs_repository.py`
   - USERS queries → `users/repositories/users_repository.py`
