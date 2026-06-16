@@ -1,7 +1,8 @@
 // Componentes
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
-import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
+// Constants
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
 // Utils
 import {
   formatDateTime,
@@ -99,12 +100,12 @@ export default function EntriesTable({ entries, loading }) {
                   <th className="font-medium text-sm pl-4 text-start">
                     <div className="flex gap-1">
                       <Icon
-                        name={vehicleTypes[entry.vehicle_type].icon}
+                        name={vehicleTypesConstant[entry.vehicle_type].icon}
                         size={18}
                         fill
                       />
 
-                      <span>{vehicleTypes[entry.vehicle_type].text}</span>
+                      <span>{vehicleTypesConstant[entry.vehicle_type].text}</span>
                     </div>
                   </th>
 
