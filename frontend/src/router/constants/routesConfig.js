@@ -5,7 +5,7 @@ import EntriesPage from "../../modules/entries/EntriesPage";
 import ParkingPage from "../../modules/parking/ParkingPage";
 import FinancePage from "../../modules/finance/FinancePage";
 import CheckInPage from "../../modules/check-in/CheckInPage";
-import OnBoardingPage from "../../modules/on-boarding/onBoardingPage";
+import OnBoardingPage from "../../modules/on-boarding/OnBoardingPage";
 import VehiclePayment from "../../modules/vehicle-payment/VehiclePayment";
 
 export const routesConfig = [
