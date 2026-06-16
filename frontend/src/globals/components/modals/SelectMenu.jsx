@@ -46,6 +46,7 @@ export default function SelectMenu({
         className={`${miniVersion ? "h-10" : "h-[66px]"} w-full flex items-center gap-1.5`}
       >
         <button
+          type="button"
           id={id}
           ref={triggerRef}
           onClick={handleToggle}

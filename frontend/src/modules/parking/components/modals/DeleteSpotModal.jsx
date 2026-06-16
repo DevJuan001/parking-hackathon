@@ -29,7 +29,7 @@ export default function DeleteSpotModal({
       triggerRef={triggerRef}
     >
       <div className="flex flex-col">
-        <span className="text-base">
+        <span className="text-base text-nowrap">
           Deseas eliminar el spot <strong>{spot.spot}</strong>?
         </span>
 

@@ -24,11 +24,21 @@ export default function EditSpotModal({ onClose, spot }) {
   return (
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
-        icon={vehicleTypes[spot.vehicle_type_id]?.icon || "garage"}
+        icon={vehicleTypes[spot.vehicle_type_id]?.icon}
         text={spotData.spot}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={(e) => openInnerModal("delete", e)}
       />
+
+      {!spot.plate && (
+        <SelectMenu
+          id={"vehicle-types-menu"}
+          name={"vehicle_type_id"}
+          spanText={"Tipo de vehículo"}
+          value={spotData.vehicle_type_id}
+          onChange={handleChange}
+        />
+      )}
 
       <FormField
         id={"spot"}

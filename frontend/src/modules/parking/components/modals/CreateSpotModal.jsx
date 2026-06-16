@@ -7,6 +7,7 @@ import FormField from "../../../../globals/components/ui/FormField";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
+import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 
 export default function CreateSpotModal({ floor, onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
@@ -14,7 +15,15 @@ export default function CreateSpotModal({ floor, onClose }) {
     useCreateSpot(floor);
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+      <SelectMenu
+        id={"vehicle_type_id"}
+        name={"vehicle_type_id"}
+        spanText={"Tipo de vehículo"}
+        value={spotData.vehicle_type_id}
+        onChange={handleChange}
+      />
+
       <FormField
         id={"spot"}
         name={"spot"}
@@ -42,6 +51,6 @@ export default function CreateSpotModal({ floor, onClose }) {
           onClose={() => openInnerModal(null)}
         />
       )}
-    </section>
+    </form>
   );
 }
