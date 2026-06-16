@@ -1,5 +1,6 @@
 // Hooks
 import { useCreateTariff } from "../../hooks/useCreateTariff";
+import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
@@ -9,13 +10,12 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
-import { vehicleTypeOptions } from "../../../../globals/constants/vehicleTypes";
-// Constants
-
 
 export default function CreateTariffModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { handleChange, handleSubmit, tariffData, loading, error } = useCreateTariff();
+  const { vehicleTypes } = useVehicleTypes();
+  const { handleChange, handleSubmit, tariffData, loading, error } =
+    useCreateTariff();
 
   return (
     <section className="flex flex-col items-center gap-2">
@@ -25,7 +25,10 @@ export default function CreateTariffModal({ onClose }) {
         name={"vehicle_type"}
         value={tariffData.vehicle_type}
         onChange={handleChange}
-        options={vehicleTypeOptions}
+        options={vehicleTypes.map((vehicleType) => ({
+          value: vehicleType.id,
+          label: vehicleType.name,
+        }))}
       />
 
       <FormField
@@ -33,6 +36,7 @@ export default function CreateTariffModal({ onClose }) {
         name={"value"}
         labelText={"Valor"}
         type="number"
+        placeholder={"$1000"}
         value={tariffData.value}
         onChange={handleChange}
         autoComplete="off"

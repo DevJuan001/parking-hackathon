@@ -20,6 +20,7 @@ export default function CreateFloorModal({ onClose }) {
         id={"name"}
         name={"name"}
         labelText={"Nombre"}
+        placeholder={"Nombre del piso"}
         value={floorData.name}
         onChange={handleChange}
         autoComplete="off"
