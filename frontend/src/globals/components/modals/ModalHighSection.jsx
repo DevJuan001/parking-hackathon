@@ -1,10 +1,11 @@
 import Icon from "../ui/Icon";
 
 export default function ModalHighSection({
-  icon,
-  text,
   deleteButtonOnClick,
   closeButtonOnClick,
+  icon,
+  iconClassName = "dark:text-[#E4E2E5]",
+  text,
 }) {
   return (
     <div
@@ -27,7 +28,7 @@ export default function ModalHighSection({
       )}
 
       <div className="justify-self-center flex flex-col items-center gap-3">
-        <Icon name={icon} size={60} fill className={"dark:text-[#E4E2E5]"} />
+        <Icon name={icon} size={60} fill className={iconClassName} />
 
         <span
           className="w-52 font-semibold text-lg text-center text-ellipsis overflow-hidden

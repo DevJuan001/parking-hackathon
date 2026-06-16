@@ -34,7 +34,7 @@ export default function CreateTariffModal({ onClose }) {
       <FormField
         id={"value"}
         name={"value"}
-        labelText={"Valor"}
+        labelText={"Valor por hora"}
         type="number"
         placeholder={"$1000"}
         value={tariffData.value}
