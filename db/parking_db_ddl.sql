@@ -67,14 +67,17 @@ CREATE TABLE PLATES (
 );
 
 CREATE TABLE SPOTS (
-  spot_id     INT       NOT NULL AUTO_INCREMENT,
-  floor_id    INT       NULL,
-  spot        TEXT      NOT NULL,
-  spot_status  INT      NOT NULL DEFAULT 2 COMMENT '1: deshabilitada, 2: dispnible, 3: ocupado',
-  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  spot_id         INT       NOT NULL AUTO_INCREMENT,
+  floor_id        INT       NULL,
+  spot            TEXT      NOT NULL,
+  spot_status     INT       NOT NULL DEFAULT 2 COMMENT '1: deshabilitada, 2: dispnible, 3: ocupado',
+  vehicle_type_id INT       NOT NULL,
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (spot_id),
   FOREIGN KEY (floor_id) REFERENCES FLOORS(id) ON DELETE SET NULL,
-  INDEX idx_spots_floor_id (floor_id)
+  FOREIGN KEY (vehicle_type_id) REFERENCES VEHICLE_TYPES(id),
+  INDEX idx_spots_floor_id (floor_id),
+  INDEX idx_spots_vehicle_type_id (vehicle_type_id)
 );
 
 -- Dependent tables

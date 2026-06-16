@@ -40,17 +40,17 @@ INSERT INTO FLOORS (parking_id, name) VALUES
   (1, 'Piso 3');
 
 -- SPOTS
-INSERT INTO SPOTS (floor_id, spot, spot_status) VALUES
-  (1, 'A-01', 2),
-  (1, 'A-02', 2),
-  (1, 'A-03', 2),
-  (2, 'B-01', 2),
-  (2, 'B-02', 2),
-  (2, 'B-03', 2),
-  (3, 'C-01', 2),
-  (3, 'C-02', 2),
-  (3, 'C-03', 2),
-  (3, 'C-04', 2);
+INSERT INTO SPOTS (floor_id, spot, spot_status, vehicle_type_id) VALUES
+  (1, 'A-01', 2, 1),
+  (1, 'A-02', 2, 1),
+  (1, 'A-03', 2, 1),
+  (2, 'B-01', 2, 1),
+  (2, 'B-02', 2, 1),
+  (2, 'B-03', 2, 1),
+  (3, 'C-01', 2, 1),
+  (3, 'C-02', 2, 1),
+  (3, 'C-03', 2, 1),
+  (3, 'C-04', 2, 1);
 
 -- RATES
 INSERT INTO RATES (parking_id, vehicle_type_id, value) VALUES
