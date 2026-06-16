@@ -66,6 +66,7 @@ export default function FilterModal({
             dark:hover:bg-[#450a0a96] dark:border-[#28282ba1]"
           >
             <Icon name={"filter_list_off"} size={20} />
+            
             <span className="text-xs md:text-sm">Limpiar filtros</span>
           </button>
         </div>
