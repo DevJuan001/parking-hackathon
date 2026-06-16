@@ -92,7 +92,7 @@ export default function SpotsPanel({ openModal }) {
               onClick={(e) =>
                 openModal(filters.floor_id, "createSpot", e.currentTarget)
               }
-              className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 rounded-3xl transition-colors 
+              className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 border-[#EBE6E7] rounded-3xl transition-colors 
               hover:bg-[#efedf0] 
               dark:hover:bg-[#ffffff15] dark:border-3 dark:border-[#202022]"
             >
