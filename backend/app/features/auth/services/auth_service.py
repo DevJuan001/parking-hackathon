@@ -176,16 +176,6 @@ class AuthService:
             if payload.get("onboarding_completed"):
                 raise ServiceError("El usuario ya completó el onboarding")
 
-            # Buscamos al usuario mediante el id
-            error, user = UsersRepository.find_user_by_id(
-                parking_id=parking_id,
-                user_id=user_id,
-                connection=connection
-            )
-
-            if error or not user:
-                raise ServiceError(error or "Usuario no encontrado")
-
             # Creamos un parking nuevo para ese usuario
             error, parking_id, parking_message = ParkingService.create_parking(
                 name=data.parking_name,
@@ -211,8 +201,18 @@ class AuthService:
             if error or not success:
                 raise ServiceError(error or message)
 
-            role_name = user[0]
-            user_email = user[5]
+            # Buscamos al usuario mediante el id
+            error, user = UsersRepository.find_user_by_id(
+                parking_id=parking_id,
+                user_id=user_id,
+                connection=connection
+            )
+
+            if error or not user:
+                raise ServiceError(error or "Usuario no encontrado")
+
+            role_name = user[0].id
+            user_email = user[0].email
 
             connection.commit()
 

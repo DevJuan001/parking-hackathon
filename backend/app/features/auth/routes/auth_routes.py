@@ -43,7 +43,7 @@ async def register(data: RegisterSchema, response: Response):
 
 # Endpoint para completar el onboarding
 @router.put(
-    "/onboarding",
+    "/complete-on-boarding",
     dependencies=[
         Depends(RateLimiter(times=5, seconds=60)),
         Depends(require_roles(["Admin"]))
