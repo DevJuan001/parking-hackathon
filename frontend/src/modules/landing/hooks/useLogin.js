@@ -31,6 +31,8 @@ export function useLogin() {
 
     if (!isValid) return;
 
+    const triggerButton = e.currentTarget;
+
     setLoading(true);
 
     try {
@@ -41,14 +43,20 @@ export function useLogin() {
           queryKey: ["currentUser"],
           queryFn: getCurrentUserService,
         });
-        const userRole = freshData?.data?.[0]?.role;
-        userRole === "Cliente" ? navigate("/check-in") : navigate("/home");
+
+        if (freshData.onboarding_completed === false) {
+          navigate("/on-boarding");
+        } else if (freshData.data?.[0]?.role === "Cliente") {
+          navigate("/check-in");
+        } else {
+          navigate("/home");
+        }
       } else {
-        openInnerModal("error", e);
+        openInnerModal("error", { currentTarget: triggerButton });
       }
     } catch (error) {
       setError(error);
-      openInnerModal("error", e);
+      openInnerModal("error", { currentTarget: triggerButton });
     } finally {
       setLoading(false);
     }

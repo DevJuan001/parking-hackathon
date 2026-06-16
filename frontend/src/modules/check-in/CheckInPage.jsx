@@ -1,6 +1,6 @@
 // Hooks
 import { useState } from "react";
-import { useCreateEntry } from "./hooks/useCreateEntry"
+import { useCreateEntry } from "./hooks/useCreateEntry";
 // Componentes
 import CreateEntrySection from "./components/ui/CreateEntrySection";
 import SuccessEntrySection from "./components/ui/SuccessEntrySection";
@@ -18,7 +18,7 @@ export default function CheckInPage() {
   } = useCreateEntry(setActiveSection);
 
   return (
-    <section className="w-full h-full flex flex-col items-center justify-between p-6 font-dmsans bg-noise">
+    <section className="w-screen h-screen flex flex-col items-center justify-between p-6 font-dmsans bg-noise">
       {activeSection === "createEntry" && (
         <CreateEntrySection
           entryData={entryData}

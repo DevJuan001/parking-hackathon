@@ -8,6 +8,7 @@ import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
 // Modales
 import RecoverPasswordModal from "./RecoverPasswordModal";
+import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
 export default function LoginModal() {
   const {
@@ -30,7 +31,9 @@ export default function LoginModal() {
         <span className="font-semibold dark:text-white">Parking</span>
       </div>
 
-      <span className="text-4xl font-medium dark:text-white">Iniciar sesión</span>
+      <span className="text-4xl font-medium dark:text-white">
+        Iniciar sesión
+      </span>
 
       <form
         action={(e) => handleChange(e, openInnerModal)}
@@ -77,6 +80,20 @@ export default function LoginModal() {
       {innerType === "recoverPassword" && (
         <RecoverPasswordModal
           triggerRef={innerTrigger}
+          onClose={closeInnerModal}
+        />
+      )}
+
+      {innerType === "error" && (
+        <ErrorModal
+          isOpen={true}
+          location="center"
+          triggerRef={innerTrigger}
+          errorTitle={"Usuario o contraseña incorrectos"}
+          errorText={
+            "Verifica que tus credenciales esten escritas correctamente e intentalo nuevamente"
+          }
+          confirmButtonText={"Volver"}
           onClose={closeInnerModal}
         />
       )}

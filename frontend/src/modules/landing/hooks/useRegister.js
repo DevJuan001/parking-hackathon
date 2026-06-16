@@ -7,12 +7,12 @@ import { getCurrentUserService } from "../../../globals/services/getCurrentUserS
 
 export function useRegister() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [form, setForm] = useState({
     email: "",
     password: "",
     repeat_password: "",
   });
-  const queryClient = useQueryClient();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,26 +31,36 @@ export function useRegister() {
 
     if (!isValid) return;
 
+    const triggerButton = e.currentTarget;
+
     setLoading(true);
 
     try {
       const response = await registerService(form);
 
       if (response.success === true) {
-        await queryClient.fetchQuery({
+        const freshData = await queryClient.fetchQuery({
           queryKey: ["currentUser"],
           queryFn: getCurrentUserService,
         });
 
-        navigate("/home");
+        if (freshData.onboarding_completed === false) {
+          navigate("/on-boarding");
+        } else {
+          navigate("/home");
+        }
       } else {
-        openInnerModal("error", e);
+        setError(
+          response.error ??
+            "No pudimos crear tu cuenta. Verifica los datos e intentalo de nuevo.",
+        );
+        openInnerModal("error", { currentTarget: triggerButton });
       }
     } catch {
       setError(
         "Lo sentimos por el momento no podemos crear tu cuenta, por favor intentalo nuevamente más tarde",
       );
-      openInnerModal("error", e);
+      openInnerModal("error", { currentTarget: triggerButton });
     } finally {
       setLoading(false);
     }

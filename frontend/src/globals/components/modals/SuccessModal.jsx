@@ -32,9 +32,11 @@ export default function SuccessModal({
             <span id="confirm-title" className="text-xl font-medium">
               {confirmTitle}
             </span>
+
             <span className="text-sm">{confirmText}</span>
           </div>
         </div>
+
         <ConfirmCancelButtons
           confirmText={confirmButtonText}
           confirmButtonOnClick={onClose}
