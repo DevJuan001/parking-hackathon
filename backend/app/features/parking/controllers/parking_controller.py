@@ -17,6 +17,17 @@ class ParkingController:
         }
 
     @staticmethod
+    def get_all_vehicle_types():
+        error, vehicle_types = ParkingService.get_all_vehicle_types()
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": vehicle_types
+        }
+
+    @staticmethod
     def get_all_spots(payload: dict):
         error, spots = ParkingService.get_all_spots(int(payload["parking_id"]))
 

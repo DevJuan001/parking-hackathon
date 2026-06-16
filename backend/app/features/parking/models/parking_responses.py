@@ -14,6 +14,11 @@ class SpotResponse(BaseModel):
     status: int
 
 
+class VehicleTypeResponse(BaseModel):
+    id: int
+    name: str
+
+
 class ParkingSummaryResponse(BaseModel):
     plate: str
     user_name: str

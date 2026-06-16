@@ -23,6 +23,17 @@ def get_all_plates(payload: dict = Depends(verify_jwt)):
 
 
 @router.get(
+    "/vehicle-types",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
+    ]
+)
+def get_all_vehicle_types():
+    return ParkingController.get_all_vehicle_types()
+
+
+@router.get(
     "/spots",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
