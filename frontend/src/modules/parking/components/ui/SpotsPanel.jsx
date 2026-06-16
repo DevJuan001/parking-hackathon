@@ -19,7 +19,10 @@ export default function SpotsPanel({ openModal }) {
   const isFirstLoad = spots.length === 0 && loading;
 
   return (
-    <div className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px] dark:text-white">
+    <section
+      className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px]
+      dark:text-white dark:border-[#202022]"
+    >
       <div className="flex items-center justify-between">
         <span className="font-semibold">Plazas</span>
 
@@ -83,14 +86,14 @@ export default function SpotsPanel({ openModal }) {
                 openModal(filters.floor_id, "createSpot", e.currentTarget)
               }
               className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 rounded-3xl transition-colors 
-            hover:bg-[#efedf0] 
-            dark:hover:bg-[#ffffff15]"
+              hover:bg-[#efedf0] 
+              dark:hover:bg-[#ffffff15] dark:border-3 dark:border-[#202022]"
             >
               <Icon name={"add"} size={35} />
             </button>
           </div>
         )
       )}
-    </div>
+    </section>
   );
 }
