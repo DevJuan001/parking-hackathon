@@ -1,11 +1,9 @@
 // Hooks
 import { useUpdateTariff } from "../../hooks/useUpdateTariff";
+import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Constants
-import {
-  vehicleTypeOptions,
-  vehicleTypes,
-} from "../../../../globals/constants/vehicleTypes";
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
@@ -18,6 +16,7 @@ import ModalHighSection from "../../../../globals/components/modals/ModalHighSec
 
 export default function EditTariffModal({ onClose, tariff }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+  const { vehicleTypes } = useVehicleTypes();
   const { handleChange, handleSubmit, tariffData, loading, error } =
     useUpdateTariff(tariff);
 
@@ -25,7 +24,7 @@ export default function EditTariffModal({ onClose, tariff }) {
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
         icon={"payments"}
-        text={vehicleTypes[tariff.vehicle_type]?.text}
+        text={vehicleTypesConstant[tariffData.vehicle_type]?.text}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={onClose}
       />
@@ -36,7 +35,10 @@ export default function EditTariffModal({ onClose, tariff }) {
         name={"vehicle_type"}
         value={tariffData.vehicle_type}
         onChange={handleChange}
-        options={vehicleTypeOptions}
+        options={vehicleTypes.map((vehicleType) => ({
+          value: vehicleType.id,
+          label: vehicleType.name,
+        }))}
       />
 
       <FormField

@@ -1,5 +1,6 @@
 // Hooks
 import { useUpdateSpot } from "../../hooks/useUpdateSpot";
+import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
@@ -8,7 +9,7 @@ import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Constants
 import { placeStatus } from "../../constants/spotStatus";
-import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
 // Modals
 import DeleteSpotModal from "./DeleteSpotModal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
@@ -18,14 +19,15 @@ import ModalHighSection from "../../../../globals/components/modals/ModalHighSec
 export default function EditSpotModal({ onClose, spot }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
+  const { vehicleTypes } = useVehicleTypes();
   const { handleChange, handleSubmit, spotData, loading, error } =
     useUpdateSpot(spot);
 
   return (
     <section className="flex flex-col items-center gap-2">
       <ModalHighSection
-        icon={vehicleTypes[spot.vehicle_type_id]?.icon}
         text={spotData.spot}
+        icon={vehicleTypesConstant[spot.vehicle_type_id]?.icon}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={(e) => openInnerModal("delete", e)}
       />
@@ -37,6 +39,10 @@ export default function EditSpotModal({ onClose, spot }) {
           spanText={"Tipo de vehículo"}
           value={spotData.vehicle_type_id}
           onChange={handleChange}
+          options={vehicleTypes.map((vehicleType) => ({
+            value: vehicleType.id,
+            label: vehicleType.name,
+          }))}
         />
       )}
 
