@@ -26,7 +26,7 @@ export default function ModalHighSection({
         </button>
       )}
 
-      <div className="justify-self-center flex flex-col items-center">
+      <div className="justify-self-center flex flex-col items-center gap-3">
         <Icon name={icon} size={60} fill className={"dark:text-[#E4E2E5]"} />
 
         <span
