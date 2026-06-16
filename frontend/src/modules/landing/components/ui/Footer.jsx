@@ -2,7 +2,7 @@ import Icon from "../../../../globals/components/ui/Icon";
 
 export default function Footer() {
   return (
-    <footer id="footer" className="mt-20 w-6xl flex flex-col justify-between">
+    <footer id="footer" className="mt-16 w-6xl flex flex-col justify-between">
       <div className="h-full flex justify-between py-10">
         <div className="w-md h-full flex flex-col gap-2">
           <div

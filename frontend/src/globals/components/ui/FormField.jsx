@@ -15,7 +15,7 @@ export default function FormField({
     <div
       className={`relative flex w-full border border-[#c3c4c794] pr-2 rounded-2xl bg-[#FBF9FC] overflow-hidden transition-shadow duration-200
       focus-within:shadow-[0_0_3px_2px_#e5e7eb]
-      dark:bg-black dark:border-[#1e1e20cb] dark:focus-within:shadow-[0_0_3px_3px_#28282b]
+      dark:bg-black dark:border-[#202022] dark:focus-within:shadow-[0_0_3px_3px_#28282b]
       ${className ? className : "shadow-sm"}
       `}
     >

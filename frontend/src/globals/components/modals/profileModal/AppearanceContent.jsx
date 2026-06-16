@@ -14,10 +14,10 @@ export default function AppearanceContent() {
           {/* Sistema */}
           <button
             onClick={() => setTheme("system")}
-            className={`w-28 flex flex-col items-start justify-between gap-1.5 py-2.5 pl-3 border rounded-xl
+            className={`w-28 flex flex-col items-start justify-between gap-1.5 py-2.5 pl-3 border border-[#e5e7eb] rounded-xl
+            md:w-[135px]
             focus-within:shadow-[0_0_3px_2px_#e5e7eb]
             dark:bg-[#2020226c] dark:border-[#202022] dark:focus-within:shadow-[0_0_3px_3px_#28282b]
-            md:w-[135px]
             `}
           >
             <div className="flex items-center">
@@ -26,7 +26,7 @@ export default function AppearanceContent() {
                 name={"circle"}
                 size={18}
                 color={"#ffffff"}
-                className="border rounded-full dark:border-none"
+                className="shadow-[0_0_1.5px_1px_#e5e7eb] rounded-full dark:shadow-none"
               />
 
               <Icon
@@ -43,10 +43,10 @@ export default function AppearanceContent() {
           {/* Claro */}
           <button
             onClick={() => setTheme("light")}
-            className={`w-28 flex flex-col items-start justify-between gap-2 py-2.5 pl-3 border rounded-xl
+            className={`w-28 flex flex-col items-start justify-between gap-2 py-2.5 pl-3 border border-[#e5e7eb] rounded-xl
+            md:w-[135px]
             focus-within:shadow-[0_0_3px_2px_#e5e7eb]
             dark:bg-[#2020226c] dark:border-[#202022]
-            md:w-[135px]
             `}
           >
             <Icon
@@ -54,7 +54,7 @@ export default function AppearanceContent() {
               name={"circle"}
               size={18}
               color={"#ffffff"}
-              className="border rounded-full dark:border-none"
+              className="shadow-[0_0_1.5px_1px_#e5e7eb] rounded-full dark:shadow-none"
             />
 
             <span className="font-medium text-sm">Claro</span>
@@ -63,10 +63,10 @@ export default function AppearanceContent() {
           {/* Oscuro */}
           <button
             onClick={() => setTheme("dark")}
-            className={`w-28 flex flex-col items-start justify-between gap-2 py-2.5 pl-3 border rounded-xl
+            className={`w-28 flex flex-col items-start justify-between gap-2 py-2.5 pl-3 border border-[#e5e7eb]  rounded-xl
+            md:w-[135px]
             dark:focus-within:shadow-[0_0_3px_3px_#28282b]
             dark:bg-[#2020226c] dark:border-[#202022]
-            md:w-[135px]
             `}
           >
             <Icon
