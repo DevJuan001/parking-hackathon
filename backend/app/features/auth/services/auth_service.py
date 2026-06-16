@@ -211,7 +211,7 @@ class AuthService:
             if error or not user:
                 raise ServiceError(error or "Usuario no encontrado")
 
-            role_name = user[0].id
+            role_name = user[0].role
             user_email = user[0].email
 
             connection.commit()
