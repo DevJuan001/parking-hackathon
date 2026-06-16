@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
 from app.middlewares.jwt_middleware import verify_jwt
 from app.middlewares.roles_middleware import require_roles
+from app.middlewares.onboarding_middleware import require_onboarded
 from app.features.entries.controllers.entries_controller import EntriesController
 from app.features.entries.models.entries_schemas import CreateEntrySchema, EntriesFiltersSchema
 
@@ -15,7 +16,8 @@ router = APIRouter(
     "/",
     dependencies=[
         Depends(RateLimiter(times=100, seconds=60)),
-        Depends(require_roles(["Admin"]))
+        Depends(require_roles(["Admin"])),
+        Depends(require_onboarded)
     ]
 )
 def get_all_entries(
@@ -29,7 +31,8 @@ def get_all_entries(
     "/recent-entries",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"]))
+        Depends(require_roles(["Admin"])),
+        Depends(require_onboarded)
     ]
 )
 def get_recent_entries(payload: dict = Depends(verify_jwt)):
@@ -40,7 +43,8 @@ def get_recent_entries(payload: dict = Depends(verify_jwt)):
     "/by-stats",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"]))
+        Depends(require_roles(["Admin"])),
+        Depends(require_onboarded)
     ]
 )
 def get_entry_stats(payload: dict = Depends(verify_jwt)):
@@ -51,7 +55,8 @@ def get_entry_stats(payload: dict = Depends(verify_jwt)):
     "/plate/{plate_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"]))
+        Depends(require_roles(["Admin"])),
+        Depends(require_onboarded)
     ]
 )
 def get_entries_by_plate(
@@ -65,7 +70,8 @@ def get_entries_by_plate(
     "/{entry_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"]))
+        Depends(require_roles(["Admin"])),
+        Depends(require_onboarded)
     ]
 )
 def get_entry_by_id(
