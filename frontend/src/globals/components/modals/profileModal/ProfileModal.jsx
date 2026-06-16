@@ -31,26 +31,31 @@ export default function ProfileModal({ triggerRef, onClose }) {
       >
         <aside
           className="h-[30%] justify-self-end w-full border-gray-300
-        dark:border-[#3a3d43]
-        md:h-full md:justify-self-start md:self-start"
+          md:h-full md:justify-self-start md:self-start
+          dark:border-[#3a3d43]
+        "
         >
           {/* Lista de opciones */}
-          <ul className="flex justify-center gap-1 md:flex-col md:justify-start">
+          <ul
+            className="flex justify-center gap-1
+            md:flex-col md:justify-start"
+          >
             <li>
               <button
-                className={`flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 transition duration-300
-              hover:bg-[#efedf0]
-              md:flex-row md:w-full
-              ${
-                activeSection === "general"
-                  ? "bg-gray-200 font-medium dark:bg-[#202022] text-black dark:text-white"
-                  : "hover:bg-[#efedf0] dark:hover:bg-[#202022] text-[#68676786]"
-              }`}
+                className={`flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 text-xs transition duration-300
+                md:flex-row md:w-full md:text-sm
+                ${
+                  activeSection === "general"
+                    ? `bg-gray-200 font-medium text-black
+                      dark:text-white dark:bg-[#202022] dark:hover:bg-[#28282b]`
+                    : `text-[#68676786] hover:bg-[#efedf0]
+                      dark:hover:bg-[#101012] dark:hover:text-[#ffffff8a]`
+                }`}
                 onClick={() => setActiveSection("general")}
               >
                 <Icon name={"apps"} size={24} />
 
-                <span className="text-xs md:text-sm"> General </span>
+                <span> General </span>
               </button>
             </li>
 
