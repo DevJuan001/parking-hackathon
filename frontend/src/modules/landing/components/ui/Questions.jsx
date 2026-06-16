@@ -32,7 +32,7 @@ export default function Questions() {
         parqueaderos.
       </p>
 
-      <div className="w-4xl flex flex-col gap-2">
+      <div className="mt-5 w-4xl flex flex-col gap-2">
         {questions.map((question, index) => {
           const isOpen = openQuestions.has(index);
 
@@ -41,7 +41,8 @@ export default function Questions() {
               key={index}
               onClick={() => toggleQuestion(index)}
               className="flex flex-col p-5 gap-3 border border-[#e5e7eb] rounded-2xl bg-[#f5f3f6]
-              hover:cursor-pointer"
+              hover:cursor-pointer
+              dark:bg-[#101012] dark:border-[#202022] dark:text-[#E4E2E5]"
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium">{question.question}</span>
