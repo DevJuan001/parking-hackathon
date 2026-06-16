@@ -15,11 +15,15 @@ export default function CreateFloorModal({ onClose }) {
     useCreateFloor();
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal)}
+      className="flex flex-col items-center gap-2"
+    >
       <FormField
         id={"name"}
         name={"name"}
         labelText={"Nombre"}
+        placeholder={"Nombre del piso"}
         value={floorData.name}
         onChange={handleChange}
         autoComplete="off"
@@ -61,6 +65,6 @@ export default function CreateFloorModal({ onClose }) {
           onClose={() => openInnerModal(null)}
         />
       )}
-    </section>
+    </form>
   );
 }

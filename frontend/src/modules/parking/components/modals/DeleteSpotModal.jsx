@@ -2,10 +2,10 @@
 import { useDeleteSpot } from "../../hooks/useDeleteSpot";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Components
-import Modal from "../../../../globals/components/modals/Modal";
 import Loader from "../../../../globals/components/ui/Loader";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
+import Modal from "../../../../globals/components/modals/Modal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
 export default function DeleteSpotModal({
@@ -29,7 +29,7 @@ export default function DeleteSpotModal({
       triggerRef={triggerRef}
     >
       <div className="flex flex-col">
-        <span className="text-base">
+        <span className="text-base text-nowrap">
           Deseas eliminar el spot <strong>{spot.spot}</strong>?
         </span>
 
