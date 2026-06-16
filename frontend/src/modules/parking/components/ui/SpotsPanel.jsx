@@ -3,13 +3,14 @@ import { useFloors } from "../../hooks/useFloors";
 import { useFilterSpots } from "../../hooks/useFilterSpots";
 import { useParkingSpots } from "../../hooks/useParkingSpots";
 // Components
+import SpotItem from "./SpotItem";
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 // Constants
-import SpotItem from "./SpotItem";
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
+// Modales
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import CreateButton from "../../../../globals/components/ui/CreateButton";
-import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 
 export default function SpotsPanel({ openModal }) {
   const { floors } = useFloors();
@@ -83,7 +84,7 @@ export default function SpotsPanel({ openModal }) {
                 key={spot.spot_id}
                 name={spot.spot}
                 status={spot.spot_status}
-                icon={vehicleTypes[spot.vehicle_type_id]?.icon || "circle"}
+                icon={vehicleTypesConstant[spot.vehicle_type_id]?.icon}
                 onClick={(e) => openModal(spot, "editSpot", e.currentTarget)}
               />
             ))}
