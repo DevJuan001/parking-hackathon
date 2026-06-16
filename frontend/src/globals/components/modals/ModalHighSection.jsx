@@ -30,7 +30,7 @@ export default function ModalHighSection({
         <Icon name={icon} size={60} fill className={"dark:text-[#E4E2E5]"} />
 
         <span
-          className="font-semibold text-lg
+          className="w-52 font-semibold text-lg text-center text-ellipsis overflow-hidden
           dark:text-[#E4E2E5]"
         >
           {text}
