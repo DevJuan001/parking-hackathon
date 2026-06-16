@@ -1,4 +1,7 @@
+import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import FormField from "../../../../globals/components/ui/FormField";
+import Loader from "../../../../globals/components/ui/Loader";
+import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 import SectionButtons from "./SectionButtons";
 
 export default function ParkingLocationSection({
@@ -6,9 +9,14 @@ export default function ParkingLocationSection({
   setActiveSection,
   setProgress,
   form,
+  loading,
+  error,
   handleChange,
   handleSubmit,
 }) {
+  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
+    useInnerModal();
+
   return (
     <section
       className={`${
@@ -43,14 +51,25 @@ export default function ParkingLocationSection({
         />
 
         <SectionButtons
-          continueButtonText={"Continuar"}
-          continueButtonOnClick={(e) => handleSubmit(e)}
+          continueButtonText={loading ? <Loader /> : "Continuar"}
+          continueButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
           returnButtonOnClick={() => {
             setActiveSection("parkingName");
             setProgress(200);
           }}
         />
       </form>
+
+      {innerType === "error" && (
+        <ErrorModal
+          isOpen={true}
+          triggerRef={innerTrigger}
+          location="center"
+          errorTitle={"No se pudo configurar tu parqueadero"}
+          errorText={error}
+          onClose={closeInnerModal}
+        />
+      )}
     </section>
   );
 }

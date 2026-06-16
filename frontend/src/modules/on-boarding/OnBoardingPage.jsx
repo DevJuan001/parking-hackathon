@@ -8,7 +8,7 @@ import ParkingLocationSection from "./components/ui/ParkingLocationSection";
 export default function OnBoardingPage() {
   const [progress, setProgress] = useState(100);
   const [activeSection, setActiveSection] = useState("userInfo");
-  const { form, loading, fieldError, handleChange, handleSubmit } =
+  const { form, loading, error, fieldError, handleChange, handleSubmit } =
     useCompleteOnBoarding();
 
   return (
@@ -40,6 +40,8 @@ export default function OnBoardingPage() {
         form={form}
         handleChange={handleChange}
         fieldError={fieldError}
+        loading={loading}
+        error={error}
         handleSubmit={handleSubmit}
       />
     </section>
