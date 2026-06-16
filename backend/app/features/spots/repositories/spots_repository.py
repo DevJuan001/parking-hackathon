@@ -134,23 +134,25 @@ class SpotsRepository:
             cursor.close()
 
     @staticmethod
-    def find_available_spot(parking_id: int, connection):
+    def find_available_spot(parking_id: int, vehicle_type_id: int, connection):
         cursor = connection.cursor()
 
         query = """
         SELECT s.spot_id, s.spot, f.name
         FROM SPOTS AS s
         INNER JOIN FLOORS AS f ON f.id = s.floor_id
-        WHERE f.parking_id = %s AND s.spot_status = 2
+        WHERE f.parking_id = %s
+          AND s.spot_status = 2
+          AND s.vehicle_type_id = %s
         LIMIT 1
         """
 
         try:
-            cursor.execute(query, (parking_id,))
+            cursor.execute(query, (parking_id, vehicle_type_id))
             result = cursor.fetchone()
 
             if not result:
-                return "Lo sentimos, No hay plazas disponibles por momento", None, None, None
+                return "Lo sentimos, no hay plazas disponibles para este tipo de vehículo", None, None, None,
 
             return None, result[0], result[1], result[2]
 
