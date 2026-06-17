@@ -6,6 +6,12 @@ import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 import { getCurrentUserService } from "../../../globals/services/getCurrentUserService";
 import { completeOnBoardingService } from "../service/completeOnBoardingService";
 
+const SECTION_FIELDS = {
+  userInfo: ["name", "first_surname"],
+  parkingName: ["parking_name"],
+  parkingLocation: ["parking_address", "parking_deparment"],
+};
+
 export function useCompleteOnBoarding() {
   const [form, setForm] = useState({
     name: "",
@@ -13,6 +19,7 @@ export function useCompleteOnBoarding() {
     second_surname: "",
     parking_name: "",
     parking_address: "",
+    parking_deparment: "",
   });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -24,6 +31,15 @@ export function useCompleteOnBoarding() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     clearError(name);
+  }
+
+  function validateSection(sectionName) {
+    const fields = SECTION_FIELDS[sectionName] ?? [];
+    const sectionData = fields.reduce((acc, key) => {
+      acc[key] = form[key];
+      return acc;
+    }, {});
+    return validate(sectionData);
   }
 
   async function handleSubmit(e, openInnerModal) {
@@ -63,8 +79,6 @@ export function useCompleteOnBoarding() {
     } finally {
       setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return {
@@ -74,6 +88,6 @@ export function useCompleteOnBoarding() {
     fieldError,
     handleChange,
     handleSubmit,
-    validate,
+    validateSection,
   };
 }
