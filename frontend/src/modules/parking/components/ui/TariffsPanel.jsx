@@ -4,9 +4,11 @@ import { useTariffs } from "../../hooks/useTariffs";
 import TariffItem from "./TariffItem";
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
+import { useAvailableVehicleTypes } from "../../hooks/useAvailableVehicleTypes";
 
 export default function TariffsPanel({ openModal }) {
   const { tariffs, loading } = useTariffs();
+  const { availableVehicleTypes } = useAvailableVehicleTypes();
   const noTariffs = tariffs.length === 0 && !loading;
   const isFirstLoad = tariffs.length === 0 && loading;
 
@@ -53,14 +55,18 @@ export default function TariffsPanel({ openModal }) {
               />
             ))}
 
-            <button
-              onClick={(e) => openModal(null, "createTariff", e.currentTarget)}
-              className="h-32 w-32 flex flex-col items-center justify-center rounded-3xl transition-colors border-2 border-[#EBE6E7] 
+            {availableVehicleTypes > 0 && (
+              <button
+                onClick={(e) =>
+                  openModal(null, "createTariff", e.currentTarget)
+                }
+                className="h-32 w-32 flex flex-col items-center justify-center rounded-3xl transition-colors border-2 border-[#EBE6E7] 
                 hover:bg-[#efedf0] 
                 dark:border-2 dark:border-[#202022] dark:hover:bg-[#ffffff15]"
-            >
-              <Icon name="add" size={32} fill />
-            </button>
+              >
+                <Icon name="add" size={32} fill />
+              </button>
+            )}
           </div>
         )
       )}
