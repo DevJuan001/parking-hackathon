@@ -202,8 +202,8 @@ INSERT INTO COUNTRIES (name, iso_code) VALUES
   ('Zimbabwe', 'ZW');
 
 -- PARKINGS
-INSERT INTO PARKINGS (name, address) VALUES
-  ('Parking Central', 'Cra 1 # 2-3, Bogota');
+INSERT INTO PARKINGS (name, country_id)
+  ('Parking Central', 1);
 
 -- USERS
 INSERT INTO USERS (role_id, parking_id, name, first_surname, second_surname, email, password, onboarding_completed, status) VALUES
