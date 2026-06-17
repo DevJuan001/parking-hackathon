@@ -14,6 +14,7 @@ from app.features.entries.routes import entries_routes
 from app.features.parking.routes import parking_routes
 from app.features.payments.routes import payments_routes
 from app.features.floors.routes import floors_routes
+from app.features.countries.routes import countries_routes
 
 from app.core.database import get_connection
 from app.core.redis import close_redis, init_redis
@@ -87,3 +88,5 @@ app.include_router(spots_routes.router)
 app.include_router(tariffs_routes.router)
 # Rutas de floors
 app.include_router(floors_routes.router)
+# Rutas de countries
+app.include_router(countries_routes.router)
