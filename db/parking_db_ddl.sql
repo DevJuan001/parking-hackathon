@@ -12,6 +12,14 @@ CREATE TABLE ROLES(
   PRIMARY KEY(id)
 );
 
+CREATE TABLE COUNTRIES (
+  id        INT         NOT NULL AUTO_INCREMENT,
+  name      TEXT        NOT NULL,
+  iso_code  VARCHAR(2)  NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE INDEX uq_countries_iso_code (iso_code)
+);
+
 CREATE TABLE PARKINGS (
   id INT NOT NULL AUTO_INCREMENT,
   name TEXT NOT NULL,
