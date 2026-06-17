@@ -10,4 +10,5 @@ export const apiRoutes = {
   tariffs: "/tariffs",
   dashboard: "/dashboard",
   payments: "/payments",
+  countries: "/countries",
 };
