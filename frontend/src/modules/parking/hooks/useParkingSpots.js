@@ -4,7 +4,7 @@ import { getAllSpotsService } from "../services/getAllSpotsService";
 
 export function useParkingSpots() {
   const [filters, setFilters] = useState({
-    floor_id: 1,
+    floor_id: "",
     spot_status: "",
   });
 
