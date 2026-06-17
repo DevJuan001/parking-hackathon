@@ -87,6 +87,34 @@ class ParkingService:
             connection.close()
 
     @staticmethod
+    def get_all_vehicle_types():
+        connection = get_connection()
+
+        try:
+            error, vehicle_types = VehicleTypesRepository.find_all_vehicle_types(
+                connection
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, vehicle_types
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_all_vehicle_types: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los tipos de vehículo", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     def get_all_spots(parking_id: int):
         connection = get_connection()
 

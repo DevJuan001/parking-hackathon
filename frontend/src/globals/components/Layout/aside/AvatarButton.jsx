@@ -14,7 +14,10 @@ export default function AvatarButton({ avatarOnClick }) {
     >
       <img src={avatarItem.icon} alt={avatarItem.alt} className="w-8 h-8" />
 
-      <span className="text-[#75777E] font-medium dark:text-[#7E8088]">
+      <span
+        className="max-w-48 text-ellipsis text-nowrap text-[#75777E] font-medium overflow-hidden
+        dark:text-[#7E8088]"
+      >
         {user.name} {user.first_surname}
       </span>
     </button>

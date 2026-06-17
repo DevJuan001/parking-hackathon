@@ -17,7 +17,7 @@
     optionStyles: "hover:bg-green-100 text-green-600 dark:hover:bg-[#052e1a8a]",
     visibilityIcon: true,
     fill: true,
-    styles: "bg-[#efedf0] hover:bg-[#EAE8EB] dark:bg-[#1e1e20cb]",
+    styles: "bg-[#efedf0] hover:bg-[#EAE8EB] dark:bg-[#1e1e20cb] dark:hover:bg-[#202022]",
     roles: ["Admin"],
   },
 

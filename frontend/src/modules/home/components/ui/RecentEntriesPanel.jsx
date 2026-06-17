@@ -9,9 +9,9 @@ export default function RecentEntriesPanel() {
   const isFirstLoad = entries.length === 0 && loading;
 
   return (
-    <div
+    <section
       className="h-full w-full flex flex-col px-7 py-6 rounded-[50px] border-3 border-[#EBE6E7]
-      dark:text-white"
+      dark:text-white dark:border-[#202022]"
     >
       <span className="font-semibold">Entradas recientes</span>
 
@@ -39,12 +39,14 @@ export default function RecentEntriesPanel() {
           />
         )}
 
-        <ul className="w-full h-full flex flex-col gap-2">
-          {entries.map((entry) => (
-            <RecentEntriesList key={entry.id} entry={entry} />
-          ))}
-        </ul>
+        {!noEntries && (
+          <ul className="w-full h-full flex flex-col gap-2">
+            {entries.map((entry) => (
+              <RecentEntriesList key={entry.id} entry={entry} />
+            ))}
+          </ul>
+        )}
       </div>
-    </div>
+    </section>
   );
 }

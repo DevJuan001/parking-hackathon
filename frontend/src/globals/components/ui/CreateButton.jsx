@@ -10,11 +10,7 @@ export default function CreateButton({ icon, text, borderRadius, onClick }) {
       hover:shadow-lg
       dark:bg-white dark:hover:shadow-[0px_0px_32px_-11px_#ffffff]`}
     >
-      <Icon
-        name={icon ? icon : "add"}
-        weight={600}
-        className="invert dark:brightness-200 dark:invert-0"
-      />
+      <Icon name={icon ? icon : "add"} weight={600} className="invert" />
 
       {text && (
         <span

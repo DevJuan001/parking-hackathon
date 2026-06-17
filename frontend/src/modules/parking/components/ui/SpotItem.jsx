@@ -7,10 +7,12 @@ export default function SpotItem({ name, status = 2, icon, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`h-full w-full flex flex-col items-center justify-center gap-2 rounded-3xl transition-colors duration-200
+      className={`h-full w-full flex flex-col items-center justify-center gap-2 rounded-3xl transition-colors duration-200 overflow-hidden text-ellipsis
       ${config.styles}`}
     >
-      <span className="font-semibold">{name}</span>
+      <span className="w-20 text-ellipsis overflow-hidden font-semibold">
+        {name}
+      </span>
 
       <div className="flex flex-col items-center gap-1">
         <Icon name={icon} size={14} fill={config.fill} />

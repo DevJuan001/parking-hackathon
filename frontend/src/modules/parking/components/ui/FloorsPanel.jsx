@@ -11,9 +11,9 @@ export default function FloorsPanel({ openModal }) {
   const isFirstLoad = floors.length === 0 && loading;
 
   return (
-    <div
+    <section
       className="h-full w-full flex flex-col px-7 py-5 rounded-[50px] border-3 border-[#EBE6E7]
-      dark:text-white"
+      dark:text-white dark:border-[#202022]"
     >
       <div className="flex items-center justify-between">
         <span className="font-semibold">Pisos</span>
@@ -70,6 +70,6 @@ export default function FloorsPanel({ openModal }) {
           ))
         )}
       </div>
-    </div>
+    </section>
   );
 }

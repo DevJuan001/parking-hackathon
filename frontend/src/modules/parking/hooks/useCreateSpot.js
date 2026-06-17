@@ -7,6 +7,7 @@ import { useFormValidation } from "../../../globals/hooks/useFormValidation";
 export function useCreateSpot(floor) {
   const [spotData, setSpotData] = useState({
     floor_id: floor,
+    vehicle_type_id: "",
     spot: "",
   });
   const [loading, setLoading] = useState(false);

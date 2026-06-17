@@ -67,3 +67,22 @@ Follow the rules in the companion files:
 | `commits-and-prs.md` | Conventional Commits, pre-PR checklist, PR template, gh pr create |
 
 Add new files here when a recurring concern emerges (e.g. `testing.md`, `emails.md`, `db-coordination.md`, `payments.md`) and link them from the table above.
+
+---
+
+## Current domain model (state as of `feat/entries-vehicle-type-compatibility`)
+
+Quick context for any model working in this repo. Update this section when the domain model changes.
+
+- **`PLATES.vehicle_type_id`** and **`SPOTS.vehicle_type_id`** are real columns, both FK to `VEHICLE_TYPES(id)`. A plate has the type inferred at registration from the plate's last character (digit → Carro `1`, alpha → Moto `2`); a spot is created with an explicit `vehicle_type_id` chosen by the admin.
+- **Spot assignment is constrained by vehicle type.** `EntriesService.create_entry` resolves the plate's `vehicle_type_id` and passes it to `SpotsRepository.find_available_spot(parking_id, vehicle_type_id, connection)`, which only returns compatible spots. No spot whose type does not match the plate is ever assigned. See `code-conventions.md` → "Vehicle type compatibility on spot assignment".
+- **Plate format invariants** (enforced in `EntriesService.create_entry`): exactly 6 chars after `plate_formatter`, first 3 alpha, last char determines vehicle type. Empty plate is rejected.
+- **Active entry invariant**: a plate can only have one entry without a corresponding newer exit. `EntriesRepository.has_active_entry` is the canonical check; `create_entry` raises `ServiceError("La placa ya tiene un ingreso activo")` when violated.
+- **Time/billing invariants** (payments): exit > entry, minimum 1h, `round_up_to_next_50`, no negative money. See `code-conventions.md` → "Validation invariants".
+- **Schema lives in `db/parking_db_ddl.sql`**, owned by the `database` branch. Feature branches never ALTER tables; they coordinate a PR to `database` first. See `architecture.md` → "Cross-feature access" and the `database` skill.
+
+---
+
+## Working rules
+
+- **Never touch git stashes.** Do not run `git stash`, `git stash pop`, `git stash apply`, `git stash drop`, or `git stash clear`. If uncommitted work blocks a branch switch, ask the user how to handle it.

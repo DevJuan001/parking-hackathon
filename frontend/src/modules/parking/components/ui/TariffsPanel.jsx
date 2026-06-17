@@ -4,28 +4,42 @@ import { useTariffs } from "../../hooks/useTariffs";
 import TariffItem from "./TariffItem";
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
+import { useAvailableVehicleTypes } from "../../hooks/useAvailableVehicleTypes";
+import CreateButton from "../../../../globals/components/ui/CreateButton";
 
 export default function TariffsPanel({ openModal }) {
   const { tariffs, loading } = useTariffs();
+  const { availableVehicleTypes } = useAvailableVehicleTypes();
   const noTariffs = tariffs.length === 0 && !loading;
   const isFirstLoad = tariffs.length === 0 && loading;
 
   return (
-    <div
-      className="h-full w-full flex flex-col gap-2 px-7 py-6 rounded-[50px] border-3 border-[#EBE6E7] 
-      dark:text-white"
+    <section
+      className="h-full w-full flex flex-col gap-2 px-7 py-6 rounded-[50px] border-3 border-[#EBE6E7] animate-blur-up
+      dark:text-white dark:border-[#202022]"
     >
       <div className="flex items-center">
         <span className="font-semibold">Tarifas</span>
       </div>
 
       {noTariffs && (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-[#75777E]">
-          <Icon name={"border_clear"} size={90} />
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+          <Icon
+            name={"border_clear"}
+            size={90}
+            className={"text-[#75777E] dark:text-[#7E8088]"}
+          />
 
-          <span className="text-xl font-semibold">
+          <span
+            className="text-xl font-semibold text-[#75777E]
+            dark:text-[#7E8088]"
+          >
             Aún no hay tarifas registradas
           </span>
+
+          <CreateButton
+            onClick={(e) => openModal(null, "createTariff", e.currentTarget)}
+          />
         </div>
       )}
 
@@ -53,17 +67,21 @@ export default function TariffsPanel({ openModal }) {
               />
             ))}
 
-            <button
-              onClick={(e) => openModal(null, "createTariff", e.currentTarget)}
-              className="h-32 w-32 flex flex-col items-center justify-center rounded-3xl transition-colors border-2 
+            {availableVehicleTypes.length > 0 && (
+              <button
+                onClick={(e) =>
+                  openModal(null, "createTariff", e.currentTarget)
+                }
+                className="h-32 w-32 flex flex-col items-center justify-center rounded-3xl transition-colors border-2 border-[#EBE6E7] 
                 hover:bg-[#efedf0] 
-                dark:hover:bg-[#ffffff15]"
-            >
-              <Icon name="add" size={20} fill />
-            </button>
+                dark:border-2 dark:border-[#202022] dark:hover:bg-[#ffffff15]"
+              >
+                <Icon name="add" size={32} fill />
+              </button>
+            )}
           </div>
         )
       )}
-    </div>
+    </section>
   );
 }

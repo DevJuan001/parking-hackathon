@@ -3,13 +3,14 @@ import { useFloors } from "../../hooks/useFloors";
 import { useFilterSpots } from "../../hooks/useFilterSpots";
 import { useParkingSpots } from "../../hooks/useParkingSpots";
 // Components
+import SpotItem from "./SpotItem";
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 // Constants
-import SpotItem from "./SpotItem";
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
+// Modales
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import CreateButton from "../../../../globals/components/ui/CreateButton";
-import { vehicleTypes } from "../../../../globals/constants/vehicleTypes";
 
 export default function SpotsPanel({ openModal }) {
   const { floors } = useFloors();
@@ -19,7 +20,10 @@ export default function SpotsPanel({ openModal }) {
   const isFirstLoad = spots.length === 0 && loading;
 
   return (
-    <div className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px] dark:text-white">
+    <section
+      className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px]
+      dark:text-white dark:border-[#202022]"
+    >
       <div className="flex items-center justify-between">
         <span className="font-semibold">Plazas</span>
 
@@ -38,9 +42,16 @@ export default function SpotsPanel({ openModal }) {
 
       {noSpots && (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-          <Icon name={"border_clear"} size={90} />
+          <Icon
+            name={"border_clear"}
+            size={90}
+            className={"text-[#75777E] dark:text-[#7E8088]"}
+          />
 
-          <span className="text-xl font-semibold text-[#75777E]">
+          <span
+            className="text-xl font-semibold text-[#75777E]
+            dark:text-[#7E8088]"
+          >
             Aún no hay plazas registradas
           </span>
 
@@ -65,15 +76,16 @@ export default function SpotsPanel({ openModal }) {
         !noSpots && (
           <div
             className="h-full w-full grid grid-cols-8 grid-rows-7 pt-2 gap-2
-            lg:gap-x-2 lg:gap-y-4
-            2xl:gap-2.5"
+            md:grid-cols-4
+            lg:grid-cols-6 lg:gap-x-2 lg:gap-y-4
+            2xl:grid-cols-8 2xl:gap-2.5"
           >
             {spots.map((spot) => (
               <SpotItem
                 key={spot.spot_id}
                 name={spot.spot}
                 status={spot.spot_status}
-                icon={vehicleTypes[spot.vehicle_type_id]?.icon || "circle"}
+                icon={vehicleTypesConstant[spot.vehicle_type_id]?.icon}
                 onClick={(e) => openModal(spot, "editSpot", e.currentTarget)}
               />
             ))}
@@ -82,15 +94,15 @@ export default function SpotsPanel({ openModal }) {
               onClick={(e) =>
                 openModal(filters.floor_id, "createSpot", e.currentTarget)
               }
-              className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 rounded-3xl transition-colors 
-            hover:bg-[#efedf0] 
-            dark:hover:bg-[#ffffff15]"
+              className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 border-[#EBE6E7] rounded-3xl transition-colors 
+              hover:bg-[#efedf0] 
+              dark:hover:bg-[#ffffff15] dark:border-3 dark:border-[#202022]"
             >
               <Icon name={"add"} size={35} />
             </button>
           </div>
         )
       )}
-    </div>
+    </section>
   );
 }

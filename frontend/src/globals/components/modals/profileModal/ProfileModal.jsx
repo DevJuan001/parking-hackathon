@@ -27,58 +27,61 @@ export default function ProfileModal({ triggerRef, onClose }) {
     >
       <section
         className="h-screen flex flex-col-reverse items-center justify-between gap-4
-      md:h-[445px] md:grid md:grid-cols-[150px_1fr]"
+        md:h-[445px] md:grid md:grid-cols-[150px_1fr]"
       >
         <aside
           className="h-[30%] justify-self-end w-full border-gray-300
-        dark:border-[#3a3d43]
-        md:h-full md:justify-self-start md:self-start"
+          md:h-full md:justify-self-start md:self-start
+          dark:border-[#3a3d43]
+        "
         >
           {/* Lista de opciones */}
-          <ul className="flex justify-center gap-1 md:flex-col md:justify-start">
-            <li>
-              <button
-                className={`flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 transition duration-300
-              hover:bg-[#efedf0]
-              md:flex-row md:w-full
-              ${
-                activeSection === "general"
-                  ? "bg-gray-200 font-medium dark:bg-[#202022] text-black dark:text-white"
-                  : "hover:bg-[#efedf0] dark:hover:bg-[#202022] text-[#68676786]"
-              }`}
-                onClick={() => setActiveSection("general")}
-              >
-                <Icon name={"apps"} size={24} />
+          <ul
+            className="flex justify-center gap-1
+            md:flex-col md:justify-start"
+          >
+            <li
+              onClick={() => setActiveSection("general")}
+              className={`flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 text-xs transition duration-300
+                md:flex-row md:w-full md:text-sm
+                ${
+                  activeSection === "general"
+                    ? `bg-gray-200 font-medium text-black
+                      dark:text-white dark:bg-[#202022] dark:hover:bg-[#28282b]`
+                    : `text-[#68676786] hover:bg-[#efedf0]
+                      dark:hover:bg-[#101012] dark:hover:text-[#ffffff8a]`
+                }`}
+            >
+              <Icon name={"apps"} size={24} />
 
-                <span className="text-xs md:text-sm"> General </span>
-              </button>
+              <span> General </span>
             </li>
 
-            <li>
-              <button
-                className={`w-full flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 transition duration-300
+            <li
+              onClick={() => setActiveSection("appearance")}
+              className={`w-full flex flex-col items-center py-2.5 px-3 rounded-xl gap-2 transition duration-300
               hover:bg-[#efedf0]
               md:flex-row md:pr-0 md:pl-3
               dark:hover:bg-[#202022]
               ${
                 activeSection === "appearance"
-                  ? "bg-gray-200 font-medium dark:bg-[#202022] text-black dark:text-white"
-                  : "hover:bg-[#efedf0] dark:hover:bg-[#202022] text-[#68676786]"
+                  ? `bg-gray-200 font-medium text-black
+                    dark:text-white dark:bg-[#202022] dark:hover:bg-[#28282b]`
+                  : `text-[#68676786] hover:bg-[#efedf0]
+                    dark:hover:bg-[#101012] dark:hover:text-[#ffffff8a]`
               }`}
-                onClick={() => setActiveSection("appearance")}
-              >
-                <Icon name={"palette"} size={24} />
+            >
+              <Icon name={"palette"} size={24} />
 
-                <span className="text-xs md:text-sm"> Apariencia </span>
-              </button>
+              <span className="text-xs md:text-sm"> Apariencia </span>
             </li>
           </ul>
         </aside>
 
         <section
           className="h-[80%] w-full flex flex-col gap-7 animate-blur-up
-        md:h-full
-        dark:text-white"
+          md:h-full
+          dark:text-white"
         >
           {/* Contenido de la sección seleccionada */}
           {activeSection === "general" && (

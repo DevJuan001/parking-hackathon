@@ -46,6 +46,7 @@ export default function SelectMenu({
         className={`${miniVersion ? "h-10" : "h-[66px]"} w-full flex items-center gap-1.5`}
       >
         <button
+          type="button"
           id={id}
           ref={triggerRef}
           onClick={handleToggle}
@@ -108,9 +109,8 @@ export default function SelectMenu({
           z_index="600"
         >
           <div
-            className={`w-full max-h-96 flex flex-col gap-1 px-1 pt-1 overflow-y-auto rounded-3xl bg-[#fbf9fc]
+            className={`w-full h-fit max-h-96 flex flex-col gap-1 px-1 py-1 overflow-y-auto rounded-3xl bg-[#fbf9fc]
             dark:bg-black dark:text-white  
-            ${options.length > 6 ? "min-h-96" : "min-h-24"}
             `}
             onClick={(e) => e.stopPropagation()}
           >

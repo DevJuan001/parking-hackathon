@@ -1,5 +1,5 @@
 // Hooks
-import { useDeleteFloor } from "../../hooks/useDeleteFloor";
+import { useDeleteTariff } from "../../hooks/useDeleteTariff";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
@@ -8,14 +8,13 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 import Modal from "../../../../globals/components/modals/Modal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
-export default function DeleteFloorModal({
+export default function DeleteTariffModal({
   isOpen,
   triggerRef,
   onClose,
-  onDeleted,
-  floor,
+  tariff,
 }) {
-  const { handleDelete, loading, error } = useDeleteFloor(floor);
+  const { handleDelete, loading, error } = useDeleteTariff(tariff);
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
 
@@ -23,14 +22,15 @@ export default function DeleteFloorModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      type={"delete"}
-      title={"Eliminar plaza"}
+      type={"deleteTariff"}
+      title={"Eliminar tarifa"}
       growDirection="center-right"
       triggerRef={triggerRef}
     >
       <div className="flex flex-col">
         <span>
-          Deseas eliminar el <strong>{floor.name}</strong>?
+          Deseas eliminar la tarifa del tipo de vehiculo{" "}
+          <strong>{tariff.vehicle_type}</strong>?
         </span>
 
         <ConfirmCancelButtons
@@ -38,9 +38,7 @@ export default function DeleteFloorModal({
           confirmText={loading ? <Loader /> : "Eliminar"}
           confirmBgColor="#ff0000"
           disabled={loading}
-          confirmButtonOnClick={(e) =>
-            handleDelete(e, openInnerModal, onDeleted)
-          }
+          confirmButtonOnClick={(e) => handleDelete(e, openInnerModal, onClose)}
           cancelButtonOnClick={onClose}
         />
       </div>
@@ -51,7 +49,7 @@ export default function DeleteFloorModal({
           triggerRef={innerTrigger}
           onClose={closeInnerModal}
           errorText={error}
-          errorTitle={"No se pudo eliminar la plaza!"}
+          errorTitle={"No se pudo eliminar la tarifa!"}
         />
       )}
     </Modal>

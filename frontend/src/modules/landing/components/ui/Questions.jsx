@@ -19,7 +19,7 @@ export default function Questions() {
 
   return (
     <section id="questions" className="w-full flex flex-col items-center gap-3">
-      <span className="mt-28 text-5xl font-semibold dark:text-[#e4e2e5]">
+      <span className="mt-32 text-5xl font-semibold dark:text-[#e4e2e5]">
         Preguntas Frecuentes
       </span>
 

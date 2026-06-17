@@ -1,33 +1,37 @@
 // Hooks
 import { useUpdateTariff } from "../../hooks/useUpdateTariff";
+import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Constants
-import {
-  vehicleTypeOptions,
-  vehicleTypes,
-} from "../../../../globals/constants/vehicleTypes";
+import { vehicleTypesConstant } from "../../../../globals/constants/vehicleTypes";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
+import DeleteTariffModal from "./DeleteTariffModal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
 
 export default function EditTariffModal({ onClose, tariff }) {
-  const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
+    useInnerModal();
+  const { vehicleTypes } = useVehicleTypes();
   const { handleChange, handleSubmit, tariffData, loading, error } =
     useUpdateTariff(tariff);
 
   return (
-    <section className="flex flex-col items-center gap-2">
+    <form
+      onSubmit={(e) => handleSubmit(e, openInnerModal, onClose)}
+      className="flex flex-col items-center gap-2"
+    >
       <ModalHighSection
-        icon={"payments"}
-        text={vehicleTypes[tariff.vehicle_type]?.text}
+        icon={"💵"}
+        text={vehicleTypesConstant[tariffData.vehicle_type]?.text}
         closeButtonOnClick={onClose}
-        deleteButtonOnClick={onClose}
+        deleteButtonOnClick={(e) => openInnerModal("deleteTariff", e)}
       />
 
       <SelectMenu
@@ -36,7 +40,10 @@ export default function EditTariffModal({ onClose, tariff }) {
         name={"vehicle_type"}
         value={tariffData.vehicle_type}
         onChange={handleChange}
-        options={vehicleTypeOptions}
+        options={vehicleTypes.map((vehicleType) => ({
+          value: vehicleType.id,
+          label: vehicleType.name,
+        }))}
       />
 
       <FormField
@@ -55,6 +62,18 @@ export default function EditTariffModal({ onClose, tariff }) {
         cancelButtonOnClick={onClose}
       />
 
+      {innerType === "deleteTariff" && (
+        <DeleteTariffModal
+          isOpen={true}
+          triggerRef={innerTrigger}
+          tariff={tariff}
+          onClose={() => {
+            closeInnerModal();
+            onClose();
+          }}
+        />
+      )}
+
       {innerType === "success" && (
         <SuccessModal
           triggerRef={innerTrigger}
@@ -65,7 +84,7 @@ export default function EditTariffModal({ onClose, tariff }) {
           }
           confirmButtonText={"Volver a la pagina"}
           onClose={() => {
-            openInnerModal(null);
+            closeInnerModal();
             onClose();
           }}
         />
@@ -78,9 +97,9 @@ export default function EditTariffModal({ onClose, tariff }) {
           errorTitle="¡No se pudo editar la tarifa!"
           errorText={error}
           confirmButtonText="Volver a intentarlo"
-          onClose={() => openInnerModal(null)}
+          onClose={closeInnerModal}
         />
       )}
-    </section>
+    </form>
   );
 }
