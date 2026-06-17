@@ -1,7 +1,7 @@
 // Hooks
 import { useCreateTariff } from "../../hooks/useCreateTariff";
-import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
+import { useAvailableVehicleTypes } from "../../hooks/useAvailableVehicleTypes";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
 import FormField from "../../../../globals/components/ui/FormField";
@@ -9,11 +9,10 @@ import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
-import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 
 export default function CreateTariffModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { vehicleTypes } = useVehicleTypes();
+  const { availableVehicleTypes } = useAvailableVehicleTypes();
   const { handleChange, handleSubmit, tariffData, loading, error } =
     useCreateTariff();
 
@@ -28,7 +27,7 @@ export default function CreateTariffModal({ onClose }) {
         name={"vehicle_type"}
         value={tariffData.vehicle_type}
         onChange={handleChange}
-        options={vehicleTypes.map((vehicleType) => ({
+        options={availableVehicleTypes.map((vehicleType) => ({
           value: vehicleType.id,
           label: vehicleType.name,
         }))}
@@ -47,27 +46,9 @@ export default function CreateTariffModal({ onClose }) {
 
       <ConfirmCancelButtons
         confirmText={loading ? <Loader /> : "Crear"}
-        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
+        confirmButtonOnClick={(e) => handleSubmit(e, openInnerModal, onClose)}
         cancelButtonOnClick={onClose}
       />
-
-      {innerType === "success" && (
-        <SuccessModal
-          triggerRef={innerTrigger}
-          isOpen={true}
-          location="anchored"
-          growDirection={"top-right"}
-          confirmTitle={"Tarifa creada con éxito!"}
-          confirmText={
-            "La tarifa se ha registrado correctamente, toca el botón de volver a la pagina para verla"
-          }
-          confirmButtonText={"Volver a la pagina"}
-          onClose={() => {
-            openInnerModal(null);
-            onClose();
-          }}
-        />
-      )}
 
       {innerType === "error" && (
         <ErrorModal

@@ -21,7 +21,7 @@ export function useCreateTariff() {
     }));
   }
 
-  async function handleSubmit(e, openInnerModal) {
+  async function handleSubmit(e, openInnerModal, onClose) {
     e.preventDefault();
 
     const triggerButton = getModalTrigger(e);
@@ -39,7 +39,7 @@ export function useCreateTariff() {
 
       if (response.success === true) {
         await queryClient.invalidateQueries({ queryKey: ["tariffs"] });
-        openInnerModal("success", triggerButton);
+        onClose();
       } else {
         setError(
           "No se pudo crear la tarifa, intentalo nuevamente mas tarde.",

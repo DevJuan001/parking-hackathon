@@ -19,6 +19,7 @@ from app.features.auth.models.auth_schema import OnboardingSchema, RegisterSchem
 from app.features.users.services.users_service import UsersService
 from app.features.users.models.users_schemas import CompleteUserOnboardingSchema, CreateUserSchema
 from app.features.parking.services.parking_service import ParkingService
+from app.features.floors.services.floors_service import FloorsService
 from app.features.users.repositories.users_repository import UsersRepository
 
 logger = get_logger("auth.service")
@@ -185,6 +186,16 @@ class AuthService:
             if error or not parking_id:
                 raise ServiceError(error or parking_message)
 
+            # Creamos el piso por defecto del parking para que el admin
+            # pueda empezar a registrar plazas sin pasos extra
+            error, floor_ok, floor_message = FloorsService.create_floor(
+                parking_id=parking_id,
+                name="Piso 1"
+            )
+
+            if error or not floor_ok:
+                raise ServiceError(error or floor_message or "No se pudo crear el piso por defecto")
+
             # Actualizamos los datos del usuario y le asignamos el parking que recien creamos
             user_data = CompleteUserOnboardingSchema(
                 name=data.name,
@@ -211,7 +222,7 @@ class AuthService:
             if error or not user:
                 raise ServiceError(error or "Usuario no encontrado")
 
-            role_name = user[0].id
+            role_name = user[0].role
             user_email = user[0].email
 
             connection.commit()

@@ -10,12 +10,14 @@ import FormField from "../../../../globals/components/ui/FormField";
 import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmCancelButtons";
 // Modals
+import DeleteTariffModal from "./DeleteTariffModal";
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
 import ModalHighSection from "../../../../globals/components/modals/ModalHighSection";
 
 export default function EditTariffModal({ onClose, tariff }) {
-  const { innerType, innerTrigger, openInnerModal } = useInnerModal();
+  const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
+    useInnerModal();
   const { vehicleTypes } = useVehicleTypes();
   const { handleChange, handleSubmit, tariffData, loading, error } =
     useUpdateTariff(tariff);
@@ -26,10 +28,10 @@ export default function EditTariffModal({ onClose, tariff }) {
       className="flex flex-col items-center gap-2"
     >
       <ModalHighSection
-        icon={"payments"}
+        icon={"💵"}
         text={vehicleTypesConstant[tariffData.vehicle_type]?.text}
         closeButtonOnClick={onClose}
-        deleteButtonOnClick={onClose}
+        deleteButtonOnClick={(e) => openInnerModal("deleteTariff", e)}
       />
 
       <SelectMenu
@@ -60,6 +62,18 @@ export default function EditTariffModal({ onClose, tariff }) {
         cancelButtonOnClick={onClose}
       />
 
+      {innerType === "deleteTariff" && (
+        <DeleteTariffModal
+          isOpen={true}
+          triggerRef={innerTrigger}
+          tariff={tariff}
+          onClose={() => {
+            closeInnerModal();
+            onClose();
+          }}
+        />
+      )}
+
       {innerType === "success" && (
         <SuccessModal
           triggerRef={innerTrigger}
@@ -70,7 +84,7 @@ export default function EditTariffModal({ onClose, tariff }) {
           }
           confirmButtonText={"Volver a la pagina"}
           onClose={() => {
-            openInnerModal(null);
+            closeInnerModal();
             onClose();
           }}
         />
@@ -83,7 +97,7 @@ export default function EditTariffModal({ onClose, tariff }) {
           errorTitle="¡No se pudo editar la tarifa!"
           errorText={error}
           confirmButtonText="Volver a intentarlo"
-          onClose={() => openInnerModal(null)}
+          onClose={closeInnerModal}
         />
       )}
     </form>

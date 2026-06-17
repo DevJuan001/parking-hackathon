@@ -33,6 +33,19 @@ class TariffsController:
         }
 
     @staticmethod
+    def get_available_vehicle_types(payload: dict):
+        error, vehicle_types = TariffsService.get_available_vehicle_types(
+            int(payload["parking_id"])
+        )
+
+        if error:
+            raise HTTPException(status_code=404, detail=error)
+
+        return {
+            "data": vehicle_types
+        }
+
+    @staticmethod
     async def create_tariff(tariff_data: CreateTariffSchema, payload: dict):
         error, success, message = await TariffsService.create_tariff(
             int(payload["parking_id"]),

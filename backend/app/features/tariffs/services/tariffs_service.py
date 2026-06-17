@@ -66,6 +66,36 @@ class TariffsService:
             connection.close()
 
     @staticmethod
+    def get_available_vehicle_types(parking_id: int):
+        connection = get_connection()
+
+        try:
+            error, vehicle_types = (
+                TariffsRepository.find_vehicle_types_without_tariff(
+                    parking_id, connection
+                )
+            )
+
+            if error:
+                raise ServiceError(error)
+
+            return None, vehicle_types
+
+        except ServiceError as e:
+            return e.message, None
+
+        except Exception as e:
+            logger.error(
+                "Error en get_available_vehicle_types: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al intentar obtener los tipos de vehículo disponibles", None
+
+        finally:
+            connection.close()
+
+    @staticmethod
     async def create_tariff(parking_id: int, tariff_data: CreateTariffSchema):
         connection = get_connection()
 

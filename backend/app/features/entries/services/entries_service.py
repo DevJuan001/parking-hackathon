@@ -196,9 +196,11 @@ class EntriesService:
                     raise ServiceError(error or "Error al registrar la placa")
 
                 plate_id = new_plate_id
+                plate_vehicle_type_id = vehicle_type_id
 
             else:
                 plate_id = plate.id
+                plate_vehicle_type_id = plate.vehicle_type
 
             error, active = EntriesRepository.has_active_entry(
                 parking_id, plate_id, connection
@@ -211,7 +213,7 @@ class EntriesService:
                 raise ServiceError("La placa ya tiene un ingreso activo")
 
             error, spot_id, spot_label, floor_name = SpotsRepository.find_available_spot(
-                parking_id, connection
+                parking_id, plate_vehicle_type_id, connection
             )
 
             if error or not spot_id:

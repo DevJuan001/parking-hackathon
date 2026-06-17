@@ -14,6 +14,7 @@ export default function ModalHighSection({
     >
       {deleteButtonOnClick && (
         <button
+          type="button"
           onClick={deleteButtonOnClick}
           className="self-start flex items-center p-2.5 rounded-3xl bg-[#fbf9fc] border border-[#EBE6E7] transition-colors duration-200 group
           hover:bg-[#ff5b5b41]
@@ -39,6 +40,7 @@ export default function ModalHighSection({
       </div>
 
       <button
+        type="button"
         onClick={closeButtonOnClick}
         className="self-start flex items-center p-2.5 rounded-3xl bg-[#fbf9fc] border border-[#EBE6E7] transition-colors duration-200
         hover:bg-[#ffffff3d]
