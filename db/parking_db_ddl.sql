@@ -12,12 +12,22 @@ CREATE TABLE ROLES(
   PRIMARY KEY(id)
 );
 
+CREATE TABLE COUNTRIES (
+  id        INT         NOT NULL AUTO_INCREMENT,
+  name      TEXT        NOT NULL,
+  iso_code  VARCHAR(2)  NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE INDEX uq_countries_iso_code (iso_code)
+);
+
 CREATE TABLE PARKINGS (
   id INT NOT NULL AUTO_INCREMENT,
+  country_id INT NOT NULL,
   name TEXT NOT NULL,
-  address TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY(id)
+  PRIMARY KEY(id),
+  FOREIGN KEY (country_id) REFERENCES COUNTRIES(id),
+  INDEX idx_parkings_country_id (country_id)
 );
 
 CREATE TABLE USERS (

@@ -26,4 +26,4 @@ class OnboardingSchema(BaseModel):
     first_surname: str
     second_surname: Optional[str] = None
     parking_name: str
-    parking_address: str
+    parking_country: int
