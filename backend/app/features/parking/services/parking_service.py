@@ -15,7 +15,7 @@ logger = get_logger("parking.service")
 class ParkingService:
 
     @staticmethod
-    def create_parking(name: str, address: str):
+    def create_parking(name: str, country_id: int):
         connection = get_connection()
 
         try:
@@ -24,14 +24,14 @@ class ParkingService:
                     "El nombre del parking no puede estar vacío"
                 )
 
-            if not address or not address.strip():
+            if not isinstance(country_id, int) or country_id <= 0:
                 raise ServiceError(
-                    "La dirección del parking no puede estar vacía"
+                    "El pais del parking es obligatorio, selecciona uno e intentalo nuevamente"
                 )
 
             error, success, parking_id = ParkingsRepository.create_parking(
                 name=name.strip(),
-                address=address.strip(),
+                country_id=country_id,
                 connection=connection
             )
 

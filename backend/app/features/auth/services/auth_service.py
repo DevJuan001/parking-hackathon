@@ -180,7 +180,7 @@ class AuthService:
             # Creamos un parking nuevo para ese usuario
             error, parking_id, parking_message = ParkingService.create_parking(
                 name=data.parking_name,
-                address=data.parking_address
+                country_id=data.parking_country
             )
 
             if error or not parking_id:
