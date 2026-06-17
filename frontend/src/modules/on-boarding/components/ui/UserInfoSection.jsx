@@ -3,11 +3,10 @@ import SectionButtons from "./SectionButtons";
 
 export default function UserInfoSection({
   activeSection,
-  setActiveSection,
-  setProgress,
   form,
   handleChange,
   fieldError,
+  continueButtonOnClick,
 }) {
   return (
     <section
@@ -66,10 +65,7 @@ export default function UserInfoSection({
 
         <SectionButtons
           continueButtonText={"Continuar"}
-          continueButtonOnClick={() => {
-            setProgress(200);
-            setActiveSection("parkingName");
-          }}
+          continueButtonOnClick={continueButtonOnClick}
         />
       </form>
     </section>

@@ -1,4 +1,5 @@
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
+import SelectMenu from "../../../../globals/components/modals/SelectMenu";
 import FormField from "../../../../globals/components/ui/FormField";
 import Loader from "../../../../globals/components/ui/Loader";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
@@ -6,13 +7,13 @@ import SectionButtons from "./SectionButtons";
 
 export default function ParkingLocationSection({
   activeSection,
-  setActiveSection,
-  setProgress,
   form,
   loading,
   error,
   handleChange,
+  fieldError,
   handleSubmit,
+  returnButtonOnClick,
 }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
@@ -42,21 +43,29 @@ export default function ParkingLocationSection({
       </div>
 
       <form className="w-lg flex flex-col gap-2">
+        <SelectMenu
+          id={"department-menu-city"}
+          name={"parking_deparment"}
+          spanText={"Departamento"}
+          value={form.parking_deparment}
+          onChange={handleChange}
+          options={[{}]}
+          className={fieldError("parking_deparment")}
+        />
+
         <FormField
           name={"parking_address"}
-          labelText={"Nombre"}
+          labelText={"Dirección *"}
           placeholder={"Escribe el nombre aquí"}
           value={form.parking_address}
           onChange={handleChange}
+          className={fieldError("parking_address")}
         />
 
         <SectionButtons
           continueButtonText={loading ? <Loader /> : "Continuar"}
           continueButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
-          returnButtonOnClick={() => {
-            setActiveSection("parkingName");
-            setProgress(200);
-          }}
+          returnButtonOnClick={returnButtonOnClick}
         />
 
         {innerType === "error" && (
@@ -77,6 +86,7 @@ export default function ParkingLocationSection({
           location="center"
           errorTitle={"No se pudo configurar tu parqueadero"}
           errorText={error}
+          confirmButtonText={"Volver a intentar"}
           onClose={closeInnerModal}
         />
       )}

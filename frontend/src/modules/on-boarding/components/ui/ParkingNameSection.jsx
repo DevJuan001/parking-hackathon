@@ -3,10 +3,11 @@ import SectionButtons from "./SectionButtons";
 
 export default function ParkingNameSection({
   activeSection,
-  setActiveSection,
-  setProgress,
   form,
   handleChange,
+  fieldError,
+  continueButtonOnClick,
+  returnButtonOnClick,
 }) {
   return (
     <section
@@ -35,22 +36,17 @@ export default function ParkingNameSection({
       <form className="w-lg flex flex-col gap-2">
         <FormField
           name={"parking_name"}
-          labelText={"Nombre"}
+          labelText={"Nombre *"}
           placeholder={"Escribe el nombre aquí"}
           value={form.parking_name}
           onChange={handleChange}
+          className={fieldError("parking_name")}
         />
 
         <SectionButtons
           continueButtonText={"Continuar"}
-          continueButtonOnClick={() => {
-            setActiveSection("parkingLocation");
-            setProgress(300);
-          }}
-          returnButtonOnClick={() => {
-            setActiveSection("userInfo");
-            setProgress(100);
-          }}
+          continueButtonOnClick={continueButtonOnClick}
+          returnButtonOnClick={returnButtonOnClick}
         />
       </form>
     </section>
