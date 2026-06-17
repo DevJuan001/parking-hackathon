@@ -5,6 +5,7 @@ import TariffItem from "./TariffItem";
 import Icon from "../../../../globals/components/ui/Icon";
 import Skeleton from "../../../../globals/components/ui/Skeleton";
 import { useAvailableVehicleTypes } from "../../hooks/useAvailableVehicleTypes";
+import CreateButton from "../../../../globals/components/ui/CreateButton";
 
 export default function TariffsPanel({ openModal }) {
   const { tariffs, loading } = useTariffs();
@@ -22,12 +23,23 @@ export default function TariffsPanel({ openModal }) {
       </div>
 
       {noTariffs && (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-[#75777E]">
-          <Icon name={"border_clear"} size={90} />
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+          <Icon
+            name={"border_clear"}
+            size={90}
+            className={"text-[#75777E] dark:text-[#7E8088]"}
+          />
 
-          <span className="text-xl font-semibold">
+          <span
+            className="text-xl font-semibold text-[#75777E]
+            dark:text-[#7E8088]"
+          >
             Aún no hay tarifas registradas
           </span>
+
+          <CreateButton
+            onClick={(e) => openModal(null, "createTariff", e.currentTarget)}
+          />
         </div>
       )}
 
@@ -55,7 +67,7 @@ export default function TariffsPanel({ openModal }) {
               />
             ))}
 
-            {availableVehicleTypes > 0 && (
+            {availableVehicleTypes.length > 0 && (
               <button
                 onClick={(e) =>
                   openModal(null, "createTariff", e.currentTarget)
