@@ -1,6 +1,7 @@
 from app.utils.logger import get_logger
 from app.utils.date_formatter import date_formatter
 from app.features.tariffs.models.tariffs_responses import TariffResponse
+from app.features.parking.models.parking_responses import VehicleTypeResponse
 
 logger = get_logger("tariffs.repository")
 
@@ -122,6 +123,43 @@ class TariffsRepository:
                 exc_info=True
             )
             return "Error al buscar la tarifa", None
+
+        finally:
+            cursor.close()
+
+    @staticmethod
+    def find_vehicle_types_without_tariff(parking_id: int, connection):
+        cursor = connection.cursor()
+
+        query = """
+        SELECT id, name
+        FROM VEHICLE_TYPES
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM RATES
+            WHERE RATES.parking_id = %s
+              AND RATES.vehicle_type_id = VEHICLE_TYPES.id
+        )
+        ORDER BY id ASC
+        """
+
+        try:
+            cursor.execute(query, (parking_id,))
+            results = cursor.fetchall()
+
+            vehicle_types = [
+                VehicleTypeResponse(id=item[0], name=item[1])
+                for item in results
+            ]
+            return None, vehicle_types
+
+        except Exception as e:
+            logger.error(
+                "Error en find_vehicle_types_without_tariff: %s",
+                e,
+                exc_info=True
+            )
+            return "Error al obtener los tipos de vehículo sin tarifa", None
 
         finally:
             cursor.close()
