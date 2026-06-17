@@ -1,9 +1,12 @@
-import ErrorModal from "../../../../globals/components/modals/ErrorModal";
-import SelectMenu from "../../../../globals/components/modals/SelectMenu";
-import FormField from "../../../../globals/components/ui/FormField";
-import Loader from "../../../../globals/components/ui/Loader";
+// Hooks
+import { useCountries } from "../../hooks/useCountries";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
+// Componentes
 import SectionButtons from "./SectionButtons";
+import Loader from "../../../../globals/components/ui/Loader";
+import SelectMenu from "../../../../globals/components/modals/SelectMenu";
+// Modales
+import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 
 export default function ParkingLocationSection({
   activeSection,
@@ -17,6 +20,7 @@ export default function ParkingLocationSection({
 }) {
   const { innerType, innerTrigger, openInnerModal, closeInnerModal } =
     useInnerModal();
+  const { countries } = useCountries();
 
   return (
     <section
@@ -38,28 +42,23 @@ export default function ParkingLocationSection({
           className="text-5xl font-semibold
           dark:text-[#E4E2E5]"
         >
-          ¿Dónde está ubicado tu parqueadero?
+          ¿En qué país te encuentras?
         </span>
       </div>
 
       <form className="w-lg flex flex-col gap-2">
         <SelectMenu
-          id={"department-menu-city"}
-          name={"parking_deparment"}
-          spanText={"Departamento"}
-          value={form.parking_deparment}
+          searchable
+          id={"countries-menu"}
+          name={"parking_country"}
+          spanText={"País"}
+          value={form.parking_country}
           onChange={handleChange}
-          options={[{}]}
-          className={fieldError("parking_deparment")}
-        />
-
-        <FormField
-          name={"parking_address"}
-          labelText={"Dirección *"}
-          placeholder={"Escribe el nombre aquí"}
-          value={form.parking_address}
-          onChange={handleChange}
-          className={fieldError("parking_address")}
+          options={countries.map((country) => ({
+            value: country.id,
+            label: country.name,
+          }))}
+          className={fieldError("parking_country")}
         />
 
         <SectionButtons
@@ -67,16 +66,6 @@ export default function ParkingLocationSection({
           continueButtonOnClick={(e) => handleSubmit(e, openInnerModal)}
           returnButtonOnClick={returnButtonOnClick}
         />
-
-        {innerType === "error" && (
-          <ErrorModal
-            isOpen={true}
-            triggerRef={innerTrigger}
-            errorTitle={"No se pudo configurar tu perfil"}
-            errorText={error}
-            onClose={closeInnerModal}
-          />
-        )}
       </form>
 
       {innerType === "error" && (
