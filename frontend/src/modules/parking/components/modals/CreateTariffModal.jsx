@@ -1,6 +1,5 @@
 // Hooks
 import { useCreateTariff } from "../../hooks/useCreateTariff";
-import { useVehicleTypes } from "../../hooks/useVehicleTypes";
 import { useInnerModal } from "../../../../globals/hooks/useInnerModal";
 // Components
 import Loader from "../../../../globals/components/ui/Loader";
@@ -10,10 +9,11 @@ import ConfirmCancelButtons from "../../../../globals/components/modals/ConfirmC
 // Modals
 import ErrorModal from "../../../../globals/components/modals/ErrorModal";
 import SuccessModal from "../../../../globals/components/modals/SuccessModal";
+import { useAvailableVehicleTypes } from "../../hooks/useAvailableVehicleTypes";
 
 export default function CreateTariffModal({ onClose }) {
   const { innerType, innerTrigger, openInnerModal } = useInnerModal();
-  const { vehicleTypes } = useVehicleTypes();
+  const { availableVehicleTypes } = useAvailableVehicleTypes();
   const { handleChange, handleSubmit, tariffData, loading, error } =
     useCreateTariff();
 
@@ -28,7 +28,7 @@ export default function CreateTariffModal({ onClose }) {
         name={"vehicle_type"}
         value={tariffData.vehicle_type}
         onChange={handleChange}
-        options={vehicleTypes.map((vehicleType) => ({
+        options={availableVehicleTypes.map((vehicleType) => ({
           value: vehicleType.id,
           label: vehicleType.name,
         }))}
