@@ -1,6 +1,8 @@
+// Hooks
 import { useState } from "react";
-import ProgressBar from "./components/ui/ProgressBar";
 import { useCompleteOnBoarding } from "./hooks/useCompleteOnBoarding";
+// Componentes
+import ProgressBar from "./components/ui/ProgressBar";
 import UserInfoSection from "./components/ui/UserInfoSection";
 import ParkingNameSection from "./components/ui/ParkingNameSection";
 import ParkingLocationSection from "./components/ui/ParkingLocationSection";
@@ -38,10 +40,10 @@ export default function OnBoardingPage() {
         setActiveSection={setActiveSection}
         setProgress={setProgress}
         form={form}
-        handleChange={handleChange}
-        fieldError={fieldError}
         loading={loading}
         error={error}
+        handleChange={handleChange}
+        fieldError={fieldError}
         handleSubmit={handleSubmit}
       />
     </section>
