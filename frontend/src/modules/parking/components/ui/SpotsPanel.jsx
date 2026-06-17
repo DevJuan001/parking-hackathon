@@ -21,7 +21,7 @@ export default function SpotsPanel({ openModal }) {
 
   return (
     <section
-      className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px] animate-blur-up
+      className="h-full w-full px-7 py-6 flex flex-col gap-1 col-span-1 row-span-2 border-3 border-[#EBE6E7] rounded-[50px]
       dark:text-white dark:border-[#202022]"
     >
       <div className="flex items-center justify-between">
