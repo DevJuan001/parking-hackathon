@@ -6,16 +6,16 @@ logger = get_logger("parkings.repository")
 class ParkingsRepository:
 
     @staticmethod
-    def create_parking(name: str, address: str, connection):
+    def create_parking(name: str, country_id: int, connection):
         cursor = connection.cursor()
 
         query = """
-        INSERT INTO PARKINGS (name, address)
+        INSERT INTO PARKINGS (name, country_id)
         VALUES (%s, %s)
         """
 
         try:
-            cursor.execute(query, (name, address))
+            cursor.execute(query, (name, country_id))
             return None, True, cursor.lastrowid
 
         except Exception as e:
