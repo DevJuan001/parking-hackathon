@@ -80,3 +80,9 @@ Quick context for any model working in this repo. Update this section when the d
 - **Active entry invariant**: a plate can only have one entry without a corresponding newer exit. `EntriesRepository.has_active_entry` is the canonical check; `create_entry` raises `ServiceError("La placa ya tiene un ingreso activo")` when violated.
 - **Time/billing invariants** (payments): exit > entry, minimum 1h, `round_up_to_next_50`, no negative money. See `code-conventions.md` → "Validation invariants".
 - **Schema lives in `db/parking_db_ddl.sql`**, owned by the `database` branch. Feature branches never ALTER tables; they coordinate a PR to `database` first. See `architecture.md` → "Cross-feature access" and the `database` skill.
+
+---
+
+## Working rules
+
+- **Never touch git stashes.** Do not run `git stash`, `git stash pop`, `git stash apply`, `git stash drop`, or `git stash clear`. If uncommitted work blocks a branch switch, ask the user how to handle it.
