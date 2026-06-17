@@ -18,8 +18,7 @@ export function useCompleteOnBoarding() {
     first_surname: "",
     second_surname: "",
     parking_name: "",
-    parking_address: "",
-    parking_deparment: "",
+    parking_country: "",
   });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
