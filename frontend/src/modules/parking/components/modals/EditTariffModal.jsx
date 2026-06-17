@@ -26,7 +26,7 @@ export default function EditTariffModal({ onClose, tariff }) {
       className="flex flex-col items-center gap-2"
     >
       <ModalHighSection
-        icon={"payments"}
+        icon={"💵"}
         text={vehicleTypesConstant[tariffData.vehicle_type]?.text}
         closeButtonOnClick={onClose}
         deleteButtonOnClick={onClose}
