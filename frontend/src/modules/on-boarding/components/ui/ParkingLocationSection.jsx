@@ -58,6 +58,16 @@ export default function ParkingLocationSection({
             setProgress(200);
           }}
         />
+
+        {innerType === "error" && (
+          <ErrorModal
+            isOpen={true}
+            triggerRef={innerTrigger}
+            errorTitle={"No se pudo configurar tu perfil"}
+            errorText={error}
+            onClose={closeInnerModal}
+          />
+        )}
       </form>
 
       {innerType === "error" && (
