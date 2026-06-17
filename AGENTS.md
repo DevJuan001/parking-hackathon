@@ -84,4 +84,5 @@ gh pr edit <num> --add-label "<label1>,<label2>"
 - One feature per branch, short-lived.
 - Delete branches after merge.
 - No secrets, no hardcoded URLs, no `console.log`, no commented-out code.
+- Never touch git stashes. Do not run `git stash`, `git stash pop`, `git stash apply`, `git stash drop`, or `git stash clear`. If uncommitted work blocks a branch switch, ask the user how to handle it.
 - If unsure, ask before acting.
