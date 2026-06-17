@@ -23,6 +23,17 @@ def get_all_tariffs(payload: dict = Depends(verify_jwt)):
 
 
 @router.get(
+    "/available-vehicle-types",
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(require_roles(["Admin"])),
+    ]
+)
+def get_available_vehicle_types(payload: dict = Depends(verify_jwt)):
+    return TariffsController.get_available_vehicle_types(payload)
+
+
+@router.get(
     "/{tariff_id}",
     dependencies=[
         Depends(RateLimiter(times=30, seconds=60)),
@@ -34,17 +45,6 @@ def get_tariff_by_id(
     payload: dict = Depends(verify_jwt)
 ):
     return TariffsController.get_tariff_by_id(tariff_id, payload)
-
-
-@router.get(
-    "/available-vehicle-types",
-    dependencies=[
-        Depends(RateLimiter(times=30, seconds=60)),
-        Depends(require_roles(["Admin"])),
-    ]
-)
-def get_available_vehicle_types(payload: dict = Depends(verify_jwt)):
-    return TariffsController.get_available_vehicle_types(payload)
 
 
 @router.post(
